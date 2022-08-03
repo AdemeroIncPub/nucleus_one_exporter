@@ -1,0 +1,23 @@
+{
+  "name": "nucleus_one_exporter",
+  "description": "This npm package was created to enable commitizen.",
+  "license": "Apache-2.0",
+  "private": true,
+  "scripts": {
+    "commit": "git-cz",
+    "prepare": "husky install",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "config": {
+    "commitizen": {
+      "path": "@commitlint/cz-commitlint"
+    }
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.0.3",
+    "@commitlint/config-conventional": "^17.0.3",
+    "@commitlint/cz-commitlint": "^17.0.3",
+    "commitizen": "^4.2.5",
+    "husky": "^8.0.1"
+  }
+}
