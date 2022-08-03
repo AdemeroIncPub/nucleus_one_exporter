@@ -19,4 +19,7 @@ npm install
 To commit staged changes, run either `npx cz` or `npm run commit`. Or install
 commitizen globally (`npm install -g commitizen`), then run `git cz`.
 
+Note: IDE plugins may be available allowing properly formatted commit messages
+to be written direclty in your editor.
+
 ### Testing
