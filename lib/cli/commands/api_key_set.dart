@@ -13,7 +13,7 @@ class ApiKeySetCommand extends Command<void> {
       'You can generate an API key in your user profile in the Nucleus One web app.';
   @override
   String get invocation =>
-      '${runner!.executableName} ${parent!.name} $name <your API key>';
+      '${runner!.executableName} ${parent!.name} $name <your API key> [arguments]';
 
   @override
   Future<void> run() async {

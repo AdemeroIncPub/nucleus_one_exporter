@@ -5,9 +5,11 @@ import 'package:args/command_runner.dart';
 
 import '../constants.dart';
 import 'commands/api_key.dart';
+import 'commands/info.dart';
 
 CommandRunner<void> createRootCommand() {
   return CommandRunner(productId, productName,
       usageLineLength: min(stdout.terminalColumns, 100))
-    ..addCommand(ApiKeyCommand());
+    ..addCommand(ApiKeyCommand())
+    ..addCommand(InfoCommand());
 }

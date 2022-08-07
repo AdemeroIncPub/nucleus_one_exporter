@@ -8,8 +8,6 @@ class ApiKeyShowCommand extends Command<void> {
   String get name => 'show';
   @override
   String get description => 'Show stored api key.';
-  @override
-  String get invocation => '${runner!.executableName} ${parent!.name} $name';
 
   @override
   Future<void> run() async {

@@ -8,8 +8,6 @@ class ApiKeyRemoveCommand extends Command<void> {
   String get name => 'remove';
   @override
   String get description => 'Remove your API key from this device.';
-  @override
-  String get invocation => '${runner!.executableName} ${parent!.name} $name';
 
   @override
   void run() {

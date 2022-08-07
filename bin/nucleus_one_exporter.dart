@@ -1,7 +1,6 @@
 import 'package:args/command_runner.dart';
 import 'package:get_it/get_it.dart';
-import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart'
-    show NucleusOne, NucleusOneApp, NucleusOneOptions;
+import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
 import 'package:nucleus_one_exporter/cli/cli.dart';
 import 'package:nucleus_one_exporter/settings.dart';
 
@@ -18,17 +17,18 @@ Future<void> _initializeDependencies() async {
   final gi = GetIt.instance;
   gi.registerSingleton<Settings>(Settings());
 
-  gi.registerLazySingletonAsync<NucleusOneApp>(() async {
+  gi.registerLazySingletonAsync<n1.NucleusOneApp>(() async {
     // GetIt.resetLazySingleton<NucleusOneApp>() is called when modifying the
     // API key, which will cause this singleton to be (re)created next time
     // NucleusOneApp is requested. Call NucleusOne.resetSdk() in case it has
     // already been initialized (it's a no op if not initialized).
-    await NucleusOne.resetSdk();
-    await NucleusOne.intializeSdk();
+    await n1.NucleusOne.resetSdk();
+    await n1.NucleusOne.intializeSdk();
     final apiKey = gi<Settings>().apiKey;
-    final n1App = NucleusOneApp(options: NucleusOneOptions(apiKey: apiKey));
+    final n1App =
+        n1.NucleusOneApp(options: n1.NucleusOneOptions(apiKey: apiKey));
     return n1App;
   });
 
-  await gi.isReady<NucleusOneApp>();
+  await gi.isReady<n1.NucleusOneApp>();
 }
