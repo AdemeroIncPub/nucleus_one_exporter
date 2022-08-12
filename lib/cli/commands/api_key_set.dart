@@ -1,10 +1,15 @@
 import 'package:args/command_runner.dart';
 import 'package:get_it/get_it.dart';
-import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
 
+import '../../commands/api_key_set.dart';
 import '../../settings.dart';
 
 class ApiKeySetCommand extends Command<void> {
+  ApiKeySetCommand({Settings? settings})
+      : _settings = settings ?? GetIt.I<Settings>();
+
+  final Settings _settings;
+
   @override
   String get name => 'set';
   @override
@@ -17,24 +22,13 @@ class ApiKeySetCommand extends Command<void> {
 
   @override
   Future<void> run() async {
-    // Validate command.
     if (argResults?.rest.length != 1) {
       usageException(
           'The $name command takes a single argument, your API key.');
     }
 
-    final gi = GetIt.instance;
-    final settings = gi<Settings>();
-    final oldApiKey = settings.apiKey;
     final newApiKey = (argResults?.rest[0])!;
-
-    // If api key changed, save new key and recreate NucleusOneApp.
-    if (newApiKey != oldApiKey) {
-      settings.apiKey = newApiKey;
-      gi.resetLazySingleton<n1.NucleusOneApp>();
-      await gi.isReady<n1.NucleusOneApp>();
-    }
-
+    await setApiKey(_settings, newApiKey: newApiKey);
     print('API key set: $newApiKey');
   }
 }

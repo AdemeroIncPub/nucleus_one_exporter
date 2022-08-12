@@ -2,6 +2,7 @@ import 'package:args/command_runner.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
 import 'package:nucleus_one_exporter/cli/cli.dart';
+import 'package:nucleus_one_exporter/nucleus_one_sdk_service.dart';
 import 'package:nucleus_one_exporter/settings.dart';
 
 Future<void> main(List<String> args) async {
@@ -10,12 +11,16 @@ Future<void> main(List<String> args) async {
   final rootCommand = createRootCommand();
   return rootCommand
       .run(args)
+      .onError<n1.HttpException>((error, stackTrace) =>
+          print('Error communicating with Nucleus One API. '
+              '${["Status Code: ${error.status}", error.message].join(". ")}'))
       .onError<UsageException>((error, stackTrace) => print(error.toString()));
 }
 
 Future<void> _initializeDependencies() async {
-  final gi = GetIt.instance;
+  final gi = GetIt.I;
   gi.registerSingleton<Settings>(Settings());
+  gi.registerSingleton<NucleusOneSdkService>(NucleusOneSdkService());
 
   gi.registerLazySingletonAsync<n1.NucleusOneApp>(() async {
     // GetIt.resetLazySingleton<NucleusOneApp>() is called when modifying the
