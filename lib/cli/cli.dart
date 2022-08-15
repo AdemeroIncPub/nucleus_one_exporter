@@ -5,11 +5,14 @@ import 'package:args/command_runner.dart';
 
 import '../constants.dart';
 import 'commands/api_key.dart';
+import 'commands/export.dart';
 import 'commands/info.dart';
 
 CommandRunner<void> createRootCommand() {
-  return CommandRunner(productId, productName,
-      usageLineLength: min(stdout.terminalColumns, 100))
+  return CommandRunner(productId, productName, usageLineLength: usageLineLength)
     ..addCommand(ApiKeyCommand())
-    ..addCommand(InfoCommand());
+    ..addCommand(InfoCommand())
+    ..addCommand(ExportCommand());
 }
+
+int get usageLineLength => min(stdout.terminalColumns, 80);

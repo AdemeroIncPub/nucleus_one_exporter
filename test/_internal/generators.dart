@@ -29,6 +29,7 @@ extension MyGenerators on Any {
   Generator<MyUserOrgAndProjectsWithDocCount>
       get myUserOrgAndProjectsWithDocCount => any.combine2(
             userOrganization,
+            // List size limited to reduce test time.
             any.listWithLengthInRange(0, 4, _myUserOrgProjectWithDocCount),
             (
               n1.UserOrganization userOrganization,

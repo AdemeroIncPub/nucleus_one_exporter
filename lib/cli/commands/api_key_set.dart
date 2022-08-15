@@ -1,8 +1,10 @@
+import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../commands/api_key_set.dart';
 import '../../settings.dart';
+import '../cli.dart';
 
 class ApiKeySetCommand extends Command<void> {
   ApiKeySetCommand({Settings? settings})
@@ -11,11 +13,17 @@ class ApiKeySetCommand extends Command<void> {
   final Settings _settings;
 
   @override
+  ArgParser get argParser => _argParser;
+  final _argParser = ArgParser(usageLineLength: usageLineLength);
+
+  @override
   String get name => 'set';
+
   @override
   String get description =>
       'Store your API key on this device (key is stored in plain text).\n'
       'You can generate an API key in your user profile in the Nucleus One web app.';
+
   @override
   String get invocation =>
       '${runner!.executableName} ${parent!.name} $name <your API key> [arguments]';
