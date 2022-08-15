@@ -1,7 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:glados/glados.dart';
 import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
-import 'package:nucleus_one_exporter/commands/api_key_set.dart';
+import 'package:nucleus_one_exporter/application/commands/api_key_set.dart';
 
 import '../../../_internal/fakes.dart';
 import '../../../_internal/generators.dart';

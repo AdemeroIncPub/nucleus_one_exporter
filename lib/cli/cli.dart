@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:args/command_runner.dart';
 
-import '../constants.dart';
+import '../application/constants.dart';
 import 'commands/api_key.dart';
 import 'commands/export.dart';
 import 'commands/info.dart';

@@ -4,7 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:glados/glados.dart';
 import 'package:mocktail/mocktail.dart' as mt;
 import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
-import 'package:nucleus_one_exporter/commands/info.dart';
+import 'package:nucleus_one_exporter/application/commands/info.dart';
 
 import '../../../_internal/generators.dart';
 import '../../../_internal/mocks.dart';

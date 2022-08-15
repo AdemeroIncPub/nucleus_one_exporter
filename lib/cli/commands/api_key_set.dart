@@ -2,8 +2,8 @@ import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:get_it/get_it.dart';
 
-import '../../commands/api_key_set.dart';
-import '../../settings.dart';
+import '../../application/commands/api_key_set.dart';
+import '../../application/settings.dart';
 import '../cli.dart';
 
 class ApiKeySetCommand extends Command<void> {

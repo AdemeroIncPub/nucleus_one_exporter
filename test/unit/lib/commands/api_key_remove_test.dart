@@ -1,5 +1,5 @@
 import 'package:glados/glados.dart';
-import 'package:nucleus_one_exporter/commands/api_key_remove.dart';
+import 'package:nucleus_one_exporter/application/commands/api_key_remove.dart';
 
 import '../../../_internal/fakes.dart';
 import '../../../_internal/generators.dart';

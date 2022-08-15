@@ -1,7 +1,7 @@
 import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 
-import '../../commands/info.dart';
+import '../../application/commands/info.dart';
 import '../cli.dart';
 
 class InfoCommand extends Command<void> {

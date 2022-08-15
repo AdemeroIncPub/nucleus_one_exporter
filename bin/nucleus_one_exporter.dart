@@ -2,8 +2,8 @@ import 'package:args/command_runner.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
 import 'package:nucleus_one_exporter/cli/cli.dart';
-import 'package:nucleus_one_exporter/nucleus_one_sdk_service.dart';
-import 'package:nucleus_one_exporter/settings.dart';
+import 'package:nucleus_one_exporter/application/nucleus_one_sdk_service.dart';
+import 'package:nucleus_one_exporter/application/settings.dart';
 
 Future<void> main(List<String> args) async {
   await _initializeDependencies();
