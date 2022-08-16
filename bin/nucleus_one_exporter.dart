@@ -1,10 +1,11 @@
 import 'package:args/command_runner.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
-import 'package:nucleus_one_exporter/application/services/api_key_service.dart';
-import 'package:nucleus_one_exporter/cli/cli.dart';
 import 'package:nucleus_one_exporter/application/nucleus_one_sdk_service.dart';
+import 'package:nucleus_one_exporter/application/services/api_key_service.dart';
+import 'package:nucleus_one_exporter/application/services/user_orgs_summary_service.dart';
 import 'package:nucleus_one_exporter/application/settings.dart';
+import 'package:nucleus_one_exporter/cli/cli.dart';
 
 Future<void> main(List<String> args) async {
   await _initializeDependencies();
@@ -23,6 +24,7 @@ Future<void> _initializeDependencies() async {
   gi.registerSingleton<Settings>(Settings());
   gi.registerSingleton<ApiKeyService>(ApiKeyService());
   gi.registerSingleton<NucleusOneSdkService>(NucleusOneSdkService());
+  gi.registerSingleton<UserOrgsSummaryService>(UserOrgsSummaryService());
 
   gi.registerLazySingletonAsync<n1.NucleusOneApp>(() async {
     // GetIt.resetLazySingleton<NucleusOneApp>() is called when modifying the

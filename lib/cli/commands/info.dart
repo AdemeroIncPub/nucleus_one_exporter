@@ -1,10 +1,17 @@
 import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
+import 'package:get_it/get_it.dart';
 
-import '../../application/commands/info.dart';
+import '../../application/services/user_orgs_summary_service.dart';
 import '../cli.dart';
 
 class InfoCommand extends Command<void> {
+  InfoCommand({UserOrgsSummaryService? userOrgsSummaryService})
+      : _userOrgsSummaryService =
+            userOrgsSummaryService ?? GetIt.I<UserOrgsSummaryService>();
+
+  final UserOrgsSummaryService _userOrgsSummaryService;
+
   @override
   ArgParser get argParser => _argParser;
   final _argParser = ArgParser(usageLineLength: usageLineLength);
@@ -18,16 +25,16 @@ class InfoCommand extends Command<void> {
 
   @override
   Future<void> run() async {
-    final info = await getInfo();
+    final summary = await _userOrgsSummaryService.getSummary();
     final printer = InfoPrinter();
-    printer.printInfo(info);
+    printer.printInfo(summary);
   }
 }
 
 class InfoPrinter {
-  void printInfo(InfoCommandInfo info) {
-    _printOrgCount(info.orgInfos.length);
-    for (final org in info.orgInfos) {
+  void printInfo(UserOrgsSummary summary) {
+    _printOrgCount(summary.orgInfos.length);
+    for (final org in summary.orgInfos) {
       _printOrg(
           id: org.id, name: org.name, projectCount: org.projectInfos.length);
       for (final project in org.projectInfos) {

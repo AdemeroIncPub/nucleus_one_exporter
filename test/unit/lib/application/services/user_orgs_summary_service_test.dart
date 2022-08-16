@@ -4,10 +4,10 @@ import 'package:get_it/get_it.dart';
 import 'package:glados/glados.dart';
 import 'package:mocktail/mocktail.dart' as mt;
 import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
-import 'package:nucleus_one_exporter/application/commands/info.dart';
+import 'package:nucleus_one_exporter/application/services/user_orgs_summary_service.dart';
 
-import '../../../_internal/generators.dart';
-import '../../../_internal/mocks.dart';
+import '../../../../_internal/generators.dart';
+import '../../../../_internal/mocks.dart';
 
 void main() {
   setUp(() {
@@ -63,8 +63,10 @@ void main() {
         }
       }
 
+      final sut = UserOrgsSummaryService(n1Sdk: mockNucleusOneSdkService);
+
       // Act
-      final info = await getInfo(n1Sdk: mockNucleusOneSdkService);
+      final info = await sut.getSummary();
 
       // Assert
       expect(myUserOrgAndProjectsWithDocCounts.length, info.orgInfos.length);

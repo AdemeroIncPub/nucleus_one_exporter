@@ -2,8 +2,8 @@
 
 import 'package:storagebox/storagebox.dart';
 
-import 'constants.dart';
 import '../runtime_helper.dart';
+import 'constants.dart';
 
 class Settings {
   Settings() : _sb = _initStorageBox();
