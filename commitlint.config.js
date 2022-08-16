@@ -4,8 +4,8 @@ module.exports = {
     rules: {
         // Add scopes as needed
         'scope-enum': [2, 'always', [
-            'cli',
-            'lib'
+            'lib',
+            'cli'
         ]],
     },
     prompt: {
