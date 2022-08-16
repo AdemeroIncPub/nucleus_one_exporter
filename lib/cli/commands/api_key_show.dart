@@ -2,15 +2,14 @@ import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:get_it/get_it.dart';
 
-import '../../application/commands/api_key_show.dart';
-import '../../application/settings.dart';
+import '../../application/services/api_key_service.dart';
 import '../cli.dart';
 
 class ApiKeyShowCommand extends Command<void> {
-  ApiKeyShowCommand({Settings? settings})
-      : _settings = settings ?? GetIt.I<Settings>();
+  ApiKeyShowCommand({ApiKeyService? apiKeyService})
+      : _apiKeyService = apiKeyService ?? GetIt.I<ApiKeyService>();
 
-  final Settings _settings;
+  final ApiKeyService _apiKeyService;
 
   @override
   ArgParser get argParser => _argParser;
@@ -24,7 +23,7 @@ class ApiKeyShowCommand extends Command<void> {
 
   @override
   Future<void> run() async {
-    final apiKey = showApiKey(_settings);
+    final apiKey = _apiKeyService.showApiKey();
     print('API key: $apiKey');
   }
 }

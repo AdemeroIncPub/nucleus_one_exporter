@@ -2,15 +2,14 @@ import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:get_it/get_it.dart';
 
-import '../../application/commands/api_key_remove.dart';
-import '../../application/settings.dart';
+import '../../application/services/api_key_service.dart';
 import '../cli.dart';
 
 class ApiKeyRemoveCommand extends Command<void> {
-  ApiKeyRemoveCommand({Settings? settings})
-      : _settings = settings ?? GetIt.I<Settings>();
+  ApiKeyRemoveCommand({ApiKeyService? apiKeyService})
+      : _apiKeyService = apiKeyService ?? GetIt.I<ApiKeyService>();
 
-  final Settings _settings;
+  final ApiKeyService _apiKeyService;
 
   @override
   ArgParser get argParser => _argParser;
@@ -24,7 +23,7 @@ class ApiKeyRemoveCommand extends Command<void> {
 
   @override
   void run() {
-    removeApiKey(_settings);
+    _apiKeyService.removeApiKey();
     print('API key removed.');
   }
 }
