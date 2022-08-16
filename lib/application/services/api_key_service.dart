@@ -24,7 +24,7 @@ class ApiKeyService {
     _settings.apiKey = '';
   }
 
-  String showApiKey() {
+  String getApiKey() {
     return _settings.apiKey;
   }
 }

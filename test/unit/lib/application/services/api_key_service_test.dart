@@ -119,18 +119,18 @@ void main() {
     );
   });
 
-  group('showApiKey tests', () {
+  group('getApiKey tests', () {
     Glados(any.printableAscii).test(
-      'showApiKey returns any key',
+      'getApiKey returns any key',
       (apiKey) {
         // Arrange
         final settings = FakeSettings();
         final sut = ApiKeyService(settings: settings);
-        expect('', sut.showApiKey());
+        expect('', sut.getApiKey());
 
         settings.apiKey = apiKey;
 
-        expect(apiKey, sut.showApiKey());
+        expect(apiKey, sut.getApiKey());
       },
     );
   });

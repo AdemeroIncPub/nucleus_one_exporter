@@ -23,7 +23,7 @@ class ApiKeyShowCommand extends Command<void> {
 
   @override
   Future<void> run() async {
-    final apiKey = _apiKeyService.showApiKey();
+    final apiKey = _apiKeyService.getApiKey();
     print('API key: $apiKey');
   }
 }
