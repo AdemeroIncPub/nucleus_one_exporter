@@ -12,11 +12,15 @@ environment:
 
 dependencies:
   args: any
+  characters: any
   collection: any
   dartx: any
   get_it: any
+  meta: any
   nucleus_one_dart_sdk:
     path: ../nucleus_one_dart_sdk
+  path: any
+  quiver: any
   storagebox: any
 
 dev_dependencies:
