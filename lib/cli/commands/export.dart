@@ -2,46 +2,51 @@
 
 import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
+import 'package:dartz/dartz.dart';
+import 'package:get_it/get_it.dart';
 
-import '../../application/exceptions.dart';
+import '../../application/services/export_service.dart';
+import '../../runtime_helper.dart';
 import '../cli.dart';
 
 class ExportCommand extends Command<void> {
-  ExportCommand() {
-    argParser
-      ..addOption(
-        _option_destination,
-        help: 'Relative or absolute path to create documents. (required)',
-        abbr: 'd',
-        valueHelp: 'local path',
-      )
-      ..addOption(
-        _option_orgId,
-        help: 'Organization ID (required)',
-        abbr: 'o',
-        valueHelp: 'id',
-      )
-      ..addOption(
-        _option_projectId,
-        help: 'Project ID (required)',
-        abbr: 'p',
-        valueHelp: 'id',
-      )
-      ..addFlag(
-        _flag_overwrite,
-        help: 'Overwrite existing documents.',
-      )
-      ..addFlag(
-        _flag_allowNonemptyDestination,
-        help: 'If the specified path contains files or folder, export anyway.',
-      );
+  ExportCommand({ExportService? exportService})
+      : _exportService = exportService ?? GetIt.I<ExportService>() {
+    argParser.addOption(
+      _option_orgId,
+      help: 'Organization ID (required)',
+      abbr: 'o',
+      valueHelp: 'id',
+    );
+    argParser.addOption(
+      _option_projectId,
+      help: 'Project ID (required)',
+      abbr: 'p',
+      valueHelp: 'id',
+    );
+    argParser.addOption(
+      _option_destination,
+      help: 'Relative or absolute path to create documents. (required)',
+      abbr: 'd',
+      valueHelp: 'local path',
+    );
+    argParser.addFlag(
+      _flag_overwrite,
+      help: 'Overwrite existing documents.',
+    );
+    argParser.addFlag(
+      _flag_allowNonemptyDestination,
+      help: 'If the specified path contains files or folder, export anyway.',
+    );
   }
 
-  static final _option_destination = 'destination';
   static final _option_orgId = 'organization-id';
   static final _option_projectId = 'project-id';
+  static final _option_destination = 'destination';
   static final _flag_overwrite = 'overwrite';
   static final _flag_allowNonemptyDestination = 'allow-nonempty-destination';
+
+  final ExportService _exportService;
 
   @override
   ArgParser get argParser => _argParser;
@@ -56,28 +61,52 @@ class ExportCommand extends Command<void> {
 
   @override
   Future<void> run() async {
-    try {
-      final results = argResults!;
-      _validate(results);
-    } on ValidationException catch (e) {
-      usageException(e.message);
-    }
+    final args = argResults!;
+
+    _validate(args)
+        .flatMap((_) => _exportService
+            .exportDocuments(
+              orgId: tryCast(args[_option_orgId], ''),
+              projectId: tryCast(args[_option_projectId], ''),
+              destination: tryCast(args[_option_destination], ''),
+              overwrite: args[_flag_overwrite] as bool,
+              allowNonEmptyDestination:
+                  args[_flag_allowNonemptyDestination] as bool,
+            )
+            .leftMap(_mapExportFailures2Messages))
+        .leftMap((err) => usageException(err.join('\n')));
   }
 
-  void _validate(ArgResults results) {
+  Either<List<String>, Unit> _validate(ArgResults results) {
     final issues = <String>[];
-    if (!results.wasParsed(_option_destination)) {
-      issues.add('The $_option_destination option is required.');
-    }
     if (!results.wasParsed(_option_orgId)) {
       issues.add('The $_option_orgId option is required.');
     }
     if (!results.wasParsed(_option_projectId)) {
       issues.add('The $_option_projectId option is required.');
     }
+    if (!results.wasParsed(_option_destination)) {
+      issues.add('The $_option_destination option is required.');
+    }
 
     if (issues.isNotEmpty) {
-      throw ValidationException(issues.join('\n'));
+      return Left(issues);
     }
+    return Right(unit);
+  }
+
+  List<String> _mapExportFailures2Messages(List<ExportFailure> err) {
+    return err.map((e) {
+      switch (e) {
+        case ExportFailure.orgIdInvalid:
+          return 'The $_option_orgId path is invalid.';
+        case ExportFailure.projectIdInvalid:
+          return 'The $_option_projectId path is invalid.';
+        case ExportFailure.destinationInvalid:
+          return 'The $_option_destination path is invalid.';
+        case ExportFailure.destinationNotEmpty:
+          return 'The destination folder already exists and is not empty.';
+      }
+    }).toList();
   }
 }

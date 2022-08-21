@@ -1,5 +1,5 @@
-class ValidationException implements Exception {
-  const ValidationException(this.message);
+class ApplicationException implements Exception {
+  ApplicationException(this.message);
 
   final String message;
 }

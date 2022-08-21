@@ -15,7 +15,6 @@ enum PathType {
 /// or may not exist and are not checked. The validation is performed using
 /// knowledge of invalid characters, reserved files names, etc.
 class PathValidator {
-  @visibleForTesting
   PathValidator({path_.Context? pathContext, String? os})
       : _pathContext = pathContext ?? path_.context,
         _os = os ?? Platform.operatingSystem;

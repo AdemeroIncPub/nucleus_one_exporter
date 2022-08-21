@@ -15,6 +15,7 @@ dependencies:
   characters: any
   collection: any
   dartx: any
+  dartz: any
   get_it: any
   meta: any
   nucleus_one_dart_sdk:
