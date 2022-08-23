@@ -8,6 +8,7 @@ import 'package:quiver/strings.dart' as quiver;
 enum PathType {
   absoluteFolderpath,
   absoluteFilepath,
+  foldername,
   filename,
 }
 
@@ -83,6 +84,9 @@ class PathValidator {
         }
         pathComponents = components.take(components.length - 1).skip(1);
         filenameComponent = components.last;
+        break;
+      case PathType.foldername:
+        pathComponents = [path];
         break;
       case PathType.filename:
         pathComponents = Iterable.empty();
