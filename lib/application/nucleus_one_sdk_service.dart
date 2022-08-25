@@ -14,10 +14,13 @@ class NucleusOneSdkService {
     return (await _n1App.users().getOrganizations()).items;
   }
 
-  Future<List<n1.UserOrganizationProject>> getUserOrganizationProjects({
+  Future<List<n1.OrganizationProject>> getOrganizationProjects({
     required String organizationId,
   }) async {
-    return (await _n1App.users().getProjects(organizationId: organizationId))
+    return (await _n1App
+            .organization(organizationId)
+            .getProjects(organizationId: organizationId, getAll: true))
+        .results
         .items;
   }
 

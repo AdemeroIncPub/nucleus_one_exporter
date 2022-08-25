@@ -1,3 +1,4 @@
+import 'package:dartz/dartz.dart';
 import 'package:glados/glados.dart';
 import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
 
@@ -11,7 +12,7 @@ class MyUserOrgAndProjectsWithDocCount {
 class MyUserOrgProjectWithDocCount {
   MyUserOrgProjectWithDocCount(this.project, this.docCount);
 
-  n1.UserOrganizationProject project;
+  n1.OrganizationProject project;
   int docCount;
 }
 
@@ -36,8 +37,7 @@ extension MyGenerators on Any {
               List<MyUserOrgProjectWithDocCount> myUserOrgProjectWithDocCount,
             ) {
               for (final x in myUserOrgProjectWithDocCount) {
-                x.project.projectID = userOrganization.organizationID;
-                x.project.projectName = userOrganization.organizationName;
+                x.project.organizationID = userOrganization.organizationID;
               }
               return MyUserOrgAndProjectsWithDocCount(
                   userOrganization, myUserOrgProjectWithDocCount);
@@ -46,10 +46,10 @@ extension MyGenerators on Any {
 
   Generator<MyUserOrgProjectWithDocCount> get _myUserOrgProjectWithDocCount =>
       any.combine2(
-        userOrganizationProject,
+        organizationProject,
         any.positiveIntOrZero,
         (
-          n1.UserOrganizationProject userOrganizationProject,
+          n1.OrganizationProject userOrganizationProject,
           int docCount,
         ) =>
             MyUserOrgProjectWithDocCount(userOrganizationProject, docCount),
@@ -81,36 +81,85 @@ extension MyGenerators on Any {
         },
       );
 
-  Generator<n1.UserOrganizationProject> get userOrganizationProject =>
-      any.combine8(
-        any.list(printableAscii),
-        any.printableAscii,
-        any.printableAsciiWithSpace,
-        any.printableAscii,
-        any.printableAscii,
-        any.bool,
-        any.printableAsciiWithSpace,
-        any.printableAscii,
+  Generator<n1.OrganizationProject> get organizationProject => any.combine2(
+        any.combine10(
+          any.printableAscii,
+          any.printableAscii,
+          any.printableAscii,
+          any.printableAsciiWithSpace,
+          any.printableAscii,
+          any.bool,
+          any.printableAscii,
+          any.bool,
+          any.printableAsciiWithSpace,
+          any.printableAscii,
+          (
+            String accessType,
+            String createdByUserEmail,
+            String createdByUserID,
+            String createdByUserName,
+            String createdOn,
+            bool disabled,
+            String id,
+            bool isMarkedForPurge,
+            String name,
+            String organizationID,
+          ) {
+            return Tuple10(
+              accessType,
+              createdByUserEmail,
+              createdByUserID,
+              createdByUserName,
+              createdOn,
+              disabled,
+              id,
+              isMarkedForPurge,
+              name,
+              organizationID,
+            );
+          },
+        ),
+        any.combine4(
+          any.printableAscii,
+          any.printableAscii,
+          any.printableAscii,
+          any.printableAscii,
+          (
+            String purgeMarkedByUserEmail,
+            String purgeMarkedByUserID,
+            String purgeMarkedByUserName,
+            String purgeMarkedOn,
+          ) {
+            return Tuple4(
+              purgeMarkedByUserEmail,
+              purgeMarkedByUserID,
+              purgeMarkedByUserName,
+              purgeMarkedOn,
+            );
+          },
+        ),
         (
-          List<String> assignmentTypes,
-          String organizationID,
-          String organizationName,
-          String projectAccessType,
-          String projectID,
-          bool projectIsDisabled,
-          String projectName,
-          String userEmail,
+          Tuple10<String, String, String, String, String, bool, String, bool,
+                  String, String>
+              a,
+          Tuple4<String, String, String, String> b,
         ) {
-          return n1.UserOrganizationProject(
-            assignmentTypes: assignmentTypes,
-            hasAssignment: assignmentTypes.isNotEmpty,
-            organizationID: organizationID,
-            organizationName: organizationName,
-            projectAccessType: projectAccessType,
-            projectID: projectID,
-            projectIsDisabled: projectIsDisabled,
-            projectName: projectName,
-            userEmail: userEmail,
+          return n1.OrganizationProject(
+            accessType: a.value1,
+            createdByUserEmail: a.value2,
+            createdByUserID: a.value3,
+            createdByUserName: a.value4,
+            createdOn: a.value5,
+            disabled: a.value6,
+            id: a.value7,
+            isMarkedForPurge: a.value8,
+            name: a.value9,
+            nameLower: a.value9.toLowerCase(),
+            organizationID: a.value10,
+            purgeMarkedByUserEmail: b.value1,
+            purgeMarkedByUserID: b.value2,
+            purgeMarkedByUserName: b.value3,
+            purgeMarkedOn: b.value4,
           );
         },
       );
