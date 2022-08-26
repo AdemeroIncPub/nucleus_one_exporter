@@ -10,7 +10,7 @@ void main() {
         final sut = PathValidator(pathContext: path_.windows, os: 'windows');
 
         // General tests
-        for (final td in _testDataWindows) {
+        for (final td in _IsValidWindowsTestData.testData) {
           expect(sut.isValid(td.toTest, pt), td.absoluteFolderpathWindows,
               reason: td.toTest);
         }
@@ -50,12 +50,12 @@ void main() {
         }
       });
 
-      test(skip: true, 'Windows absoluteFilepath tests', () {
+      test('Windows absoluteFilepath tests', () {
         final pt = PathType.absoluteFilepath;
         final sut = PathValidator(pathContext: path_.windows, os: 'windows');
 
         // General tests
-        for (final td in _testDataWindows) {
+        for (final td in _IsValidWindowsTestData.testData) {
           expect(sut.isValid(td.toTest, pt), td.absoluteFilepathWindows,
               reason: td.toTest);
         }
@@ -95,12 +95,12 @@ void main() {
         }
       });
 
-      test(skip: true, 'Windows foldername tests', () {
+      test('Windows foldername tests', () {
         final pt = PathType.foldername;
         final sut = PathValidator(pathContext: path_.windows, os: 'windows');
 
         // General tests
-        for (final td in _testDataWindows) {
+        for (final td in _IsValidWindowsTestData.testData) {
           expect(sut.isValid(td.toTest, pt), td.foldernameWindows,
               reason: td.toTest);
         }
@@ -140,12 +140,12 @@ void main() {
         }
       });
 
-      test(skip: true, 'Windows filename tests', () {
+      test('Windows filename tests', () {
         final pt = PathType.filename;
         final sut = PathValidator(pathContext: path_.windows, os: 'windows');
 
         // General tests
-        for (final td in _testDataWindows) {
+        for (final td in _IsValidWindowsTestData.testData) {
           expect(sut.isValid(td.toTest, pt), td.filenameWindows,
               reason: td.toTest);
         }
@@ -191,7 +191,7 @@ void main() {
             final sut = PathValidator(pathContext: path_.posix, os: 'macos');
             final pt = PathType.absoluteFolderpath;
 
-            for (final td in _testDataPosix) {
+            for (final td in _IsValidPosixTestData.testData) {
               expect(sut.isValid(td.toTest, pt), td.absoluteFolderpathMacOS,
                   reason: td.toTest);
             }
@@ -201,7 +201,7 @@ void main() {
             final sut = PathValidator(pathContext: path_.posix, os: 'macos');
             final pt = PathType.absoluteFilepath;
 
-            for (final td in _testDataPosix) {
+            for (final td in _IsValidPosixTestData.testData) {
               expect(sut.isValid(td.toTest, pt), td.absoluteFilepathMacOS,
                   reason: td.toTest);
             }
@@ -211,7 +211,7 @@ void main() {
             final sut = PathValidator(pathContext: path_.posix, os: 'macos');
             final pt = PathType.filename;
 
-            for (final td in _testDataPosix) {
+            for (final td in _IsValidPosixTestData.testData) {
               expect(sut.isValid(td.toTest, pt), td.foldernameMacOS,
                   reason: td.toTest);
             }
@@ -221,7 +221,7 @@ void main() {
             final sut = PathValidator(pathContext: path_.posix, os: 'macos');
             final pt = PathType.filename;
 
-            for (final td in _testDataPosix) {
+            for (final td in _IsValidPosixTestData.testData) {
               expect(sut.isValid(td.toTest, pt), td.filenameMacOS,
                   reason: td.toTest);
             }
@@ -233,7 +233,7 @@ void main() {
             final sut = PathValidator(pathContext: path_.posix, os: 'linux');
             final pt = PathType.absoluteFolderpath;
 
-            for (final td in _testDataPosix) {
+            for (final td in _IsValidPosixTestData.testData) {
               expect(sut.isValid(td.toTest, pt), td.absoluteFolderpathLinux,
                   reason: td.toTest);
             }
@@ -243,7 +243,7 @@ void main() {
             final sut = PathValidator(pathContext: path_.posix, os: 'linux');
             final pt = PathType.absoluteFilepath;
 
-            for (final td in _testDataPosix) {
+            for (final td in _IsValidPosixTestData.testData) {
               expect(sut.isValid(td.toTest, pt), td.absoluteFilepathLinux,
                   reason: td.toTest);
             }
@@ -253,7 +253,7 @@ void main() {
             final sut = PathValidator(pathContext: path_.posix, os: 'linux');
             final pt = PathType.filename;
 
-            for (final td in _testDataPosix) {
+            for (final td in _IsValidPosixTestData.testData) {
               expect(sut.isValid(td.toTest, pt), td.foldernameLinux,
                   reason: td.toTest);
             }
@@ -263,7 +263,7 @@ void main() {
             final sut = PathValidator(pathContext: path_.posix, os: 'linux');
             final pt = PathType.filename;
 
-            for (final td in _testDataPosix) {
+            for (final td in _IsValidPosixTestData.testData) {
               expect(sut.isValid(td.toTest, pt), td.filenameLinux,
                   reason: td.toTest);
             }
@@ -271,11 +271,62 @@ void main() {
         });
       });
     });
+
+    group('makeSafeFoldername tests', () {
+      test('Windows tests', () {
+        final sut = PathValidator(pathContext: path_.windows, os: 'windows');
+        for (final td in _MakeSafeNameTestData.foldernameTestData) {
+          expect(sut.makeSafeFoldername(td.toTest), td.windows,
+              reason: td.toTest);
+        }
+      });
+      group('POSIX tests', () {
+        test('MacOS tests', () {
+          final sut = PathValidator(pathContext: path_.posix, os: 'macos');
+          for (final td in _MakeSafeNameTestData.foldernameTestData) {
+            expect(sut.makeSafeFoldername(td.toTest), td.macOS,
+                reason: td.toTest);
+          }
+        });
+        test('Linux tests', () {
+          final sut = PathValidator(pathContext: path_.posix, os: 'linux');
+          for (final td in _MakeSafeNameTestData.foldernameTestData) {
+            expect(sut.makeSafeFoldername(td.toTest), td.linux,
+                reason: td.toTest);
+          }
+        });
+      });
+    });
+    group('makeSafeFilename tests', () {
+      test('Windows tests', () {
+        final sut = PathValidator(pathContext: path_.windows, os: 'windows');
+        for (final td in _MakeSafeNameTestData.filenameTestData) {
+          expect(sut.makeSafeFilename(td.toTest), td.windows,
+              reason: td.toTest);
+        }
+      });
+      group('POSIX tests', () {
+        test('MacOS tests', () {
+          final sut = PathValidator(pathContext: path_.posix, os: 'macos');
+          for (final td in _MakeSafeNameTestData.filenameTestData) {
+            expect(sut.makeSafeFilename(td.toTest), td.macOS,
+                reason: td.toTest);
+          }
+        });
+        test('Linux tests', () {
+          final sut = PathValidator(pathContext: path_.posix, os: 'linux');
+          for (final td in _MakeSafeNameTestData.filenameTestData) {
+            expect(sut.makeSafeFilename(td.toTest), td.linux,
+                reason: td.toTest);
+          }
+        });
+      });
+    });
   });
 }
 
-class _TestDataWindows {
-  _TestDataWindows(
+class _IsValidWindowsTestData {
+  const _IsValidWindowsTestData(
     this.toTest,
     this.absoluteFolderpathWindows,
     this.absoluteFilepathWindows,
@@ -283,66 +334,66 @@ class _TestDataWindows {
     this.filenameWindows,
   );
 
-  String toTest;
-  bool absoluteFolderpathWindows;
-  bool absoluteFilepathWindows;
-  bool foldernameWindows;
-  bool filenameWindows;
+  final String toTest;
+  final bool absoluteFolderpathWindows;
+  final bool absoluteFilepathWindows;
+  final bool foldernameWindows;
+  final bool filenameWindows;
+
+  static const _t = true;
+  static const _f = false;
+  static const List<_IsValidWindowsTestData> testData = [
+    _IsValidWindowsTestData(r'.', _f, _f, _f, _f),
+    _IsValidWindowsTestData(r'..', _f, _f, _f, _f),
+    _IsValidWindowsTestData(r'..\', _f, _f, _f, _f),
+    _IsValidWindowsTestData(r'\', _t, _f, _f, _f),
+    _IsValidWindowsTestData(r'\..', _t, _f, _f, _f),
+    _IsValidWindowsTestData(r'.\a', _f, _f, _f, _f),
+    _IsValidWindowsTestData(r'..\a', _f, _f, _f, _f),
+    _IsValidWindowsTestData(r'..\\a', _f, _f, _f, _f),
+    _IsValidWindowsTestData(r'\a', _t, _t, _f, _f),
+    _IsValidWindowsTestData(r'\..\a', _t, _t, _f, _f),
+    _IsValidWindowsTestData(r'\a.ext', _t, _t, _f, _f),
+    _IsValidWindowsTestData(r'\a\b.ext', _t, _t, _f, _f),
+    _IsValidWindowsTestData(r'C:', _f, _f, _f, _f),
+    _IsValidWindowsTestData(r'C:a', _f, _f, _f, _f),
+    _IsValidWindowsTestData(r'C:a\', _f, _f, _f, _f),
+    _IsValidWindowsTestData(r'C:a.ext', _f, _f, _f, _f),
+    _IsValidWindowsTestData(r'C:a\b.ext', _f, _f, _f, _f),
+    _IsValidWindowsTestData(r'C:\', _t, _f, _f, _f),
+    _IsValidWindowsTestData(r'C:\a', _t, _t, _f, _f),
+    _IsValidWindowsTestData(r'C:\a\', _t, _f, _f, _f),
+    _IsValidWindowsTestData(r'C:\a.ext', _t, _t, _f, _f),
+    _IsValidWindowsTestData(r'C:\a\b.ext', _t, _t, _f, _f),
+    _IsValidWindowsTestData(r'\\server\share', _t, _f, _f, _f),
+    _IsValidWindowsTestData(r'\\server\share\', _t, _f, _f, _f),
+    _IsValidWindowsTestData(r'\\server\share\a', _t, _t, _f, _f),
+    _IsValidWindowsTestData(r'\\server\share\a\', _t, _f, _f, _f),
+    _IsValidWindowsTestData(r'\\server\share\a.ext', _t, _t, _f, _f),
+    _IsValidWindowsTestData(r'\\server\share\a\b.ext', _t, _t, _f, _f),
+    _IsValidWindowsTestData(r'CA:\', _f, _f, _f, _f),
+    _IsValidWindowsTestData(r'C:A\', _f, _f, _f, _f),
+    _IsValidWindowsTestData(r'C:\A:\', _f, _f, _f, _f),
+    _IsValidWindowsTestData(r':C\', _f, _f, _f, _f),
+    _IsValidWindowsTestData(r'C:\🙂', _t, _t, _f, _f),
+    _IsValidWindowsTestData(r'🙂', _f, _f, _t, _t),
+    _IsValidWindowsTestData(r'a', _f, _f, _t, _t),
+    _IsValidWindowsTestData(r'a.ext', _f, _f, _t, _t),
+    _IsValidWindowsTestData(r'a.ext.ext', _f, _f, _t, _t),
+    _IsValidWindowsTestData(r'/', _t, _f, _f, _f),
+    _IsValidWindowsTestData(r'/..', _t, _f, _f, _f),
+    _IsValidWindowsTestData(r'/a', _t, _t, _f, _f),
+    _IsValidWindowsTestData(r'/a.ext', _t, _t, _f, _f),
+    _IsValidWindowsTestData(r'/a/b.ext', _t, _t, _f, _f),
+    _IsValidWindowsTestData(r'C:/', _t, _f, _f, _f),
+    _IsValidWindowsTestData(r'C:/a', _t, _t, _f, _f),
+    _IsValidWindowsTestData(r'C:/a.ext', _t, _t, _f, _f),
+    _IsValidWindowsTestData(r'C:/a/b.ext', _t, _t, _f, _f),
+  ];
 }
 
-const _t = true;
-const _f = false;
-List<_TestDataWindows> _testDataWindows = [
-  _TestDataWindows(r'.', _f, _f, _f, _f),
-  _TestDataWindows(r'..', _f, _f, _f, _f),
-  _TestDataWindows(r'..\', _f, _f, _f, _f),
-  _TestDataWindows(r'\', _t, _f, _f, _f),
-  _TestDataWindows(r'\..', _t, _f, _f, _f),
-  _TestDataWindows(r'.\a', _f, _f, _f, _f),
-  _TestDataWindows(r'..\a', _f, _f, _f, _f),
-  _TestDataWindows(r'..\\a', _f, _f, _f, _f),
-  _TestDataWindows(r'\a', _t, _t, _f, _f),
-  _TestDataWindows(r'\..\a', _t, _t, _f, _f),
-  _TestDataWindows(r'\a.ext', _t, _t, _f, _f),
-  _TestDataWindows(r'\a\b.ext', _t, _t, _f, _f),
-  _TestDataWindows(r'C:', _f, _f, _f, _f),
-  _TestDataWindows(r'C:a', _f, _f, _f, _f),
-  _TestDataWindows(r'C:a\', _f, _f, _f, _f),
-  _TestDataWindows(r'C:a.ext', _f, _f, _f, _f),
-  _TestDataWindows(r'C:a\b.ext', _f, _f, _f, _f),
-  _TestDataWindows(r'C:\', _t, _f, _f, _f),
-  _TestDataWindows(r'C:\a', _t, _t, _f, _f),
-  _TestDataWindows(r'C:\a\', _t, _f, _f, _f),
-  _TestDataWindows(r'C:\a.ext', _t, _t, _f, _f),
-  _TestDataWindows(r'C:\a\b.ext', _t, _t, _f, _f),
-  _TestDataWindows(r'\\server\share', _t, _f, _f, _f),
-  _TestDataWindows(r'\\server\share\', _t, _f, _f, _f),
-  _TestDataWindows(r'\\server\share\a', _t, _t, _f, _f),
-  _TestDataWindows(r'\\server\share\a\', _t, _f, _f, _f),
-  _TestDataWindows(r'\\server\share\a.ext', _t, _t, _f, _f),
-  _TestDataWindows(r'\\server\share\a\b.ext', _t, _t, _f, _f),
-  _TestDataWindows(r'CA:\', _f, _f, _f, _f),
-  _TestDataWindows(r'C:A\', _f, _f, _f, _f),
-  _TestDataWindows(r'C:\A:\', _f, _f, _f, _f),
-  _TestDataWindows(r':C\', _f, _f, _f, _f),
-  _TestDataWindows(r'C:\🙂', _t, _t, _f, _f),
-  _TestDataWindows(r'🙂', _f, _f, _t, _t),
-  _TestDataWindows(r'a', _f, _f, _t, _t),
-  _TestDataWindows(r'a.ext', _f, _f, _t, _t),
-  _TestDataWindows(r'a.ext.ext', _f, _f, _t, _t),
-  _TestDataWindows(r'/', _t, _f, _f, _f),
-  _TestDataWindows(r'/..', _t, _f, _f, _f),
-  _TestDataWindows(r'/a', _t, _t, _f, _f),
-  _TestDataWindows(r'/a.ext', _t, _t, _f, _f),
-  _TestDataWindows(r'/a/b.ext', _t, _t, _f, _f),
-  _TestDataWindows(r'C:/', _t, _f, _f, _f),
-  _TestDataWindows(r'C:/a', _t, _t, _f, _f),
-  _TestDataWindows(r'C:/a.ext', _t, _t, _f, _f),
-  _TestDataWindows(r'C:/a/b.ext', _t, _t, _f, _f),
-];
-
-class _TestDataPosix {
-  _TestDataPosix(
+class _IsValidPosixTestData {
+  const _IsValidPosixTestData(
     this.toTest,
     this.absoluteFolderpathMacOS,
     this.absoluteFilepathMacOS,
@@ -354,38 +405,113 @@ class _TestDataPosix {
     this.filenameLinux,
   );
 
-  String toTest;
-  bool absoluteFolderpathMacOS;
-  bool absoluteFilepathMacOS;
-  bool foldernameMacOS;
-  bool filenameMacOS;
-  bool absoluteFolderpathLinux;
-  bool absoluteFilepathLinux;
-  bool foldernameLinux;
-  bool filenameLinux;
+  final String toTest;
+  final bool absoluteFolderpathMacOS;
+  final bool absoluteFilepathMacOS;
+  final bool foldernameMacOS;
+  final bool filenameMacOS;
+  final bool absoluteFolderpathLinux;
+  final bool absoluteFilepathLinux;
+  final bool foldernameLinux;
+  final bool filenameLinux;
+
+  static const _t = true;
+  static const _f = false;
+  static const List<_IsValidPosixTestData> testData = [
+    _IsValidPosixTestData(r'/', _t, _f, _f, _f, _t, _f, _f, _f),
+    _IsValidPosixTestData(r'/a', _t, _t, _f, _f, _t, _t, _f, _f),
+    _IsValidPosixTestData(r'/../a', _t, _t, _f, _f, _t, _t, _f, _f),
+    _IsValidPosixTestData(r'/a/../b', _t, _t, _f, _f, _t, _t, _f, _f),
+    _IsValidPosixTestData(r'a', _f, _f, _t, _t, _f, _f, _t, _t),
+    _IsValidPosixTestData(r'a.ext', _f, _f, _t, _t, _f, _f, _t, _t),
+    _IsValidPosixTestData(r'a.ext.ext', _f, _f, _t, _t, _f, _f, _t, _t),
+    _IsValidPosixTestData(r'/', _t, _f, _f, _f, _t, _f, _f, _f),
+    _IsValidPosixTestData(r'/..', _t, _f, _f, _f, _t, _f, _f, _f),
+    _IsValidPosixTestData(r'/a', _t, _t, _f, _f, _t, _t, _f, _f),
+    _IsValidPosixTestData(r'/a.ext', _t, _t, _f, _f, _t, _t, _f, _f),
+    _IsValidPosixTestData(r'/a/b.ext', _t, _t, _f, _f, _t, _t, _f, _f),
+    _IsValidPosixTestData(r'\', _f, _f, _t, _t, _f, _f, _t, _t),
+    _IsValidPosixTestData(r'\a', _f, _f, _t, _t, _f, _f, _t, _t),
+    _IsValidPosixTestData(r'C:', _f, _f, _f, _f, _f, _f, _t, _t),
+    _IsValidPosixTestData(r'C:a', _f, _f, _f, _f, _f, _f, _t, _t),
+    _IsValidPosixTestData(r'C:\', _f, _f, _f, _f, _f, _f, _t, _t),
+    _IsValidPosixTestData(r'C:\a', _f, _f, _f, _f, _f, _f, _t, _t),
+    _IsValidPosixTestData(r'C:/', _f, _f, _f, _f, _f, _f, _f, _f),
+    _IsValidPosixTestData(r'C:/a', _f, _f, _f, _f, _f, _f, _f, _f),
+    _IsValidPosixTestData(r'C:/a.ext', _f, _f, _f, _f, _f, _f, _f, _f),
+    _IsValidPosixTestData(r'C:/a/b.ext', _f, _f, _f, _f, _f, _f, _f, _f),
+  ];
 }
 
-List<_TestDataPosix> _testDataPosix = [
-  _TestDataPosix(r'/', _t, _f, _f, _f, _t, _f, _f, _f),
-  _TestDataPosix(r'/a', _t, _t, _f, _f, _t, _t, _f, _f),
-  _TestDataPosix(r'/../a', _t, _t, _f, _f, _t, _t, _f, _f),
-  _TestDataPosix(r'/a/../b', _t, _t, _f, _f, _t, _t, _f, _f),
-  _TestDataPosix(r'a', _f, _f, _t, _t, _f, _f, _t, _t),
-  _TestDataPosix(r'a.ext', _f, _f, _t, _t, _f, _f, _t, _t),
-  _TestDataPosix(r'a.ext.ext', _f, _f, _t, _t, _f, _f, _t, _t),
-  _TestDataPosix(r'/', _t, _f, _f, _f, _t, _f, _f, _f),
-  _TestDataPosix(r'/..', _t, _f, _f, _f, _t, _f, _f, _f),
-  _TestDataPosix(r'/a', _t, _t, _f, _f, _t, _t, _f, _f),
-  _TestDataPosix(r'/a.ext', _t, _t, _f, _f, _t, _t, _f, _f),
-  _TestDataPosix(r'/a/b.ext', _t, _t, _f, _f, _t, _t, _f, _f),
-  _TestDataPosix(r'\', _f, _f, _t, _t, _f, _f, _t, _t),
-  _TestDataPosix(r'\a', _f, _f, _t, _t, _f, _f, _t, _t),
-  _TestDataPosix(r'C:', _f, _f, _f, _f, _f, _f, _t, _t),
-  _TestDataPosix(r'C:a', _f, _f, _f, _f, _f, _f, _t, _t),
-  _TestDataPosix(r'C:\', _f, _f, _f, _f, _f, _f, _t, _t),
-  _TestDataPosix(r'C:\a', _f, _f, _f, _f, _f, _f, _t, _t),
-  _TestDataPosix(r'C:/', _f, _f, _f, _f, _f, _f, _f, _f),
-  _TestDataPosix(r'C:/a', _f, _f, _f, _f, _f, _f, _f, _f),
-  _TestDataPosix(r'C:/a.ext', _f, _f, _f, _f, _f, _f, _f, _f),
-  _TestDataPosix(r'C:/a/b.ext', _f, _f, _f, _f, _f, _f, _f, _f),
-];
+class _MakeSafeNameTestData {
+  const _MakeSafeNameTestData(
+      this.toTest, this.windows, this.macOS, this.linux);
+
+  final String toTest;
+  final String windows;
+  final String macOS;
+  final String linux;
+
+  static const List<_MakeSafeNameTestData> _common = [
+    _MakeSafeNameTestData(r'.', '_', '_', '_'),
+    _MakeSafeNameTestData(r'..', '._', '._', '._'),
+    _MakeSafeNameTestData(r'\', '_', r'\', r'\'),
+    _MakeSafeNameTestData(r'/', '_', '_', '_'),
+    _MakeSafeNameTestData(r'.a', '.a', '.a', '.a'),
+    _MakeSafeNameTestData(r'a.', 'a_', 'a.', 'a.'),
+    _MakeSafeNameTestData(r'a', 'a', 'a', 'a'),
+    _MakeSafeNameTestData(r'a ', 'a_', 'a ', 'a '),
+    _MakeSafeNameTestData(r'a.ext', 'a.ext', 'a.ext', 'a.ext'),
+    _MakeSafeNameTestData(r'a .ext', 'a .ext', 'a .ext', 'a .ext'),
+    _MakeSafeNameTestData(r'a\b', 'a_b', r'a\b', r'a\b'),
+    _MakeSafeNameTestData(r'a:b', 'a_b', 'a_b', 'a:b'),
+    _MakeSafeNameTestData(
+        r'c:\a\b<c.ext', 'c__a_b_c.ext', r'c_\a\b<c.ext', r'c:\a\b<c.ext'),
+    _MakeSafeNameTestData(
+        r'c:/a/b<c.ext', 'c__a_b_c.ext', r'c__a_b<c.ext', r'c:_a_b<c.ext'),
+  ];
+
+  static const List<_MakeSafeNameTestData> foldernameTestData = [
+    ..._common,
+    _MakeSafeNameTestData(r'CON', 'CON', 'CON', 'CON'),
+    _MakeSafeNameTestData(r'CON.ext', 'CON.ext', 'CON.ext', 'CON.ext'),
+    _MakeSafeNameTestData(r'aCON', 'aCON', 'aCON', 'aCON'),
+    _MakeSafeNameTestData(r'COM2', 'COM2', 'COM2', 'COM2'),
+    _MakeSafeNameTestData(r'COM2.ext', 'COM2.ext', 'COM2.ext', 'COM2.ext'),
+    _MakeSafeNameTestData(r'aCOM2', 'aCOM2', 'aCOM2', 'aCOM2'),
+    _MakeSafeNameTestData(r'LPT2', 'LPT2', 'LPT2', 'LPT2'),
+    _MakeSafeNameTestData(r'LPT2.ext', 'LPT2.ext', 'LPT2.ext', 'LPT2.ext'),
+    _MakeSafeNameTestData(r'aLPT2', 'aLPT2', 'aLPT2', 'aLPT2'),
+    _MakeSafeNameTestData(r'con', 'con', 'con', 'con'),
+    _MakeSafeNameTestData(r'con.ext', 'con.ext', 'con.ext', 'con.ext'),
+    _MakeSafeNameTestData(r'acon', 'acon', 'acon', 'acon'),
+    _MakeSafeNameTestData(r'com2', 'com2', 'com2', 'com2'),
+    _MakeSafeNameTestData(r'com2.ext', 'com2.ext', 'com2.ext', 'com2.ext'),
+    _MakeSafeNameTestData(r'acom2', 'acom2', 'acom2', 'acom2'),
+    _MakeSafeNameTestData(r'lpt2', 'lpt2', 'lpt2', 'lpt2'),
+    _MakeSafeNameTestData(r'lpt2.ext', 'lpt2.ext', 'lpt2.ext', 'lpt2.ext'),
+    _MakeSafeNameTestData(r'alpt2', 'alpt2', 'alpt2', 'alpt2'),
+  ];
+
+  static const List<_MakeSafeNameTestData> filenameTestData = [
+    ..._common,
+    _MakeSafeNameTestData(r'CON', 'CON_', 'CON', 'CON'),
+    _MakeSafeNameTestData(r'CON.ext', 'CON_.ext', 'CON.ext', 'CON.ext'),
+    _MakeSafeNameTestData(r'aCON', 'aCON', 'aCON', 'aCON'),
+    _MakeSafeNameTestData(r'COM2', 'COM2_', 'COM2', 'COM2'),
+    _MakeSafeNameTestData(r'COM2.ext', 'COM2_.ext', 'COM2.ext', 'COM2.ext'),
+    _MakeSafeNameTestData(r'aCOM2', 'aCOM2', 'aCOM2', 'aCOM2'),
+    _MakeSafeNameTestData(r'LPT2', 'LPT2_', 'LPT2', 'LPT2'),
+    _MakeSafeNameTestData(r'LPT2.ext', 'LPT2_.ext', 'LPT2.ext', 'LPT2.ext'),
+    _MakeSafeNameTestData(r'aLPT2', 'aLPT2', 'aLPT2', 'aLPT2'),
+    _MakeSafeNameTestData(r'con', 'con_', 'con', 'con'),
+    _MakeSafeNameTestData(r'con.ext', 'con_.ext', 'con.ext', 'con.ext'),
+    _MakeSafeNameTestData(r'acon', 'acon', 'acon', 'acon'),
+    _MakeSafeNameTestData(r'com2', 'com2_', 'com2', 'com2'),
+    _MakeSafeNameTestData(r'com2.ext', 'com2_.ext', 'com2.ext', 'com2.ext'),
+    _MakeSafeNameTestData(r'acom2', 'acom2', 'acom2', 'acom2'),
+    _MakeSafeNameTestData(r'lpt2', 'lpt2_', 'lpt2', 'lpt2'),
+    _MakeSafeNameTestData(r'lpt2.ext', 'lpt2_.ext', 'lpt2.ext', 'lpt2.ext'),
+    _MakeSafeNameTestData(r'alpt2', 'alpt2', 'alpt2', 'alpt2'),
+  ];
+}

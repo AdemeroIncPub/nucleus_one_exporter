@@ -20,7 +20,7 @@ void main() {
   });
 
   Glados(any.list(any.myUserOrgAndProjectsWithDocCount)).test(
-    'getInfo returns correct InfoCommandInfo',
+    'getSummary returns correct UserOrgsSummary',
     (myUserOrgAndProjectsWithDocCounts) async {
       // Arrange
       // Setup orgs

@@ -20,6 +20,8 @@ class PathValidator {
       : _pathContext = pathContext ?? path_.context,
         _os = os ?? Platform.operatingSystem;
 
+  static final _replacementChar = '_';
+
   final path_.Context _pathContext;
   final String _os;
 
@@ -74,7 +76,14 @@ class PathValidator {
         }
         pathComponents = components.skip(1);
         break;
+
       case PathType.absoluteFilepath:
+        if (_os == 'windows' && path.endsWith(r'\')) {
+          return false;
+        }
+        if (path.endsWith('/')) {
+          return false;
+        }
         if (!_pathContext.isAbsolute(path)) {
           return false;
         }
@@ -85,13 +94,16 @@ class PathValidator {
         pathComponents = components.take(components.length - 1).skip(1);
         filenameComponent = components.last;
         break;
+
       case PathType.foldername:
         pathComponents = [path];
         break;
+
       case PathType.filename:
         pathComponents = Iterable.empty();
         filenameComponent = path;
         break;
+
       default:
         throw UnsupportedError('Unsupported PathType: ${validateAs.name}');
     }
@@ -117,6 +129,47 @@ class PathValidator {
     }
 
     return true;
+  }
+
+  /// Pass a single foldername component. The passed string will not be split on
+  /// slashes, instead the slashes will be replaced.
+  String makeSafeFoldername(String foldername) {
+    return _makeSafeName(foldername);
+  }
+
+  String makeSafeFilename(String filename) {
+    final safeName = _makeSafeName(filename);
+    if (_isFilenameReserved(safeName)) {
+      return _pathContext.basenameWithoutExtension(safeName) +
+          _replacementChar +
+          _pathContext.extension(safeName);
+    }
+    return safeName;
+  }
+
+  String _makeSafeName(String name) {
+    if (_isComponentRelative(name)) {
+      return name.characters.skipLast(1).toString() + _replacementChar;
+    }
+
+    final resultBuffer = StringBuffer();
+
+    // Replace invalid characters
+    for (final c in name.characters) {
+      if (!_isCharValid(c.characters)) {
+        resultBuffer.write(_replacementChar);
+      } else {
+        resultBuffer.write(c);
+      }
+    }
+
+    // Check and replace final character if needed.
+    String result = resultBuffer.toString();
+    if (!_isFinalCharValid(result)) {
+      result = result.characters.skipLast(1).string + _replacementChar;
+    }
+
+    return result;
   }
 
   bool _isRootValid(String rootOnly) {
@@ -156,36 +209,54 @@ class PathValidator {
   }
 
   bool _areAllCharactersValid(String component) {
-    // Check non-printable ASCII (0 - 31)
-    for (final rune in component.runes) {
-      if (rune < 32) {
+    for (final c in component.characters) {
+      if (!_isCharValid(c.characters)) {
         return false;
       }
     }
 
+    if (!_isFinalCharValid(component)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  bool _isCharValid(Characters singleCharacter) {
+    assert(singleCharacter.length == 1);
+    final c = singleCharacter.string;
+
+    // Check non-printable ASCII (0 - 31)
+    if (c.codeUnits.length == 1 && c.codeUnits[0] < 32) {
+      return false;
+    }
+
+    // Check for invalid characters.
     if (_os == 'windows') {
-      // Check for invalid characters.
-      if (invalidCharsWindows.any((e) => component.contains(e))) {
+      if (invalidCharsWindows.contains(c)) {
         return false;
       }
+    } else if (_os == 'macos') {
+      if (invalidCharsMacOS.contains(c)) {
+        return false;
+      }
+    } else {
+      if (c == '/') {
+        return false;
+      }
+    }
 
-      // Cannot end with space
+    return true;
+  }
+
+  bool _isFinalCharValid(String component) {
+    // Windows components cannot end with a space or a period.
+    if (_os == 'windows') {
       if (component.endsWith(' ')) {
         return false;
       }
 
-      // Cannot end with period
-      // A path of '.' or './' will normalize to just '.'
       if (component.endsWith('.')) {
-        return false;
-      }
-    } else if (_os == 'macos') {
-      // Check for invalid characters.
-      if (invalidCharsMacOS.any((e) => component.contains(e))) {
-        return false;
-      }
-    } else {
-      if (component.contains('/')) {
         return false;
       }
     }
@@ -206,6 +277,6 @@ class PathValidator {
   }
 
   bool _isComponentRelative(String pathComponent) {
-    return pathComponent == '.' && pathComponent == '..';
+    return pathComponent == '.' || pathComponent == '..';
   }
 }
