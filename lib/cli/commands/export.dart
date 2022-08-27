@@ -7,6 +7,7 @@ import 'package:get_it/get_it.dart';
 
 import '../../application/services/export_service.dart';
 import '../../runtime_helper.dart';
+import '../../util/extensions.dart';
 import '../cli.dart';
 
 class ExportCommand extends Command<void> {
@@ -63,18 +64,14 @@ class ExportCommand extends Command<void> {
   Future<void> run() async {
     final args = argResults!;
 
-    _validate(args)
-        .flatMap((_) => _exportService
-            .exportDocuments(
-              orgId: tryCast(args[_option_orgId], ''),
-              projectId: tryCast(args[_option_projectId], ''),
-              destination: tryCast(args[_option_destination], ''),
-              overwrite: args[_flag_overwrite] as bool,
-              allowNonEmptyDestination:
-                  args[_flag_allowNonemptyDestination] as bool,
-            )
-            .leftMap(_mapExportFailures2Messages))
-        .leftMap((err) => usageException(err.join('\n')));
+    await _validate(args).flatMapFuture((_) => _exportDocuments(args)).bimap(
+          (err) => usageException(err.join('\n')),
+          (r) => print('Total Exported: ${r.totalExported}\n'
+              'savedAsCopy: ${r.savedAsCopy}\n'
+              'skippedAlreadyExists: ${r.skippedAlreadyExists}\n'
+              'skippedFailed: ${r.skippedFailed}\n'
+              'elapsed: ${r.elapsed.toString()}'),
+        );
   }
 
   Either<List<String>, Unit> _validate(ArgResults results) {
@@ -90,9 +87,23 @@ class ExportCommand extends Command<void> {
     }
 
     if (issues.isNotEmpty) {
-      return Left(issues);
+      return left(issues);
     }
-    return Right(unit);
+    return right(unit);
+  }
+
+  Future<Either<List<String>, ExportResults>> _exportDocuments(
+      ArgResults args) async {
+    return _exportService
+        .exportDocuments(
+          orgId: tryCast(args[_option_orgId], ''),
+          projectId: tryCast(args[_option_projectId], ''),
+          destination: tryCast(args[_option_destination], ''),
+          overwrite: args[_flag_overwrite] as bool,
+          allowNonEmptyDestination:
+              args[_flag_allowNonemptyDestination] as bool,
+        )
+        .leftMap(_mapExportFailures2Messages);
   }
 
   List<String> _mapExportFailures2Messages(List<ExportFailure> err) {
@@ -105,7 +116,8 @@ class ExportCommand extends Command<void> {
         case ExportFailure.destinationInvalid:
           return 'The $_option_destination path is invalid.';
         case ExportFailure.destinationNotEmpty:
-          return 'The destination folder already exists and is not empty.';
+          return 'The destination folder already exists and is not empty.'
+              ' Use flag $_flag_allowNonemptyDestination to export anyway.';
       }
     }).toList();
   }

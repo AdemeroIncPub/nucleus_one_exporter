@@ -1,3 +1,4 @@
+import 'package:dartz/dartz.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
 
@@ -19,7 +20,10 @@ class NucleusOneSdkService {
   }) async {
     return (await _n1App
             .organization(organizationId)
-            .getProjects(organizationId: organizationId, getAll: true))
+            // todo(apn): (getAll: true) causes 0 results. Need to either fix
+            // the api call or change logic to gather all results via paging.
+            // .getProjects(organizationId: organizationId, getAll: true))
+            .getProjects(organizationId: organizationId))
         .results
         .items;
   }
@@ -34,5 +38,20 @@ class NucleusOneSdkService {
         .organization(organizationId)
         .project(projectId)
         .getDocumentCount(ignoreInbox, ignoreRecycleBin);
+  }
+
+  Future<n1.QueryResult<n1.DocumentCollection>> getDocuments({
+    required String orgId,
+    required String projectId,
+    String? cursor,
+  }) {
+    final project = _n1App.organization(orgId).project(projectId);
+    return project.getDocuments(showAll: true, cursor: cursor);
+  }
+
+  Future<n1.DocumentContentPackage> getDocumentContentPackage(n1.Document doc) {
+    final project =
+        _n1App.organization(doc.organizationID).project(doc.projectID);
+    return project.document(doc.documentID).getDocumentContentPackage();
   }
 }

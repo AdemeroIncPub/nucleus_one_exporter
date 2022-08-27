@@ -17,6 +17,7 @@ dependencies:
   dartx: any
   dartz: any
   get_it: any
+  http: any
   meta: any
   nucleus_one_dart_sdk:
     path: ../nucleus_one_dart_sdk

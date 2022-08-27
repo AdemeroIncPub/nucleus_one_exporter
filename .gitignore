@@ -1,3 +1,4 @@
+.local/
 node_modules/
 nucleus_one_exporter.local.code-workspace
 
