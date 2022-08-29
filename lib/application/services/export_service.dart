@@ -103,20 +103,26 @@ class ExportService {
             orgId: v.orgId, projectId: v.projectId, cursor: cursor);
         cursor = qrDocs.cursor;
         didReturnItems = qrDocs.results.items.isNotEmpty;
-        final exportResults = qrDocs.results.items
-            .fold<Future<Either<ExportFailure, ExportResults>>>(
-                Future.value(right(innerResults)), (acc, doc) async {
-          return TaskEither.fromEither(await acc)
-              .flatMap((r) => _exportDocument(doc, validated, results).orElse(
-                  (l) => TaskEither<ExportFailure, ExportResults>.right(
-                      l.results)))
-              .run();
-        });
+        final exportResults =
+            _exportDocumentList(v, qrDocs.results.items, innerResults);
         await exportResults.map((r) => innerResults = r);
       } while (didReturnItems);
 
       return innerResults;
     }, (error, stackTrace) => tryCast(error, ExportFailure.unknownError));
+  }
+
+  Future<Either<ExportFailure, ExportResults>> _exportDocumentList(
+      _Validated validated,
+      List<n1.Document> docs,
+      final ExportResults results) {
+    return docs.fold<Future<Either<ExportFailure, ExportResults>>>(
+        Future.value(right(results)), (acc, doc) async {
+      return TaskEither.fromEither(await acc)
+          .flatMap((r) => _exportDocument(doc, validated, r).orElse(
+              (l) => TaskEither<ExportFailure, ExportResults>.right(l.results)))
+          .run();
+    });
   }
 
   TaskEither<_DownloadFailure, ExportResults> _exportDocument(
@@ -153,17 +159,12 @@ class ExportService {
   Future<void> _downloadDoc(
       {required String url, required String destinationFilepath}) async {
     return Future.sync(() async {
-      IOSink? sink;
-      try {
-        final file = File(destinationFilepath);
-        await file.parent.create(recursive: true);
-        sink = file.openWrite(mode: FileMode.writeOnly);
-        final request = http.Request('get', Uri.parse(url));
-        final response = await _httpClient.send(request);
-        await response.stream.pipe(sink);
-        await sink.flush();
-      } finally {
-        await sink?.close();
+      final file = File(destinationFilepath);
+      await file.parent.create(recursive: true);
+      final request = http.Request('get', Uri.parse(url));
+      final response = await _httpClient.send(request);
+      await for (final b in response.stream) {
+        await file.writeAsBytes(b, mode: FileMode.writeOnlyAppend);
       }
     });
   }
