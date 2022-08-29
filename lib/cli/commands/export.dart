@@ -32,19 +32,21 @@ class ExportCommand extends Command<void> {
       valueHelp: 'local path',
     );
     argParser.addFlag(
-      _flag_overwrite,
-      help: 'Overwrite existing documents.',
+      _flag_copyIfExists,
+      help:
+          'Create a copy if the file already exists, otherwise skip. (default: false)',
     );
     argParser.addFlag(
       _flag_allowNonemptyDestination,
-      help: 'If the specified path contains files or folder, export anyway.',
+      help:
+          'If the specified path contains files or folders, export anyway. (default: false)',
     );
   }
 
   static final _option_orgId = 'organization-id';
   static final _option_projectId = 'project-id';
   static final _option_destination = 'destination';
-  static final _flag_overwrite = 'overwrite';
+  static final _flag_copyIfExists = 'copy-if-exists';
   static final _flag_allowNonemptyDestination = 'allow-nonempty-destination';
 
   final ExportService _exportService;
@@ -59,6 +61,14 @@ class ExportCommand extends Command<void> {
   @override
   String get description =>
       'Export your Nucleus One documents to a local path.';
+
+  @override
+  String get usageFooter => 'During export, any characters that are not '
+      'allowed in file and folder names will be replaced with an underscore. '
+      "Due to this renaming, it's possible that the export will save a file "
+      'with the same name as another file not yet exported. Without the flag '
+      'copy-if-exists, the second file will be skipped since the file already '
+      'exists. A warning will be issued. This mostly affects Windows.';
 
   @override
   Future<void> run() async {
@@ -102,7 +112,7 @@ class ExportCommand extends Command<void> {
           orgId: tryCast(args[_option_orgId], ''),
           projectId: tryCast(args[_option_projectId], ''),
           destination: tryCast(args[_option_destination], ''),
-          overwrite: args[_flag_overwrite] as bool,
+          copyIfExists: args[_flag_copyIfExists] as bool,
           allowNonEmptyDestination:
               args[_flag_allowNonemptyDestination] as bool,
         )

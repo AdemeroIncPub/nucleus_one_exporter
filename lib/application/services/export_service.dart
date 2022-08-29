@@ -68,7 +68,7 @@ class ExportService {
     required String orgId,
     required String projectId,
     required String destination,
-    bool overwrite = false,
+    bool copyIfExists = false,
     bool allowNonEmptyDestination = false,
   }) async {
     final results = ExportResults._(DateTime.now());
@@ -77,7 +77,7 @@ class ExportService {
         orgId: orgId,
         projectId: projectId,
         destination: destination,
-        overwrite: overwrite,
+        copyIfExists: copyIfExists,
         allowNonEmptyDestination: allowNonEmptyDestination,
         pathValidator: _pathValidator);
 
@@ -126,7 +126,7 @@ class ExportService {
       var outFilepath = _makeSafeFilepath(doc, validated.destination);
       var renamed = false;
       if (File(outFilepath).existsSync()) {
-        if (validated.overwrite) {
+        if (validated.copyIfExists) {
           outFilepath = _makeAlternativeFilepathIfExists(outFilepath);
           renamed = true;
         } else {
@@ -221,7 +221,7 @@ class _Validated {
     required this.orgId,
     required this.projectId,
     required this.destination,
-    required this.overwrite,
+    required this.copyIfExists,
     required this.allowNonEmptyDestination,
     required this.pathValidator,
   });
@@ -230,7 +230,7 @@ class _Validated {
     required String orgId,
     required String projectId,
     required String destination,
-    required bool overwrite,
+    required bool copyIfExists,
     required bool allowNonEmptyDestination,
     required PathValidator pathValidator,
   }) {
@@ -258,7 +258,7 @@ class _Validated {
           orgId: orgId,
           projectId: projectId,
           destination: Directory(destination),
-          overwrite: overwrite,
+          copyIfExists: copyIfExists,
           allowNonEmptyDestination: allowNonEmptyDestination,
           pathValidator: pathValidator));
     }
@@ -267,7 +267,7 @@ class _Validated {
   final String orgId;
   final String projectId;
   final Directory destination;
-  final bool overwrite;
+  final bool copyIfExists;
   final bool allowNonEmptyDestination;
   final PathValidator pathValidator;
 }

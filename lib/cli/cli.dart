@@ -15,4 +15,4 @@ CommandRunner<void> createRootCommand() {
     ..addCommand(ExportCommand());
 }
 
-int get usageLineLength => min(stdout.terminalColumns, 80);
+int get usageLineLength => min(stdout.terminalColumns, 90);
