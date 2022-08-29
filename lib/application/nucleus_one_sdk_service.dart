@@ -1,4 +1,3 @@
-import 'package:dartz/dartz.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
 

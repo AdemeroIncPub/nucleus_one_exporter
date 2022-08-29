@@ -15,7 +15,7 @@ dependencies:
   characters: any
   collection: any
   dartx: any
-  dartz: any
+  fpdart: any
   get_it: any
   http: any
   meta: any
@@ -24,14 +24,10 @@ dependencies:
   path: any
   quiver: any
   storagebox: any
+  tuple: any
 
 dev_dependencies:
-  # glados: any
-  glados:
-    git:
-      url: https://github.com/jibbers42/glados
-      ref: update-deps
-      path: glados
+  glados: any
   lints: any
   mocktail: any
   test: any

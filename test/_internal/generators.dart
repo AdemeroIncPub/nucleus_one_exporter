@@ -1,6 +1,6 @@
-import 'package:dartz/dartz.dart';
 import 'package:glados/glados.dart';
 import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
+import 'package:tuple/tuple.dart';
 
 class MyUserOrgAndProjectsWithDocCount {
   MyUserOrgAndProjectsWithDocCount(this.org, this.projectsWithDocCount);
@@ -82,16 +82,13 @@ extension MyGenerators on Any {
       );
 
   Generator<n1.OrganizationProject> get organizationProject => any.combine2(
-        any.combine10(
+        any.combine7(
           any.printableAscii,
           any.printableAscii,
           any.printableAscii,
           any.printableAsciiWithSpace,
           any.printableAscii,
           any.bool,
-          any.printableAscii,
-          any.bool,
-          any.printableAsciiWithSpace,
           any.printableAscii,
           (
             String accessType,
@@ -101,11 +98,8 @@ extension MyGenerators on Any {
             String createdOn,
             bool disabled,
             String id,
-            bool isMarkedForPurge,
-            String name,
-            String organizationID,
           ) {
-            return Tuple10(
+            return Tuple7(
               accessType,
               createdByUserEmail,
               createdByUserID,
@@ -113,24 +107,30 @@ extension MyGenerators on Any {
               createdOn,
               disabled,
               id,
-              isMarkedForPurge,
-              name,
-              organizationID,
             );
           },
         ),
-        any.combine4(
+        any.combine7(
+          any.bool,
+          any.printableAsciiWithSpace,
+          any.printableAscii,
           any.printableAscii,
           any.printableAscii,
           any.printableAscii,
           any.printableAscii,
           (
+            bool isMarkedForPurge,
+            String name,
+            String organizationID,
             String purgeMarkedByUserEmail,
             String purgeMarkedByUserID,
             String purgeMarkedByUserName,
             String purgeMarkedOn,
           ) {
-            return Tuple4(
+            return Tuple7(
+              isMarkedForPurge,
+              name,
+              organizationID,
               purgeMarkedByUserEmail,
               purgeMarkedByUserID,
               purgeMarkedByUserName,
@@ -139,27 +139,25 @@ extension MyGenerators on Any {
           },
         ),
         (
-          Tuple10<String, String, String, String, String, bool, String, bool,
-                  String, String>
-              a,
-          Tuple4<String, String, String, String> b,
+          Tuple7<String, String, String, String, String, bool, String> a,
+          Tuple7<bool, String, String, String, String, String, String> b,
         ) {
           return n1.OrganizationProject(
-            accessType: a.value1,
-            createdByUserEmail: a.value2,
-            createdByUserID: a.value3,
-            createdByUserName: a.value4,
-            createdOn: a.value5,
-            disabled: a.value6,
-            id: a.value7,
-            isMarkedForPurge: a.value8,
-            name: a.value9,
-            nameLower: a.value9.toLowerCase(),
-            organizationID: a.value10,
-            purgeMarkedByUserEmail: b.value1,
-            purgeMarkedByUserID: b.value2,
-            purgeMarkedByUserName: b.value3,
-            purgeMarkedOn: b.value4,
+            accessType: a.item1,
+            createdByUserEmail: a.item2,
+            createdByUserID: a.item3,
+            createdByUserName: a.item4,
+            createdOn: a.item5,
+            disabled: a.item6,
+            id: a.item7,
+            isMarkedForPurge: b.item1,
+            name: b.item2,
+            nameLower: b.item2.toLowerCase(),
+            organizationID: b.item3,
+            purgeMarkedByUserEmail: b.item4,
+            purgeMarkedByUserID: b.item5,
+            purgeMarkedByUserName: b.item6,
+            purgeMarkedOn: b.item7,
           );
         },
       );

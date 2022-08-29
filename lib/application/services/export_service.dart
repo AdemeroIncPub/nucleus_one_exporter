@@ -1,12 +1,13 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:dartz/dartz.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
 import 'package:path/path.dart' as path_;
 
+import '../../runtime_helper.dart';
 import '../../util/extensions.dart';
 import '../nucleus_one_sdk_service.dart';
 import '../path_validator.dart';
@@ -16,6 +17,18 @@ enum ExportFailure {
   projectIdInvalid,
   destinationInvalid,
   destinationNotEmpty,
+  unknownError,
+}
+
+enum _DownloadFailureType {
+  unknownError,
+}
+
+class _DownloadFailure {
+  _DownloadFailure(this.failure, this.results);
+
+  final _DownloadFailureType failure;
+  final ExportResults results;
 }
 
 class ExportResults {
@@ -58,6 +71,8 @@ class ExportService {
     bool overwrite = false,
     bool allowNonEmptyDestination = false,
   }) async {
+    final results = ExportResults._(DateTime.now());
+
     final validated = _Validated.validate(
         orgId: orgId,
         projectId: projectId,
@@ -66,17 +81,19 @@ class ExportService {
         allowNonEmptyDestination: allowNonEmptyDestination,
         pathValidator: _pathValidator);
 
-    final results = ExportResults._(DateTime.now());
-
     return validated
-        .flatMapFuture((v) => _exportDocuments(v, results).leftMap((l) => [l]))
+        .toTaskEither()
+        .flatMap((v) => _checkNonEmptyDest(v)
+            .flatMap((v) => _exportDocuments(v, results))
+            .mapLeft((l) => [l]))
+        .map(_setFinished)
+        .run()
         .whenComplete(() => _httpClient.close());
   }
 
-  Future<Either<ExportFailure, ExportResults>> _exportDocuments(
+  TaskEither<ExportFailure, ExportResults> _exportDocuments(
       _Validated validated, final ExportResults results) {
-    Future<Either<ExportFailure, ExportResults>>
-        exportDocumentsByPaging() async {
+    return TaskEither.tryCatch(() async {
       final v = validated;
       var innerResults = results;
       var didReturnItems = false;
@@ -86,54 +103,51 @@ class ExportService {
             orgId: v.orgId, projectId: v.projectId, cursor: cursor);
         cursor = qrDocs.cursor;
         didReturnItems = qrDocs.results.items.isNotEmpty;
-        final exportResults = await qrDocs.results.items
+        final exportResults = qrDocs.results.items
             .fold<Future<Either<ExportFailure, ExportResults>>>(
-          Future.value(right(innerResults)),
-          (previous, doc) => previous.flatMapFuture((r) {
-            return _exportDocument(doc, v, r).catchError((err) {
-              innerResults._incrementSkippedFailed();
-              return right<ExportFailure, ExportResults>(innerResults);
-            });
-          }),
-        );
-        exportResults.map((r) => innerResults = r);
+                Future.value(right(innerResults)), (acc, doc) async {
+          return TaskEither.fromEither(await acc)
+              .flatMap((r) => _exportDocument(doc, validated, results).orElse(
+                  (l) => TaskEither<ExportFailure, ExportResults>.right(
+                      l.results)))
+              .run();
+        });
+        await exportResults.map((r) => innerResults = r);
       } while (didReturnItems);
 
-      return right(innerResults);
-    }
-
-    return _checkNonEmptyDest(validated)
-        .flatMapFuture((_) => exportDocumentsByPaging())
-        .map((r) {
-      r._setFinished();
-      return r;
-    });
+      return innerResults;
+    }, (error, stackTrace) => tryCast(error, ExportFailure.unknownError));
   }
 
-  Future<Either<ExportFailure, ExportResults>> _exportDocument(
-      n1.Document doc, _Validated validated, ExportResults results) async {
-    // Make path
-    var outFilepath = _makeSafeFilepath(doc, validated.destination);
-    var renamed = false;
-    if (File(outFilepath).existsSync()) {
-      if (validated.overwrite) {
-        outFilepath = _makeAlternativeFilepathIfExists(outFilepath);
-        renamed = true;
-      } else {
-        results._incrementSkippedAlreadyExists();
-        return right(results);
+  TaskEither<_DownloadFailure, ExportResults> _exportDocument(
+      n1.Document doc, _Validated validated, ExportResults results) {
+    return TaskEither.tryCatch(() async {
+      // Make path
+      var outFilepath = _makeSafeFilepath(doc, validated.destination);
+      var renamed = false;
+      if (File(outFilepath).existsSync()) {
+        if (validated.overwrite) {
+          outFilepath = _makeAlternativeFilepathIfExists(outFilepath);
+          renamed = true;
+        } else {
+          results._incrementSkippedAlreadyExists();
+          return results;
+        }
       }
-    }
 
-    // Download document
-    final dcp = await _n1Sdk.getDocumentContentPackage(doc);
-    await _downloadDoc(url: dcp.url, destinationFilepath: outFilepath);
+      // Download document
+      final dcp = await _n1Sdk.getDocumentContentPackage(doc);
+      await _downloadDoc(url: dcp.url, destinationFilepath: outFilepath);
 
-    if (renamed) {
-      results._incrementSavedAsCopy();
-    }
-    results._incrementTotalExported();
-    return right(results);
+      if (renamed) {
+        results._incrementSavedAsCopy();
+      }
+      results._incrementTotalExported();
+      return results;
+    }, (error, stackTrace) {
+      results._incrementSkippedFailed();
+      return _DownloadFailure(_DownloadFailureType.unknownError, results);
+    });
   }
 
   Future<void> _downloadDoc(
@@ -154,15 +168,16 @@ class ExportService {
     });
   }
 
-  Future<Either<ExportFailure, _Validated>> _checkNonEmptyDest(
-      _Validated validated) async {
-    if (!validated.allowNonEmptyDestination &&
-        validated.destination.existsSync() &&
-        // validated.destination.listSync().isNotEmpty) {
-        (!(await validated.destination.list().isEmpty))) {
-      return left(ExportFailure.destinationNotEmpty);
-    }
-    return right(validated);
+  TaskEither<ExportFailure, _Validated> _checkNonEmptyDest(
+      _Validated validated) {
+    return TaskEither.tryCatch(() async {
+      if (!validated.allowNonEmptyDestination &&
+          validated.destination.existsSync() &&
+          (!(await validated.destination.list().isEmpty))) {
+        throw Exception();
+      }
+      return validated;
+    }, (error, stackTrace) => ExportFailure.destinationNotEmpty);
   }
 
   String _makeSafeFilepath(n1.Document doc, Directory destination) {
@@ -193,6 +208,11 @@ class ExportService {
       f = File('$pwoe$suffix$ext');
     }
     return f.path;
+  }
+
+  ExportResults _setFinished(ExportResults results) {
+    results._setFinished();
+    return results;
   }
 }
 

@@ -2,7 +2,7 @@
 
 import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
-import 'package:dartz/dartz.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../application/services/export_service.dart';
@@ -64,14 +64,17 @@ class ExportCommand extends Command<void> {
   Future<void> run() async {
     final args = argResults!;
 
-    await _validate(args).flatMapFuture((_) => _exportDocuments(args)).bimap(
+    await _validate(args)
+        .flatMapFuture((_) => _exportDocuments(args))
+        .bimap(
           (err) => usageException(err.join('\n')),
           (r) => print('Total Exported: ${r.totalExported}\n'
               'savedAsCopy: ${r.savedAsCopy}\n'
               'skippedAlreadyExists: ${r.skippedAlreadyExists}\n'
               'skippedFailed: ${r.skippedFailed}\n'
               'elapsed: ${r.elapsed.toString()}'),
-        );
+        )
+        .run();
   }
 
   Either<List<String>, Unit> _validate(ArgResults results) {
@@ -103,7 +106,7 @@ class ExportCommand extends Command<void> {
           allowNonEmptyDestination:
               args[_flag_allowNonemptyDestination] as bool,
         )
-        .leftMap(_mapExportFailures2Messages);
+        .mapLeft(_mapExportFailures2Messages);
   }
 
   List<String> _mapExportFailures2Messages(List<ExportFailure> err) {
@@ -118,6 +121,8 @@ class ExportCommand extends Command<void> {
         case ExportFailure.destinationNotEmpty:
           return 'The destination folder already exists and is not empty.'
               ' Use flag $_flag_allowNonemptyDestination to export anyway.';
+        case ExportFailure.unknownError:
+          return 'An unknown error has ocurred.';
       }
     }).toList();
   }
