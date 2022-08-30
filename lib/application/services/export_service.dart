@@ -134,9 +134,13 @@ class ExportService {
         }
       }
 
+      // Before any async calls, reserve filename by creating it.
+      final outFile = File(outFilepath);
+      outFile.createSync(recursive: true);
+
       // Download document
       final dcp = await _n1Sdk.getDocumentContentPackage(doc);
-      await _downloadDoc(url: dcp.url, destinationFilepath: outFilepath);
+      await _downloadDoc(url: dcp.url, destinationFile: outFile);
 
       if (renamed) {
         return results.docSavedAsCopy();
@@ -150,14 +154,12 @@ class ExportService {
   }
 
   Future<void> _downloadDoc(
-      {required String url, required String destinationFilepath}) async {
+      {required String url, required File destinationFile}) async {
     return Future.sync(() async {
-      final file = File(destinationFilepath);
-      await file.parent.create(recursive: true);
       final request = http.Request('get', Uri.parse(url));
       final response = await _httpClient.send(request);
       await for (final b in response.stream) {
-        await file.writeAsBytes(b, mode: FileMode.writeOnlyAppend);
+        await destinationFile.writeAsBytes(b, mode: FileMode.writeOnlyAppend);
       }
     });
   }
