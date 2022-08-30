@@ -5,6 +5,7 @@ import 'package:args/command_runner.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:get_it/get_it.dart';
 
+import '../../application/services/export_results.dart';
 import '../../application/services/export_service.dart';
 import '../../runtime_helper.dart';
 import '../../util/extensions.dart';
@@ -72,7 +73,7 @@ class ExportCommand extends Command<void> {
       'Export your Nucleus One documents to a local path.';
 
   @override
-  String get usageFooter => 'During export, any characters that are not '
+  String get usageFooter => '\nDuring export, any characters that are not '
       'allowed in file and folder names will be replaced with an underscore. '
       "Due to this renaming, it's possible that the export will save a file "
       'with the same name as another file not yet exported. Without the flag '
@@ -87,10 +88,11 @@ class ExportCommand extends Command<void> {
         .flatMapFuture((_) => _exportDocuments(args))
         .bimap(
           (err) => usageException(err.join('\n')),
-          (r) => print('Total Exported: ${r.totalExported}\n'
+          (r) => print('totalExported: ${r.totalExported}\n'
+              'totalAttempted: ${r.totalAttempted}\n'
               'savedAsCopy: ${r.savedAsCopy}\n'
               'skippedAlreadyExists: ${r.skippedAlreadyExists}\n'
-              'skippedFailed: ${r.skippedFailed}\n'
+              'skippedUnknownFailure: ${r.skippedUnknownFailure}\n'
               'elapsed: ${r.elapsed.toString()}'),
         )
         .run();

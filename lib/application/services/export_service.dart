@@ -3,14 +3,15 @@ import 'dart:io';
 import 'package:fpdart/fpdart.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
+import 'package:meta/meta.dart';
 import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
 import 'package:path/path.dart' as path_;
 import 'package:rxdart/rxdart.dart';
 
 import '../../runtime_helper.dart';
-import '../../util/extensions.dart';
 import '../nucleus_one_sdk_service.dart';
 import '../path_validator.dart';
+import 'export_results.dart';
 
 enum ExportFailure {
   orgIdInvalid,
@@ -25,35 +26,12 @@ enum _DownloadFailureType {
   unknownError,
 }
 
+@immutable
 class _DownloadFailure {
   _DownloadFailure(this.failure, this.results);
 
   final _DownloadFailureType failure;
   final ExportResults results;
-}
-
-class ExportResults {
-  ExportResults._(this.started);
-
-  final DateTime started;
-  DateTime? _finished;
-  int _totalExported = 0;
-  int _savedAsCopy = 0;
-  int _skippedAlreadyExists = 0;
-  int _skippedFailed = 0;
-
-  int get totalExported => _totalExported;
-  int get savedAsCopy => _savedAsCopy;
-  int get skippedAlreadyExists => _skippedAlreadyExists;
-  int get skippedFailed => _skippedFailed;
-  DateTime? get finished => _finished;
-  Duration? get elapsed => _finished?.difference(started).abs();
-
-  void _incrementTotalExported() => _totalExported += 1;
-  void _incrementSavedAsCopy() => _savedAsCopy += 1;
-  void _incrementSkippedAlreadyExists() => _skippedAlreadyExists += 1;
-  void _incrementSkippedFailed() => _skippedFailed += 1;
-  void _setFinished() => _finished = DateTime.now();
 }
 
 class ExportService {
@@ -73,7 +51,7 @@ class ExportService {
     bool copyIfExists = false,
     bool allowNonEmptyDestination = false,
   }) async {
-    final results = ExportResults._(DateTime.now());
+    final results = ExportResults(DateTime.now());
 
     final validated = _Validated.validate(
         orgId: orgId,
@@ -89,7 +67,7 @@ class ExportService {
         .flatMap((v) => _checkNonEmptyDest(v)
             .flatMap((v) => _exportDocuments(v, results))
             .mapLeft((l) => [l]))
-        .map(_setFinished)
+        .map((r) => r.setFinished())
         .run()
         .whenComplete(() => _httpClient.close());
   }
@@ -97,24 +75,33 @@ class ExportService {
   TaskEither<ExportFailure, ExportResults> _exportDocuments(
       _Validated validated, final ExportResults results) {
     return TaskEither.tryCatch(() async {
-      var innerResults = results;
       final docStream = _getDocumentsStream(validated);
       final exportResults =
-          _exportDocumentsFromStream(docStream, validated, innerResults)
+          await _exportDocumentsFromStream(docStream, validated)
               .fold<Either<_DownloadFailure, ExportResults>>(
-                  right(results), (acc, result) => acc.flatMap((_) => result));
-      await exportResults.map((r) => innerResults = r);
-      return innerResults;
+        right(results),
+        (acc, docResult) => acc.fold(
+          (accL) => docResult.fold(
+            (drL) => left(
+                _DownloadFailure(accL.failure, accL.results.add(drL.results))),
+            (drR) =>
+                left(_DownloadFailure(accL.failure, accL.results.add(drR))),
+          ),
+          (accR) => docResult.fold(
+            (drL) => left(_DownloadFailure(drL.failure, accR.add(drL.results))),
+            (drR) => right(accR.add(drR)),
+          ),
+        ),
+      );
+      return exportResults.fold((l) => l.results, id);
     }, (error, stackTrace) => tryCast(error, ExportFailure.unknownError));
   }
 
   Stream<Either<_DownloadFailure, ExportResults>> _exportDocumentsFromStream(
-      Stream<n1.Document> docStream,
-      _Validated validated,
-      final ExportResults results) {
+      Stream<n1.Document> docStream, _Validated validated) {
     return docStream.flatMap(maxConcurrent: validated.maxConcurrentDownloads,
         (doc) async* {
-      yield (await _exportDocument(doc, validated, results).run());
+      yield (await _exportDocument(doc, validated).run());
     });
   }
 
@@ -132,7 +119,8 @@ class ExportService {
   }
 
   TaskEither<_DownloadFailure, ExportResults> _exportDocument(
-      n1.Document doc, _Validated validated, ExportResults results) {
+      n1.Document doc, _Validated validated) {
+    final results = ExportResults(DateTime.now());
     return TaskEither.tryCatch(() async {
       // Make path
       var outFilepath = _makeSafeFilepath(doc, validated.destination);
@@ -142,8 +130,7 @@ class ExportService {
           outFilepath = _makeAlternativeFilepathIfExists(outFilepath);
           renamed = true;
         } else {
-          results._incrementSkippedAlreadyExists();
-          return results;
+          return results.docSkippedAlreadyExists();
         }
       }
 
@@ -152,13 +139,13 @@ class ExportService {
       await _downloadDoc(url: dcp.url, destinationFilepath: outFilepath);
 
       if (renamed) {
-        results._incrementSavedAsCopy();
+        return results.docSavedAsCopy();
+      } else {
+        return results.docExported();
       }
-      results._incrementTotalExported();
-      return results;
     }, (error, stackTrace) {
-      results._incrementSkippedFailed();
-      return _DownloadFailure(_DownloadFailureType.unknownError, results);
+      return _DownloadFailure(_DownloadFailureType.unknownError,
+          results.docSkippedUnknownFailure());
     });
   }
 
@@ -215,11 +202,6 @@ class ExportService {
       f = File('$pwoe$suffix$ext');
     }
     return f.path;
-  }
-
-  ExportResults _setFinished(ExportResults results) {
-    results._setFinished();
-    return results;
   }
 }
 

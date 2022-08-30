@@ -16,6 +16,7 @@ dependencies:
   collection: any
   dartx: any
   fpdart: any
+  freezed_annotation: any
   get_it: any
   http: any
   meta: any
@@ -28,6 +29,8 @@ dependencies:
   tuple: any
 
 dev_dependencies:
+  build_runner: any
+  freezed: any
   glados: any
   lints: any
   mocktail: any
