@@ -79,20 +79,15 @@ class ExportService {
       final exportResults =
           await _exportDocumentsFromStream(docStream, validated)
               .fold<Either<_DownloadFailure, ExportResults>>(
-        right(results),
-        (acc, docResult) => acc.fold(
-          (accL) => docResult.fold(
-            (drL) => left(
-                _DownloadFailure(accL.failure, accL.results.add(drL.results))),
-            (drR) =>
-                left(_DownloadFailure(accL.failure, accL.results.add(drR))),
-          ),
-          (accR) => docResult.fold(
-            (drL) => left(_DownloadFailure(drL.failure, accR.add(drL.results))),
-            (drR) => right(accR.add(drR)),
-          ),
-        ),
-      );
+                  right(results),
+                  // Ignore individual export failures for now until we handle
+                  // retries and timeouts and such.
+                  (acc, docResult) => acc.map(
+                        (accR) => docResult.fold(
+                          (drL) => accR.add(drL.results),
+                          (drR) => accR.add(drR),
+                        ),
+                      ));
       return exportResults.fold((l) => l.results, id);
     }, (error, stackTrace) => tryCast(error, ExportFailure.unknownError));
   }
