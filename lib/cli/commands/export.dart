@@ -15,13 +15,13 @@ class ExportCommand extends Command<void> {
       : _exportService = exportService ?? GetIt.I<ExportService>() {
     argParser.addOption(
       _option_orgId,
-      help: 'Organization ID (required)',
+      help: 'Organization ID. (required)',
       abbr: 'o',
       valueHelp: 'id',
     );
     argParser.addOption(
       _option_projectId,
-      help: 'Project ID (required)',
+      help: 'Project ID. (required)',
       abbr: 'p',
       valueHelp: 'id',
     );
@@ -31,15 +31,20 @@ class ExportCommand extends Command<void> {
       abbr: 'd',
       valueHelp: 'local path',
     );
+    argParser.addOption(
+      _option_maxConcurrentDownloads,
+      help: 'Maximum number of documents to download simultaneously.',
+      abbr: 'c',
+      valueHelp: 'max',
+      defaultsTo: '4',
+    );
     argParser.addFlag(
       _flag_copyIfExists,
-      help:
-          'Create a copy if the file already exists, otherwise skip. (default: false)',
+      help: 'Create a copy if the file already exists.',
     );
     argParser.addFlag(
       _flag_allowNonemptyDestination,
-      help:
-          'If the specified path contains files or folders, export anyway. (default: false)',
+      help: 'If the specified path contains files or folders, export anyway.',
     );
   }
 
@@ -48,6 +53,10 @@ class ExportCommand extends Command<void> {
   static final _option_destination = 'destination';
   static final _flag_copyIfExists = 'copy-if-exists';
   static final _flag_allowNonemptyDestination = 'allow-nonempty-destination';
+  static final _option_maxConcurrentDownloads = 'max-concurrent-downloads';
+
+  static final _option_maxConcurrentDownloadsInvalid =
+      'The $_option_maxConcurrentDownloads option must be a number greater than zero.';
 
   final ExportService _exportService;
 
@@ -98,11 +107,19 @@ class ExportCommand extends Command<void> {
     if (!results.wasParsed(_option_destination)) {
       issues.add('The $_option_destination option is required.');
     }
+    if (_getMaxDownloads(results) == null) {
+      issues.add(_option_maxConcurrentDownloadsInvalid);
+    }
 
     if (issues.isNotEmpty) {
       return left(issues);
     }
     return right(unit);
+  }
+
+  int? _getMaxDownloads(ArgResults argResults) {
+    return int.tryParse(
+        tryCast(argResults[_option_maxConcurrentDownloads], ''));
   }
 
   Future<Either<List<String>, ExportResults>> _exportDocuments(
@@ -112,10 +129,12 @@ class ExportCommand extends Command<void> {
           orgId: tryCast(args[_option_orgId], ''),
           projectId: tryCast(args[_option_projectId], ''),
           destination: tryCast(args[_option_destination], ''),
+          maxConcurrentDownloads: _getMaxDownloads(args)!,
           copyIfExists: args[_flag_copyIfExists] as bool,
           allowNonEmptyDestination:
               args[_flag_allowNonemptyDestination] as bool,
         )
+        // todo(apn): this should not show usage
         .mapLeft(_mapExportFailures2Messages);
   }
 
@@ -131,6 +150,8 @@ class ExportCommand extends Command<void> {
         case ExportFailure.destinationNotEmpty:
           return 'The destination folder already exists and is not empty.'
               ' Use flag $_flag_allowNonemptyDestination to export anyway.';
+        case ExportFailure.maxConcurrentDownloadsInvalid:
+          return _option_maxConcurrentDownloadsInvalid;
         case ExportFailure.unknownError:
           return 'An unknown error has ocurred.';
       }

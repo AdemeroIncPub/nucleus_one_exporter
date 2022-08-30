@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:fpdart/fpdart.dart';
@@ -6,6 +5,7 @@ import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
 import 'package:path/path.dart' as path_;
+import 'package:rxdart/rxdart.dart';
 
 import '../../runtime_helper.dart';
 import '../../util/extensions.dart';
@@ -17,6 +17,7 @@ enum ExportFailure {
   projectIdInvalid,
   destinationInvalid,
   destinationNotEmpty,
+  maxConcurrentDownloadsInvalid,
   unknownError,
 }
 
@@ -68,6 +69,7 @@ class ExportService {
     required String orgId,
     required String projectId,
     required String destination,
+    int maxConcurrentDownloads = 4,
     bool copyIfExists = false,
     bool allowNonEmptyDestination = false,
   }) async {
@@ -77,6 +79,7 @@ class ExportService {
         orgId: orgId,
         projectId: projectId,
         destination: destination,
+        maxConcurrentDownloads: maxConcurrentDownloads,
         copyIfExists: copyIfExists,
         allowNonEmptyDestination: allowNonEmptyDestination,
         pathValidator: _pathValidator);
@@ -94,35 +97,38 @@ class ExportService {
   TaskEither<ExportFailure, ExportResults> _exportDocuments(
       _Validated validated, final ExportResults results) {
     return TaskEither.tryCatch(() async {
-      final v = validated;
       var innerResults = results;
-      var didReturnItems = false;
-      String? cursor;
-      do {
-        final qrDocs = await _n1Sdk.getDocuments(
-            orgId: v.orgId, projectId: v.projectId, cursor: cursor);
-        cursor = qrDocs.cursor;
-        didReturnItems = qrDocs.results.items.isNotEmpty;
-        final exportResults =
-            _exportDocumentList(v, qrDocs.results.items, innerResults);
-        await exportResults.map((r) => innerResults = r);
-      } while (didReturnItems);
-
+      final docStream = _getDocumentsStream(validated);
+      final exportResults =
+          _exportDocumentsFromStream(docStream, validated, innerResults)
+              .fold<Either<_DownloadFailure, ExportResults>>(
+                  right(results), (acc, result) => acc.flatMap((_) => result));
+      await exportResults.map((r) => innerResults = r);
       return innerResults;
     }, (error, stackTrace) => tryCast(error, ExportFailure.unknownError));
   }
 
-  Future<Either<ExportFailure, ExportResults>> _exportDocumentList(
+  Stream<Either<_DownloadFailure, ExportResults>> _exportDocumentsFromStream(
+      Stream<n1.Document> docStream,
       _Validated validated,
-      List<n1.Document> docs,
       final ExportResults results) {
-    return docs.fold<Future<Either<ExportFailure, ExportResults>>>(
-        Future.value(right(results)), (acc, doc) async {
-      return TaskEither.fromEither(await acc)
-          .flatMap((r) => _exportDocument(doc, validated, r).orElse(
-              (l) => TaskEither<ExportFailure, ExportResults>.right(l.results)))
-          .run();
+    return docStream.flatMap(maxConcurrent: validated.maxConcurrentDownloads,
+        (doc) async* {
+      yield (await _exportDocument(doc, validated, results).run());
     });
+  }
+
+  Stream<n1.Document> _getDocumentsStream(_Validated validated) async* {
+    final v = validated;
+    var didReturnItems = false;
+    String? cursor;
+    do {
+      final qrDocs = await _n1Sdk.getDocuments(
+          orgId: v.orgId, projectId: v.projectId, cursor: cursor);
+      cursor = qrDocs.cursor;
+      didReturnItems = qrDocs.results.items.isNotEmpty;
+      yield* Stream.fromIterable(qrDocs.results.items);
+    } while (didReturnItems);
   }
 
   TaskEither<_DownloadFailure, ExportResults> _exportDocument(
@@ -222,6 +228,7 @@ class _Validated {
     required this.orgId,
     required this.projectId,
     required this.destination,
+    required this.maxConcurrentDownloads,
     required this.copyIfExists,
     required this.allowNonEmptyDestination,
     required this.pathValidator,
@@ -231,6 +238,7 @@ class _Validated {
     required String orgId,
     required String projectId,
     required String destination,
+    required int maxConcurrentDownloads,
     required bool copyIfExists,
     required bool allowNonEmptyDestination,
     required PathValidator pathValidator,
@@ -244,6 +252,9 @@ class _Validated {
     }
     if (destination.isEmpty) {
       failures.add(ExportFailure.destinationInvalid);
+    }
+    if (maxConcurrentDownloads < 1) {
+      failures.add(ExportFailure.maxConcurrentDownloadsInvalid);
     }
 
     // ignore: parameter_assignments
@@ -259,6 +270,7 @@ class _Validated {
           orgId: orgId,
           projectId: projectId,
           destination: Directory(destination),
+          maxConcurrentDownloads: maxConcurrentDownloads,
           copyIfExists: copyIfExists,
           allowNonEmptyDestination: allowNonEmptyDestination,
           pathValidator: pathValidator));
@@ -268,6 +280,7 @@ class _Validated {
   final String orgId;
   final String projectId;
   final Directory destination;
+  final int maxConcurrentDownloads;
   final bool copyIfExists;
   final bool allowNonEmptyDestination;
   final PathValidator pathValidator;
