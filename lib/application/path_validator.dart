@@ -20,7 +20,7 @@ class PathValidator {
       : _pathContext = pathContext ?? path_.context,
         _os = os ?? Platform.operatingSystem;
 
-  static final _replacementChar = '_';
+  static const _replacementChar = '_';
 
   final path_.Context _pathContext;
   final String _os;
@@ -100,7 +100,7 @@ class PathValidator {
         break;
 
       case PathType.filename:
-        pathComponents = Iterable.empty();
+        pathComponents = const Iterable.empty();
         filenameComponent = path;
         break;
 

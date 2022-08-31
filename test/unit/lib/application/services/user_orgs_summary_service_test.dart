@@ -15,8 +15,8 @@ void main() {
     GetIt.I.registerSingleton<n1.NucleusOneApp>(n1App);
   });
 
-  tearDown(() {
-    GetIt.I.reset();
+  tearDown(() async {
+    return GetIt.I.reset();
   });
 
   Glados(any.list(any.myUserOrgAndProjectsWithDocCount)).test(

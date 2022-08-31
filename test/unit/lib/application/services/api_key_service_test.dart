@@ -11,14 +11,14 @@ final _gi = GetIt.I;
 
 void main() {
   group('setApiKey tests', () {
-    setUp(() {
+    setUp(() async {
       _gi.registerLazySingletonAsync<n1.NucleusOneApp>(
           () => Future.value(MockNucleusOneApp()));
       return _gi.isReady<n1.NucleusOneApp>();
     });
 
-    tearDown(() {
-      _gi.reset();
+    tearDown(() async {
+      return _gi.reset();
     });
 
     Glados(any.printableAscii).test(

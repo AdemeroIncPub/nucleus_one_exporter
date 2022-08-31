@@ -60,15 +60,15 @@ class ExportCommand extends Command<void> {
     );
   }
 
-  static final _option_orgId = 'organization-id';
-  static final _option_projectId = 'project-id';
-  static final _option_destination = 'destination';
-  static final _flag_copyIfExists = 'copy-if-exists';
-  static final _flag_allowNonemptyDestination = 'allow-nonempty-destination';
-  static final _option_maxConcurrentDownloads = 'max-concurrent-downloads';
-  static final _flag_verbose = 'verbose';
+  static const _option_orgId = 'organization-id';
+  static const _option_projectId = 'project-id';
+  static const _option_destination = 'destination';
+  static const _flag_copyIfExists = 'copy-if-exists';
+  static const _flag_allowNonemptyDestination = 'allow-nonempty-destination';
+  static const _option_maxConcurrentDownloads = 'max-concurrent-downloads';
+  static const _flag_verbose = 'verbose';
 
-  static final _maxConcurrentDownloadsInvalidMessage =
+  static const _maxConcurrentDownloadsInvalidMessage =
       'The $_option_maxConcurrentDownloads option must be a number greater than zero.';
 
   final ExportService _exportService;

@@ -30,7 +30,7 @@ enum _DownloadFailureType {
 
 @immutable
 class _DownloadFailure {
-  _DownloadFailure(this.failure, this.doc, this.results);
+  const _DownloadFailure(this.failure, this.doc, this.results);
 
   final _DownloadFailureType failure;
   final n1.Document doc;

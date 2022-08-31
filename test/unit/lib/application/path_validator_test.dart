@@ -6,7 +6,7 @@ void main() {
   group('PathValidator tests', () {
     group('isValid tests', () {
       test('Windows absoluteFolderpath tests', () {
-        final pt = PathType.absoluteFolderpath;
+        const pt = PathType.absoluteFolderpath;
         final sut = PathValidator(pathContext: path_.windows, os: 'windows');
 
         // General tests
@@ -51,7 +51,7 @@ void main() {
       });
 
       test('Windows absoluteFilepath tests', () {
-        final pt = PathType.absoluteFilepath;
+        const pt = PathType.absoluteFilepath;
         final sut = PathValidator(pathContext: path_.windows, os: 'windows');
 
         // General tests
@@ -96,7 +96,7 @@ void main() {
       });
 
       test('Windows foldername tests', () {
-        final pt = PathType.foldername;
+        const pt = PathType.foldername;
         final sut = PathValidator(pathContext: path_.windows, os: 'windows');
 
         // General tests
@@ -141,7 +141,7 @@ void main() {
       });
 
       test('Windows filename tests', () {
-        final pt = PathType.filename;
+        const pt = PathType.filename;
         final sut = PathValidator(pathContext: path_.windows, os: 'windows');
 
         // General tests
@@ -189,7 +189,7 @@ void main() {
         group('MacOS tests', () {
           test('MacOS absoluteFolderpath tests', () {
             final sut = PathValidator(pathContext: path_.posix, os: 'macos');
-            final pt = PathType.absoluteFolderpath;
+            const pt = PathType.absoluteFolderpath;
 
             for (final td in _IsValidPosixTestData.testData) {
               expect(sut.isValid(td.toTest, pt), td.absoluteFolderpathMacOS,
@@ -199,7 +199,7 @@ void main() {
 
           test('MacOS absoluteFilepath tests', () {
             final sut = PathValidator(pathContext: path_.posix, os: 'macos');
-            final pt = PathType.absoluteFilepath;
+            const pt = PathType.absoluteFilepath;
 
             for (final td in _IsValidPosixTestData.testData) {
               expect(sut.isValid(td.toTest, pt), td.absoluteFilepathMacOS,
@@ -209,7 +209,7 @@ void main() {
 
           test('MacOS foldername tests', () {
             final sut = PathValidator(pathContext: path_.posix, os: 'macos');
-            final pt = PathType.filename;
+            const pt = PathType.filename;
 
             for (final td in _IsValidPosixTestData.testData) {
               expect(sut.isValid(td.toTest, pt), td.foldernameMacOS,
@@ -219,7 +219,7 @@ void main() {
 
           test('MacOS filename tests', () {
             final sut = PathValidator(pathContext: path_.posix, os: 'macos');
-            final pt = PathType.filename;
+            const pt = PathType.filename;
 
             for (final td in _IsValidPosixTestData.testData) {
               expect(sut.isValid(td.toTest, pt), td.filenameMacOS,
@@ -231,7 +231,7 @@ void main() {
         group('Linux tests', () {
           test('Linux absoluteFolderpath tests', () {
             final sut = PathValidator(pathContext: path_.posix, os: 'linux');
-            final pt = PathType.absoluteFolderpath;
+            const pt = PathType.absoluteFolderpath;
 
             for (final td in _IsValidPosixTestData.testData) {
               expect(sut.isValid(td.toTest, pt), td.absoluteFolderpathLinux,
@@ -241,7 +241,7 @@ void main() {
 
           test('Linux absoluteFilepath tests', () {
             final sut = PathValidator(pathContext: path_.posix, os: 'linux');
-            final pt = PathType.absoluteFilepath;
+            const pt = PathType.absoluteFilepath;
 
             for (final td in _IsValidPosixTestData.testData) {
               expect(sut.isValid(td.toTest, pt), td.absoluteFilepathLinux,
@@ -251,7 +251,7 @@ void main() {
 
           test('Linux foldername tests', () {
             final sut = PathValidator(pathContext: path_.posix, os: 'linux');
-            final pt = PathType.filename;
+            const pt = PathType.filename;
 
             for (final td in _IsValidPosixTestData.testData) {
               expect(sut.isValid(td.toTest, pt), td.foldernameLinux,
@@ -261,7 +261,7 @@ void main() {
 
           test('Linux filename tests', () {
             final sut = PathValidator(pathContext: path_.posix, os: 'linux');
-            final pt = PathType.filename;
+            const pt = PathType.filename;
 
             for (final td in _IsValidPosixTestData.testData) {
               expect(sut.isValid(td.toTest, pt), td.filenameLinux,
