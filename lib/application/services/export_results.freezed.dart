@@ -19,7 +19,7 @@ mixin _$ExportResults {
   DateTime get started => throw _privateConstructorUsedError;
   int get totalAttempted => throw _privateConstructorUsedError;
   int get totalExported => throw _privateConstructorUsedError;
-  int get savedAsCopy => throw _privateConstructorUsedError;
+  int get exportedAsCopy => throw _privateConstructorUsedError;
   int get skippedAlreadyExists => throw _privateConstructorUsedError;
   int get skippedUnknownFailure => throw _privateConstructorUsedError;
   DateTime? get finished => throw _privateConstructorUsedError;
@@ -38,7 +38,7 @@ abstract class $ExportResultsCopyWith<$Res> {
       {DateTime started,
       int totalAttempted,
       int totalExported,
-      int savedAsCopy,
+      int exportedAsCopy,
       int skippedAlreadyExists,
       int skippedUnknownFailure,
       DateTime? finished});
@@ -58,7 +58,7 @@ class _$ExportResultsCopyWithImpl<$Res>
     Object? started = freezed,
     Object? totalAttempted = freezed,
     Object? totalExported = freezed,
-    Object? savedAsCopy = freezed,
+    Object? exportedAsCopy = freezed,
     Object? skippedAlreadyExists = freezed,
     Object? skippedUnknownFailure = freezed,
     Object? finished = freezed,
@@ -76,9 +76,9 @@ class _$ExportResultsCopyWithImpl<$Res>
           ? _value.totalExported
           : totalExported // ignore: cast_nullable_to_non_nullable
               as int,
-      savedAsCopy: savedAsCopy == freezed
-          ? _value.savedAsCopy
-          : savedAsCopy // ignore: cast_nullable_to_non_nullable
+      exportedAsCopy: exportedAsCopy == freezed
+          ? _value.exportedAsCopy
+          : exportedAsCopy // ignore: cast_nullable_to_non_nullable
               as int,
       skippedAlreadyExists: skippedAlreadyExists == freezed
           ? _value.skippedAlreadyExists
@@ -107,7 +107,7 @@ abstract class _$$_ExportResultsCopyWith<$Res>
       {DateTime started,
       int totalAttempted,
       int totalExported,
-      int savedAsCopy,
+      int exportedAsCopy,
       int skippedAlreadyExists,
       int skippedUnknownFailure,
       DateTime? finished});
@@ -129,7 +129,7 @@ class __$$_ExportResultsCopyWithImpl<$Res>
     Object? started = freezed,
     Object? totalAttempted = freezed,
     Object? totalExported = freezed,
-    Object? savedAsCopy = freezed,
+    Object? exportedAsCopy = freezed,
     Object? skippedAlreadyExists = freezed,
     Object? skippedUnknownFailure = freezed,
     Object? finished = freezed,
@@ -147,9 +147,9 @@ class __$$_ExportResultsCopyWithImpl<$Res>
           ? _value.totalExported
           : totalExported // ignore: cast_nullable_to_non_nullable
               as int,
-      savedAsCopy: savedAsCopy == freezed
-          ? _value.savedAsCopy
-          : savedAsCopy // ignore: cast_nullable_to_non_nullable
+      exportedAsCopy: exportedAsCopy == freezed
+          ? _value.exportedAsCopy
+          : exportedAsCopy // ignore: cast_nullable_to_non_nullable
               as int,
       skippedAlreadyExists: skippedAlreadyExists == freezed
           ? _value.skippedAlreadyExists
@@ -173,7 +173,7 @@ class _$_ExportResults extends _ExportResults {
   const _$_ExportResults(this.started,
       {this.totalAttempted = 0,
       this.totalExported = 0,
-      this.savedAsCopy = 0,
+      this.exportedAsCopy = 0,
       this.skippedAlreadyExists = 0,
       this.skippedUnknownFailure = 0,
       this.finished})
@@ -189,7 +189,7 @@ class _$_ExportResults extends _ExportResults {
   final int totalExported;
   @override
   @JsonKey()
-  final int savedAsCopy;
+  final int exportedAsCopy;
   @override
   @JsonKey()
   final int skippedAlreadyExists;
@@ -201,7 +201,7 @@ class _$_ExportResults extends _ExportResults {
 
   @override
   String toString() {
-    return 'ExportResults(started: $started, totalAttempted: $totalAttempted, totalExported: $totalExported, savedAsCopy: $savedAsCopy, skippedAlreadyExists: $skippedAlreadyExists, skippedUnknownFailure: $skippedUnknownFailure, finished: $finished)';
+    return 'ExportResults(started: $started, totalAttempted: $totalAttempted, totalExported: $totalExported, exportedAsCopy: $exportedAsCopy, skippedAlreadyExists: $skippedAlreadyExists, skippedUnknownFailure: $skippedUnknownFailure, finished: $finished)';
   }
 
   @override
@@ -215,7 +215,7 @@ class _$_ExportResults extends _ExportResults {
             const DeepCollectionEquality()
                 .equals(other.totalExported, totalExported) &&
             const DeepCollectionEquality()
-                .equals(other.savedAsCopy, savedAsCopy) &&
+                .equals(other.exportedAsCopy, exportedAsCopy) &&
             const DeepCollectionEquality()
                 .equals(other.skippedAlreadyExists, skippedAlreadyExists) &&
             const DeepCollectionEquality()
@@ -229,7 +229,7 @@ class _$_ExportResults extends _ExportResults {
       const DeepCollectionEquality().hash(started),
       const DeepCollectionEquality().hash(totalAttempted),
       const DeepCollectionEquality().hash(totalExported),
-      const DeepCollectionEquality().hash(savedAsCopy),
+      const DeepCollectionEquality().hash(exportedAsCopy),
       const DeepCollectionEquality().hash(skippedAlreadyExists),
       const DeepCollectionEquality().hash(skippedUnknownFailure),
       const DeepCollectionEquality().hash(finished));
@@ -244,7 +244,7 @@ abstract class _ExportResults extends ExportResults {
   const factory _ExportResults(final DateTime started,
       {final int totalAttempted,
       final int totalExported,
-      final int savedAsCopy,
+      final int exportedAsCopy,
       final int skippedAlreadyExists,
       final int skippedUnknownFailure,
       final DateTime? finished}) = _$_ExportResults;
@@ -257,7 +257,7 @@ abstract class _ExportResults extends ExportResults {
   @override
   int get totalExported;
   @override
-  int get savedAsCopy;
+  int get exportedAsCopy;
   @override
   int get skippedAlreadyExists;
   @override

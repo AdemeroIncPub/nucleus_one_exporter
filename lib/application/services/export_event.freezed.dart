@@ -1,0 +1,869 @@
+// coverage:ignore-file
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target
+
+part of 'export_event.dart';
+
+// **************************************************************************
+// FreezedGenerator
+// **************************************************************************
+
+T _$identity<T>(T value) => value;
+
+final _privateConstructorUsedError = UnsupportedError(
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+
+/// @nodoc
+mixin _$ExportEvent {
+  String get docId => throw _privateConstructorUsedError;
+  String get n1Path => throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String docId, String n1Path) docExportAttempt,
+    required TResult Function(
+            String docId, String n1Path, String localPath, bool exportedAsCopy)
+        docExported,
+    required TResult Function(String docId, String n1Path, String localPath)
+        docSkippedAlreadyExists,
+    required TResult Function(String docId, String n1Path)
+        docSkippedUnknownFailure,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult Function(String docId, String n1Path)? docExportAttempt,
+    TResult Function(
+            String docId, String n1Path, String localPath, bool exportedAsCopy)?
+        docExported,
+    TResult Function(String docId, String n1Path, String localPath)?
+        docSkippedAlreadyExists,
+    TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String docId, String n1Path)? docExportAttempt,
+    TResult Function(
+            String docId, String n1Path, String localPath, bool exportedAsCopy)?
+        docExported,
+    TResult Function(String docId, String n1Path, String localPath)?
+        docSkippedAlreadyExists,
+    TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(DocExportAttempt value) docExportAttempt,
+    required TResult Function(DocExported value) docExported,
+    required TResult Function(DocSkippedAlreadyExists value)
+        docSkippedAlreadyExists,
+    required TResult Function(DocSkippedUnknownFailure value)
+        docSkippedUnknownFailure,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult Function(DocExportAttempt value)? docExportAttempt,
+    TResult Function(DocExported value)? docExported,
+    TResult Function(DocSkippedAlreadyExists value)? docSkippedAlreadyExists,
+    TResult Function(DocSkippedUnknownFailure value)? docSkippedUnknownFailure,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(DocExportAttempt value)? docExportAttempt,
+    TResult Function(DocExported value)? docExported,
+    TResult Function(DocSkippedAlreadyExists value)? docSkippedAlreadyExists,
+    TResult Function(DocSkippedUnknownFailure value)? docSkippedUnknownFailure,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
+
+  @JsonKey(ignore: true)
+  $ExportEventCopyWith<ExportEvent> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ExportEventCopyWith<$Res> {
+  factory $ExportEventCopyWith(
+          ExportEvent value, $Res Function(ExportEvent) then) =
+      _$ExportEventCopyWithImpl<$Res>;
+  $Res call({String docId, String n1Path});
+}
+
+/// @nodoc
+class _$ExportEventCopyWithImpl<$Res> implements $ExportEventCopyWith<$Res> {
+  _$ExportEventCopyWithImpl(this._value, this._then);
+
+  final ExportEvent _value;
+  // ignore: unused_field
+  final $Res Function(ExportEvent) _then;
+
+  @override
+  $Res call({
+    Object? docId = freezed,
+    Object? n1Path = freezed,
+  }) {
+    return _then(_value.copyWith(
+      docId: docId == freezed
+          ? _value.docId
+          : docId // ignore: cast_nullable_to_non_nullable
+              as String,
+      n1Path: n1Path == freezed
+          ? _value.n1Path
+          : n1Path // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+abstract class _$$DocExportAttemptCopyWith<$Res>
+    implements $ExportEventCopyWith<$Res> {
+  factory _$$DocExportAttemptCopyWith(
+          _$DocExportAttempt value, $Res Function(_$DocExportAttempt) then) =
+      __$$DocExportAttemptCopyWithImpl<$Res>;
+  @override
+  $Res call({String docId, String n1Path});
+}
+
+/// @nodoc
+class __$$DocExportAttemptCopyWithImpl<$Res>
+    extends _$ExportEventCopyWithImpl<$Res>
+    implements _$$DocExportAttemptCopyWith<$Res> {
+  __$$DocExportAttemptCopyWithImpl(
+      _$DocExportAttempt _value, $Res Function(_$DocExportAttempt) _then)
+      : super(_value, (v) => _then(v as _$DocExportAttempt));
+
+  @override
+  _$DocExportAttempt get _value => super._value as _$DocExportAttempt;
+
+  @override
+  $Res call({
+    Object? docId = freezed,
+    Object? n1Path = freezed,
+  }) {
+    return _then(_$DocExportAttempt(
+      docId: docId == freezed
+          ? _value.docId
+          : docId // ignore: cast_nullable_to_non_nullable
+              as String,
+      n1Path: n1Path == freezed
+          ? _value.n1Path
+          : n1Path // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$DocExportAttempt implements DocExportAttempt {
+  const _$DocExportAttempt({required this.docId, required this.n1Path});
+
+  @override
+  final String docId;
+  @override
+  final String n1Path;
+
+  @override
+  String toString() {
+    return 'ExportEvent.docExportAttempt(docId: $docId, n1Path: $n1Path)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DocExportAttempt &&
+            const DeepCollectionEquality().equals(other.docId, docId) &&
+            const DeepCollectionEquality().equals(other.n1Path, n1Path));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(docId),
+      const DeepCollectionEquality().hash(n1Path));
+
+  @JsonKey(ignore: true)
+  @override
+  _$$DocExportAttemptCopyWith<_$DocExportAttempt> get copyWith =>
+      __$$DocExportAttemptCopyWithImpl<_$DocExportAttempt>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String docId, String n1Path) docExportAttempt,
+    required TResult Function(
+            String docId, String n1Path, String localPath, bool exportedAsCopy)
+        docExported,
+    required TResult Function(String docId, String n1Path, String localPath)
+        docSkippedAlreadyExists,
+    required TResult Function(String docId, String n1Path)
+        docSkippedUnknownFailure,
+  }) {
+    return docExportAttempt(docId, n1Path);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult Function(String docId, String n1Path)? docExportAttempt,
+    TResult Function(
+            String docId, String n1Path, String localPath, bool exportedAsCopy)?
+        docExported,
+    TResult Function(String docId, String n1Path, String localPath)?
+        docSkippedAlreadyExists,
+    TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
+  }) {
+    return docExportAttempt?.call(docId, n1Path);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String docId, String n1Path)? docExportAttempt,
+    TResult Function(
+            String docId, String n1Path, String localPath, bool exportedAsCopy)?
+        docExported,
+    TResult Function(String docId, String n1Path, String localPath)?
+        docSkippedAlreadyExists,
+    TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
+    required TResult orElse(),
+  }) {
+    if (docExportAttempt != null) {
+      return docExportAttempt(docId, n1Path);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(DocExportAttempt value) docExportAttempt,
+    required TResult Function(DocExported value) docExported,
+    required TResult Function(DocSkippedAlreadyExists value)
+        docSkippedAlreadyExists,
+    required TResult Function(DocSkippedUnknownFailure value)
+        docSkippedUnknownFailure,
+  }) {
+    return docExportAttempt(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult Function(DocExportAttempt value)? docExportAttempt,
+    TResult Function(DocExported value)? docExported,
+    TResult Function(DocSkippedAlreadyExists value)? docSkippedAlreadyExists,
+    TResult Function(DocSkippedUnknownFailure value)? docSkippedUnknownFailure,
+  }) {
+    return docExportAttempt?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(DocExportAttempt value)? docExportAttempt,
+    TResult Function(DocExported value)? docExported,
+    TResult Function(DocSkippedAlreadyExists value)? docSkippedAlreadyExists,
+    TResult Function(DocSkippedUnknownFailure value)? docSkippedUnknownFailure,
+    required TResult orElse(),
+  }) {
+    if (docExportAttempt != null) {
+      return docExportAttempt(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class DocExportAttempt implements ExportEvent {
+  const factory DocExportAttempt(
+      {required final String docId,
+      required final String n1Path}) = _$DocExportAttempt;
+
+  @override
+  String get docId;
+  @override
+  String get n1Path;
+  @override
+  @JsonKey(ignore: true)
+  _$$DocExportAttemptCopyWith<_$DocExportAttempt> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$DocExportedCopyWith<$Res>
+    implements $ExportEventCopyWith<$Res> {
+  factory _$$DocExportedCopyWith(
+          _$DocExported value, $Res Function(_$DocExported) then) =
+      __$$DocExportedCopyWithImpl<$Res>;
+  @override
+  $Res call(
+      {String docId, String n1Path, String localPath, bool exportedAsCopy});
+}
+
+/// @nodoc
+class __$$DocExportedCopyWithImpl<$Res> extends _$ExportEventCopyWithImpl<$Res>
+    implements _$$DocExportedCopyWith<$Res> {
+  __$$DocExportedCopyWithImpl(
+      _$DocExported _value, $Res Function(_$DocExported) _then)
+      : super(_value, (v) => _then(v as _$DocExported));
+
+  @override
+  _$DocExported get _value => super._value as _$DocExported;
+
+  @override
+  $Res call({
+    Object? docId = freezed,
+    Object? n1Path = freezed,
+    Object? localPath = freezed,
+    Object? exportedAsCopy = freezed,
+  }) {
+    return _then(_$DocExported(
+      docId: docId == freezed
+          ? _value.docId
+          : docId // ignore: cast_nullable_to_non_nullable
+              as String,
+      n1Path: n1Path == freezed
+          ? _value.n1Path
+          : n1Path // ignore: cast_nullable_to_non_nullable
+              as String,
+      localPath: localPath == freezed
+          ? _value.localPath
+          : localPath // ignore: cast_nullable_to_non_nullable
+              as String,
+      exportedAsCopy: exportedAsCopy == freezed
+          ? _value.exportedAsCopy
+          : exportedAsCopy // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$DocExported implements DocExported {
+  const _$DocExported(
+      {required this.docId,
+      required this.n1Path,
+      required this.localPath,
+      required this.exportedAsCopy});
+
+  @override
+  final String docId;
+  @override
+  final String n1Path;
+  @override
+  final String localPath;
+  @override
+  final bool exportedAsCopy;
+
+  @override
+  String toString() {
+    return 'ExportEvent.docExported(docId: $docId, n1Path: $n1Path, localPath: $localPath, exportedAsCopy: $exportedAsCopy)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DocExported &&
+            const DeepCollectionEquality().equals(other.docId, docId) &&
+            const DeepCollectionEquality().equals(other.n1Path, n1Path) &&
+            const DeepCollectionEquality().equals(other.localPath, localPath) &&
+            const DeepCollectionEquality()
+                .equals(other.exportedAsCopy, exportedAsCopy));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(docId),
+      const DeepCollectionEquality().hash(n1Path),
+      const DeepCollectionEquality().hash(localPath),
+      const DeepCollectionEquality().hash(exportedAsCopy));
+
+  @JsonKey(ignore: true)
+  @override
+  _$$DocExportedCopyWith<_$DocExported> get copyWith =>
+      __$$DocExportedCopyWithImpl<_$DocExported>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String docId, String n1Path) docExportAttempt,
+    required TResult Function(
+            String docId, String n1Path, String localPath, bool exportedAsCopy)
+        docExported,
+    required TResult Function(String docId, String n1Path, String localPath)
+        docSkippedAlreadyExists,
+    required TResult Function(String docId, String n1Path)
+        docSkippedUnknownFailure,
+  }) {
+    return docExported(docId, n1Path, localPath, exportedAsCopy);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult Function(String docId, String n1Path)? docExportAttempt,
+    TResult Function(
+            String docId, String n1Path, String localPath, bool exportedAsCopy)?
+        docExported,
+    TResult Function(String docId, String n1Path, String localPath)?
+        docSkippedAlreadyExists,
+    TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
+  }) {
+    return docExported?.call(docId, n1Path, localPath, exportedAsCopy);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String docId, String n1Path)? docExportAttempt,
+    TResult Function(
+            String docId, String n1Path, String localPath, bool exportedAsCopy)?
+        docExported,
+    TResult Function(String docId, String n1Path, String localPath)?
+        docSkippedAlreadyExists,
+    TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
+    required TResult orElse(),
+  }) {
+    if (docExported != null) {
+      return docExported(docId, n1Path, localPath, exportedAsCopy);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(DocExportAttempt value) docExportAttempt,
+    required TResult Function(DocExported value) docExported,
+    required TResult Function(DocSkippedAlreadyExists value)
+        docSkippedAlreadyExists,
+    required TResult Function(DocSkippedUnknownFailure value)
+        docSkippedUnknownFailure,
+  }) {
+    return docExported(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult Function(DocExportAttempt value)? docExportAttempt,
+    TResult Function(DocExported value)? docExported,
+    TResult Function(DocSkippedAlreadyExists value)? docSkippedAlreadyExists,
+    TResult Function(DocSkippedUnknownFailure value)? docSkippedUnknownFailure,
+  }) {
+    return docExported?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(DocExportAttempt value)? docExportAttempt,
+    TResult Function(DocExported value)? docExported,
+    TResult Function(DocSkippedAlreadyExists value)? docSkippedAlreadyExists,
+    TResult Function(DocSkippedUnknownFailure value)? docSkippedUnknownFailure,
+    required TResult orElse(),
+  }) {
+    if (docExported != null) {
+      return docExported(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class DocExported implements ExportEvent {
+  const factory DocExported(
+      {required final String docId,
+      required final String n1Path,
+      required final String localPath,
+      required final bool exportedAsCopy}) = _$DocExported;
+
+  @override
+  String get docId;
+  @override
+  String get n1Path;
+  String get localPath;
+  bool get exportedAsCopy;
+  @override
+  @JsonKey(ignore: true)
+  _$$DocExportedCopyWith<_$DocExported> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$DocSkippedAlreadyExistsCopyWith<$Res>
+    implements $ExportEventCopyWith<$Res> {
+  factory _$$DocSkippedAlreadyExistsCopyWith(_$DocSkippedAlreadyExists value,
+          $Res Function(_$DocSkippedAlreadyExists) then) =
+      __$$DocSkippedAlreadyExistsCopyWithImpl<$Res>;
+  @override
+  $Res call({String docId, String n1Path, String localPath});
+}
+
+/// @nodoc
+class __$$DocSkippedAlreadyExistsCopyWithImpl<$Res>
+    extends _$ExportEventCopyWithImpl<$Res>
+    implements _$$DocSkippedAlreadyExistsCopyWith<$Res> {
+  __$$DocSkippedAlreadyExistsCopyWithImpl(_$DocSkippedAlreadyExists _value,
+      $Res Function(_$DocSkippedAlreadyExists) _then)
+      : super(_value, (v) => _then(v as _$DocSkippedAlreadyExists));
+
+  @override
+  _$DocSkippedAlreadyExists get _value =>
+      super._value as _$DocSkippedAlreadyExists;
+
+  @override
+  $Res call({
+    Object? docId = freezed,
+    Object? n1Path = freezed,
+    Object? localPath = freezed,
+  }) {
+    return _then(_$DocSkippedAlreadyExists(
+      docId: docId == freezed
+          ? _value.docId
+          : docId // ignore: cast_nullable_to_non_nullable
+              as String,
+      n1Path: n1Path == freezed
+          ? _value.n1Path
+          : n1Path // ignore: cast_nullable_to_non_nullable
+              as String,
+      localPath: localPath == freezed
+          ? _value.localPath
+          : localPath // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$DocSkippedAlreadyExists implements DocSkippedAlreadyExists {
+  const _$DocSkippedAlreadyExists(
+      {required this.docId, required this.n1Path, required this.localPath});
+
+  @override
+  final String docId;
+  @override
+  final String n1Path;
+  @override
+  final String localPath;
+
+  @override
+  String toString() {
+    return 'ExportEvent.docSkippedAlreadyExists(docId: $docId, n1Path: $n1Path, localPath: $localPath)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DocSkippedAlreadyExists &&
+            const DeepCollectionEquality().equals(other.docId, docId) &&
+            const DeepCollectionEquality().equals(other.n1Path, n1Path) &&
+            const DeepCollectionEquality().equals(other.localPath, localPath));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(docId),
+      const DeepCollectionEquality().hash(n1Path),
+      const DeepCollectionEquality().hash(localPath));
+
+  @JsonKey(ignore: true)
+  @override
+  _$$DocSkippedAlreadyExistsCopyWith<_$DocSkippedAlreadyExists> get copyWith =>
+      __$$DocSkippedAlreadyExistsCopyWithImpl<_$DocSkippedAlreadyExists>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String docId, String n1Path) docExportAttempt,
+    required TResult Function(
+            String docId, String n1Path, String localPath, bool exportedAsCopy)
+        docExported,
+    required TResult Function(String docId, String n1Path, String localPath)
+        docSkippedAlreadyExists,
+    required TResult Function(String docId, String n1Path)
+        docSkippedUnknownFailure,
+  }) {
+    return docSkippedAlreadyExists(docId, n1Path, localPath);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult Function(String docId, String n1Path)? docExportAttempt,
+    TResult Function(
+            String docId, String n1Path, String localPath, bool exportedAsCopy)?
+        docExported,
+    TResult Function(String docId, String n1Path, String localPath)?
+        docSkippedAlreadyExists,
+    TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
+  }) {
+    return docSkippedAlreadyExists?.call(docId, n1Path, localPath);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String docId, String n1Path)? docExportAttempt,
+    TResult Function(
+            String docId, String n1Path, String localPath, bool exportedAsCopy)?
+        docExported,
+    TResult Function(String docId, String n1Path, String localPath)?
+        docSkippedAlreadyExists,
+    TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
+    required TResult orElse(),
+  }) {
+    if (docSkippedAlreadyExists != null) {
+      return docSkippedAlreadyExists(docId, n1Path, localPath);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(DocExportAttempt value) docExportAttempt,
+    required TResult Function(DocExported value) docExported,
+    required TResult Function(DocSkippedAlreadyExists value)
+        docSkippedAlreadyExists,
+    required TResult Function(DocSkippedUnknownFailure value)
+        docSkippedUnknownFailure,
+  }) {
+    return docSkippedAlreadyExists(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult Function(DocExportAttempt value)? docExportAttempt,
+    TResult Function(DocExported value)? docExported,
+    TResult Function(DocSkippedAlreadyExists value)? docSkippedAlreadyExists,
+    TResult Function(DocSkippedUnknownFailure value)? docSkippedUnknownFailure,
+  }) {
+    return docSkippedAlreadyExists?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(DocExportAttempt value)? docExportAttempt,
+    TResult Function(DocExported value)? docExported,
+    TResult Function(DocSkippedAlreadyExists value)? docSkippedAlreadyExists,
+    TResult Function(DocSkippedUnknownFailure value)? docSkippedUnknownFailure,
+    required TResult orElse(),
+  }) {
+    if (docSkippedAlreadyExists != null) {
+      return docSkippedAlreadyExists(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class DocSkippedAlreadyExists implements ExportEvent {
+  const factory DocSkippedAlreadyExists(
+      {required final String docId,
+      required final String n1Path,
+      required final String localPath}) = _$DocSkippedAlreadyExists;
+
+  @override
+  String get docId;
+  @override
+  String get n1Path;
+  String get localPath;
+  @override
+  @JsonKey(ignore: true)
+  _$$DocSkippedAlreadyExistsCopyWith<_$DocSkippedAlreadyExists> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$DocSkippedUnknownFailureCopyWith<$Res>
+    implements $ExportEventCopyWith<$Res> {
+  factory _$$DocSkippedUnknownFailureCopyWith(_$DocSkippedUnknownFailure value,
+          $Res Function(_$DocSkippedUnknownFailure) then) =
+      __$$DocSkippedUnknownFailureCopyWithImpl<$Res>;
+  @override
+  $Res call({String docId, String n1Path});
+}
+
+/// @nodoc
+class __$$DocSkippedUnknownFailureCopyWithImpl<$Res>
+    extends _$ExportEventCopyWithImpl<$Res>
+    implements _$$DocSkippedUnknownFailureCopyWith<$Res> {
+  __$$DocSkippedUnknownFailureCopyWithImpl(_$DocSkippedUnknownFailure _value,
+      $Res Function(_$DocSkippedUnknownFailure) _then)
+      : super(_value, (v) => _then(v as _$DocSkippedUnknownFailure));
+
+  @override
+  _$DocSkippedUnknownFailure get _value =>
+      super._value as _$DocSkippedUnknownFailure;
+
+  @override
+  $Res call({
+    Object? docId = freezed,
+    Object? n1Path = freezed,
+  }) {
+    return _then(_$DocSkippedUnknownFailure(
+      docId: docId == freezed
+          ? _value.docId
+          : docId // ignore: cast_nullable_to_non_nullable
+              as String,
+      n1Path: n1Path == freezed
+          ? _value.n1Path
+          : n1Path // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$DocSkippedUnknownFailure implements DocSkippedUnknownFailure {
+  const _$DocSkippedUnknownFailure({required this.docId, required this.n1Path});
+
+  @override
+  final String docId;
+  @override
+  final String n1Path;
+
+  @override
+  String toString() {
+    return 'ExportEvent.docSkippedUnknownFailure(docId: $docId, n1Path: $n1Path)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DocSkippedUnknownFailure &&
+            const DeepCollectionEquality().equals(other.docId, docId) &&
+            const DeepCollectionEquality().equals(other.n1Path, n1Path));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(docId),
+      const DeepCollectionEquality().hash(n1Path));
+
+  @JsonKey(ignore: true)
+  @override
+  _$$DocSkippedUnknownFailureCopyWith<_$DocSkippedUnknownFailure>
+      get copyWith =>
+          __$$DocSkippedUnknownFailureCopyWithImpl<_$DocSkippedUnknownFailure>(
+              this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String docId, String n1Path) docExportAttempt,
+    required TResult Function(
+            String docId, String n1Path, String localPath, bool exportedAsCopy)
+        docExported,
+    required TResult Function(String docId, String n1Path, String localPath)
+        docSkippedAlreadyExists,
+    required TResult Function(String docId, String n1Path)
+        docSkippedUnknownFailure,
+  }) {
+    return docSkippedUnknownFailure(docId, n1Path);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult Function(String docId, String n1Path)? docExportAttempt,
+    TResult Function(
+            String docId, String n1Path, String localPath, bool exportedAsCopy)?
+        docExported,
+    TResult Function(String docId, String n1Path, String localPath)?
+        docSkippedAlreadyExists,
+    TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
+  }) {
+    return docSkippedUnknownFailure?.call(docId, n1Path);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String docId, String n1Path)? docExportAttempt,
+    TResult Function(
+            String docId, String n1Path, String localPath, bool exportedAsCopy)?
+        docExported,
+    TResult Function(String docId, String n1Path, String localPath)?
+        docSkippedAlreadyExists,
+    TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
+    required TResult orElse(),
+  }) {
+    if (docSkippedUnknownFailure != null) {
+      return docSkippedUnknownFailure(docId, n1Path);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(DocExportAttempt value) docExportAttempt,
+    required TResult Function(DocExported value) docExported,
+    required TResult Function(DocSkippedAlreadyExists value)
+        docSkippedAlreadyExists,
+    required TResult Function(DocSkippedUnknownFailure value)
+        docSkippedUnknownFailure,
+  }) {
+    return docSkippedUnknownFailure(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult Function(DocExportAttempt value)? docExportAttempt,
+    TResult Function(DocExported value)? docExported,
+    TResult Function(DocSkippedAlreadyExists value)? docSkippedAlreadyExists,
+    TResult Function(DocSkippedUnknownFailure value)? docSkippedUnknownFailure,
+  }) {
+    return docSkippedUnknownFailure?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(DocExportAttempt value)? docExportAttempt,
+    TResult Function(DocExported value)? docExported,
+    TResult Function(DocSkippedAlreadyExists value)? docSkippedAlreadyExists,
+    TResult Function(DocSkippedUnknownFailure value)? docSkippedUnknownFailure,
+    required TResult orElse(),
+  }) {
+    if (docSkippedUnknownFailure != null) {
+      return docSkippedUnknownFailure(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class DocSkippedUnknownFailure implements ExportEvent {
+  const factory DocSkippedUnknownFailure(
+      {required final String docId,
+      required final String n1Path}) = _$DocSkippedUnknownFailure;
+
+  @override
+  String get docId;
+  @override
+  String get n1Path;
+  @override
+  @JsonKey(ignore: true)
+  _$$DocSkippedUnknownFailureCopyWith<_$DocSkippedUnknownFailure>
+      get copyWith => throw _privateConstructorUsedError;
+}

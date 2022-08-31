@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:fpdart/fpdart.dart';
@@ -11,6 +12,7 @@ import 'package:rxdart/rxdart.dart';
 import '../../runtime_helper.dart';
 import '../nucleus_one_sdk_service.dart';
 import '../path_validator.dart';
+import 'export_event.dart';
 import 'export_results.dart';
 
 enum ExportFailure {
@@ -28,20 +30,26 @@ enum _DownloadFailureType {
 
 @immutable
 class _DownloadFailure {
-  _DownloadFailure(this.failure, this.results);
+  _DownloadFailure(this.failure, this.doc, this.results);
 
   final _DownloadFailureType failure;
+  final n1.Document doc;
   final ExportResults results;
 }
 
 class ExportService {
   ExportService({NucleusOneSdkService? n1Sdk, PathValidator? pathValidator})
       : _n1Sdk = n1Sdk ?? GetIt.I<NucleusOneSdkService>(),
-        _pathValidator = pathValidator ?? GetIt.I<PathValidator>();
+        _pathValidator = pathValidator ?? GetIt.I<PathValidator>(),
+        _exportEventStreamController = StreamController<ExportEvent>();
 
   final NucleusOneSdkService _n1Sdk;
   final PathValidator _pathValidator;
+  final StreamController<ExportEvent> _exportEventStreamController;
   final http.Client _httpClient = http.Client();
+
+  Stream<ExportEvent> get exportEventStream =>
+      _exportEventStreamController.stream;
 
   Future<Either<List<ExportFailure>, ExportResults>> exportDocuments({
     required String orgId,
@@ -79,15 +87,22 @@ class ExportService {
       final exportResults =
           await _exportDocumentsFromStream(docStream, validated)
               .fold<Either<_DownloadFailure, ExportResults>>(
-                  right(results),
-                  // Ignore individual export failures for now until we handle
-                  // retries and timeouts and such.
-                  (acc, docResult) => acc.map(
-                        (accR) => docResult.fold(
-                          (drL) => accR.add(drL.results),
-                          (drR) => accR.add(drR),
-                        ),
-                      ));
+        right(results),
+        // Ignore individual export failures for now until we handle
+        // retries and timeouts and such.
+        (acc, docResult) => acc.map(
+          (accR) => docResult.fold(
+            (drL) {
+              _addExportEvent(ExportEvent.docSkippedUnknownFailure(
+                docId: drL.doc.documentID,
+                n1Path: _getNormalizedN1Path(drL.doc),
+              ));
+              return accR.add(drL.results);
+            },
+            (drR) => accR.add(drR),
+          ),
+        ),
+      );
       return exportResults.fold((l) => l.results, id);
     }, (error, stackTrace) => tryCast(error, ExportFailure.unknownError));
   }
@@ -96,6 +111,10 @@ class ExportService {
       Stream<n1.Document> docStream, _Validated validated) {
     return docStream.flatMap(maxConcurrent: validated.maxConcurrentDownloads,
         (doc) async* {
+      _addExportEvent(ExportEvent.docExportAttempt(
+        docId: doc.documentID,
+        n1Path: _getNormalizedN1Path(doc),
+      ));
       yield (await _exportDocument(doc, validated).run());
     });
   }
@@ -117,7 +136,7 @@ class ExportService {
       n1.Document doc, _Validated validated) {
     final results = ExportResults(DateTime.now());
     return TaskEither.tryCatch(() async {
-      // Make path
+      // Make path.
       var outFilepath = _makeSafeFilepath(doc, validated.destination);
       var renamed = false;
       if (File(outFilepath).existsSync()) {
@@ -125,6 +144,12 @@ class ExportService {
           outFilepath = _makeAlternativeFilepathIfExists(outFilepath);
           renamed = true;
         } else {
+          _addExportEvent(ExportEvent.docSkippedAlreadyExists(
+            docId: doc.documentID,
+            n1Path: _getNormalizedN1Path(doc),
+            localPath:
+                path_.relative(outFilepath, from: validated.destination.path),
+          ));
           return results.docSkippedAlreadyExists();
         }
       }
@@ -133,17 +158,27 @@ class ExportService {
       final outFile = File(outFilepath);
       outFile.createSync(recursive: true);
 
-      // Download document
+      // Download document.
       final dcp = await _n1Sdk.getDocumentContentPackage(doc);
       await _downloadDoc(url: dcp.url, destinationFile: outFile);
 
+      // Build export results and export event.
+      ExportResults exportResults;
       if (renamed) {
-        return results.docSavedAsCopy();
+        exportResults = results.docExportedAsCopy();
       } else {
-        return results.docExported();
+        exportResults = results.docExported();
       }
+      _addExportEvent(ExportEvent.docExported(
+        docId: doc.documentID,
+        n1Path: _getNormalizedN1Path(doc),
+        localPath:
+            path_.relative(outFile.path, from: validated.destination.path),
+        exportedAsCopy: renamed,
+      ));
+      return exportResults;
     }, (error, stackTrace) {
-      return _DownloadFailure(_DownloadFailureType.unknownError,
+      return _DownloadFailure(_DownloadFailureType.unknownError, doc,
           results.docSkippedUnknownFailure());
     });
   }
@@ -199,6 +234,16 @@ class ExportService {
       f = File('$pwoe$suffix$ext');
     }
     return f.path;
+  }
+
+  String _getNormalizedN1Path(n1.Document doc) =>
+      path_.normalize(path_.join(doc.documentFolderPath, doc.name));
+
+  void _addExportEvent(ExportEvent event) {
+    final sc = _exportEventStreamController;
+    if (!sc.isClosed && !sc.isPaused && sc.hasListener) {
+      _exportEventStreamController.add(event);
+    }
   }
 }
 

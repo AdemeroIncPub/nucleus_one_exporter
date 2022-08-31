@@ -1,10 +1,15 @@
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, constant_identifier_names
+
+import 'dart:async';
+import 'dart:io' as io;
 
 import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
+import 'package:cli_util/cli_logging.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:get_it/get_it.dart';
 
+import '../../application/services/export_event.dart';
 import '../../application/services/export_results.dart';
 import '../../application/services/export_service.dart';
 import '../../runtime_helper.dart';
@@ -47,6 +52,12 @@ class ExportCommand extends Command<void> {
       _flag_allowNonemptyDestination,
       help: 'If the specified path contains files or folders, export anyway.',
     );
+    argParser.addFlag(
+      _flag_verbose,
+      help: 'Enabled detailed output.',
+      abbr: 'v',
+      negatable: false,
+    );
   }
 
   static final _option_orgId = 'organization-id';
@@ -55,8 +66,9 @@ class ExportCommand extends Command<void> {
   static final _flag_copyIfExists = 'copy-if-exists';
   static final _flag_allowNonemptyDestination = 'allow-nonempty-destination';
   static final _option_maxConcurrentDownloads = 'max-concurrent-downloads';
+  static final _flag_verbose = 'verbose';
 
-  static final _option_maxConcurrentDownloadsInvalid =
+  static final _maxConcurrentDownloadsInvalidMessage =
       'The $_option_maxConcurrentDownloads option must be a number greater than zero.';
 
   final ExportService _exportService;
@@ -83,19 +95,22 @@ class ExportCommand extends Command<void> {
   @override
   Future<void> run() async {
     final args = argResults!;
+    final verbose = tryCast(args[_flag_verbose], false);
+    final Ansi ansi = Ansi(io.stdout.supportsAnsiEscapes);
+    final logger =
+        verbose ? Logger.verbose(ansi: ansi) : Logger.standard(ansi: ansi);
+
+    final listenToExportEventStream = _listenToExportEventStream(logger);
 
     await _validate(args)
         .flatMapFuture((_) => _exportDocuments(args))
         .bimap(
           (err) => usageException(err.join('\n')),
-          (r) => print('totalExported: ${r.totalExported}\n'
-              'totalAttempted: ${r.totalAttempted}\n'
-              'savedAsCopy: ${r.savedAsCopy}\n'
-              'skippedAlreadyExists: ${r.skippedAlreadyExists}\n'
-              'skippedUnknownFailure: ${r.skippedUnknownFailure}\n'
-              'elapsed: ${r.elapsed.toString()}'),
+          (r) => _logSummary(logger, r, args[_flag_copyIfExists] as bool),
         )
         .run();
+
+    await listenToExportEventStream.cancel();
   }
 
   Either<List<String>, Unit> _validate(ArgResults results) {
@@ -110,7 +125,7 @@ class ExportCommand extends Command<void> {
       issues.add('The $_option_destination option is required.');
     }
     if (_getMaxDownloads(results) == null) {
-      issues.add(_option_maxConcurrentDownloadsInvalid);
+      issues.add(_maxConcurrentDownloadsInvalidMessage);
     }
 
     if (issues.isNotEmpty) {
@@ -153,10 +168,67 @@ class ExportCommand extends Command<void> {
           return 'The destination folder already exists and is not empty.'
               ' Use flag $_flag_allowNonemptyDestination to export anyway.';
         case ExportFailure.maxConcurrentDownloadsInvalid:
-          return _option_maxConcurrentDownloadsInvalid;
+          return _maxConcurrentDownloadsInvalidMessage;
         case ExportFailure.unknownError:
           return 'An unknown error has ocurred.';
       }
     }).toList();
+  }
+
+  void _logSummary(Logger logger, ExportResults results, bool copyIfExists) {
+    const prefixExported_ = 'Total Documents Exported : ';
+    const prefixAttempted = 'Total Documents Attempted: ';
+    const prefixAsCopy___ = 'Exported as a Copy       : ';
+    const prefixExists___ = 'Skipped (Already Exists) : ';
+    const prefixFailure__ = 'Skipped (Unknown Failure): ';
+    const prefixElapsed__ = 'Total Export Time        : ';
+
+    String msg = '\n'
+        '$prefixExported_${results.totalExported}\n'
+        '$prefixAttempted${results.totalAttempted}\n';
+
+    if (copyIfExists) {
+      msg += '$prefixAsCopy___${results.exportedAsCopy}\n';
+    } else {
+      msg += '$prefixExists___${results.skippedAlreadyExists}\n';
+    }
+
+    msg += '$prefixFailure__${results.skippedUnknownFailure}\n'
+        '$prefixElapsed__${results.elapsed.toString()}';
+
+    return logger.stdout(msg);
+  }
+
+  StreamSubscription<ExportEvent> _listenToExportEventStream(Logger logger) {
+    final Ansi ansi = logger.ansi;
+
+    const prefixExported = '[Exported] ';
+    const prefixAsCopy = '[Exported As Copy] ';
+    const prefixExists = '[Skipped (Already Exists)] ';
+    const prefixFailure = '[Skipped (Unknown Failure)] ';
+
+    return _exportService.exportEventStream.listen((event) {
+      event.when(
+        docExportAttempt: (docId, n1Path) {/* use this to show progress */},
+        docExported: (docId, n1Path, localPath, exportedAsCopy) {
+          final msg = 'Document ID: "$docId", N1 Path: "$n1Path", '
+              'Local Path: "$localPath"';
+          if (exportedAsCopy) {
+            logger.stdout('${ansi.yellow}$prefixAsCopy$msg${ansi.none}');
+          } else {
+            logger.trace('$prefixExported$msg');
+          }
+        },
+        docSkippedAlreadyExists: (docId, n1Path, localPath) {
+          final msg = 'Document ID: "$docId", N1 Path: "$n1Path", '
+              'Local Path: "$localPath"';
+          logger.stdout('${ansi.yellow}$prefixExists$msg${ansi.none}');
+        },
+        docSkippedUnknownFailure: (docId, n1Path) {
+          final msg = 'Document ID: "$docId", N1 Path: "$n1Path"';
+          logger.stderr('$prefixFailure$msg');
+        },
+      );
+    });
   }
 }

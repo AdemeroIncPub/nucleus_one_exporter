@@ -8,7 +8,7 @@ class ExportResults with _$ExportResults {
     DateTime started, {
     @Default(0) int totalAttempted,
     @Default(0) int totalExported,
-    @Default(0) int savedAsCopy,
+    @Default(0) int exportedAsCopy,
     @Default(0) int skippedAlreadyExists,
     @Default(0) int skippedUnknownFailure,
     DateTime? finished,
@@ -21,7 +21,7 @@ class ExportResults with _$ExportResults {
     return copyWith(
       totalAttempted: totalAttempted + other.totalAttempted,
       totalExported: totalExported + other.totalExported,
-      savedAsCopy: savedAsCopy + other.savedAsCopy,
+      exportedAsCopy: exportedAsCopy + other.exportedAsCopy,
       skippedAlreadyExists: skippedAlreadyExists + other.skippedAlreadyExists,
       skippedUnknownFailure:
           skippedUnknownFailure + other.skippedUnknownFailure,
@@ -31,10 +31,10 @@ class ExportResults with _$ExportResults {
   ExportResults docExported() => copyWith(
       totalAttempted: totalAttempted + 1, totalExported: totalExported + 1);
 
-  ExportResults docSavedAsCopy() => copyWith(
+  ExportResults docExportedAsCopy() => copyWith(
       totalAttempted: totalAttempted + 1,
       totalExported: totalExported + 1,
-      savedAsCopy: savedAsCopy + 1);
+      exportedAsCopy: exportedAsCopy + 1);
 
   ExportResults docSkippedAlreadyExists() => copyWith(
       totalAttempted: totalAttempted + 1,
