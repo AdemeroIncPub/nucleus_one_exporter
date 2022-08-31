@@ -110,15 +110,15 @@ class ExportService {
         // Ignore individual export failures for now until we handle
         // retries and timeouts and such.
         (acc, docResult) => acc.map(
-          (accR) => docResult.fold(
+          (accResults) => docResult.fold(
             (drL) {
               _addExportEvent(ExportEvent.docSkippedUnknownFailure(
                 docId: drL.doc.documentID,
                 n1Path: _getNormalizedN1Path(drL.doc),
               ));
-              return accR.add(drL.results);
+              return accResults.add(drL.results);
             },
-            (drR) => accR.add(drR),
+            (drR) => accResults.add(drR),
           ),
         ),
       );
@@ -154,6 +154,7 @@ class ExportService {
   TaskEither<_DownloadFailure, ExportResults> _exportDocument(
       n1.Document doc, _Validated validated) {
     final results = ExportResults(DateTime.now());
+    File? outFile;
     return TaskEither.tryCatch(() async {
       // Make path.
       var outFilepath = _makeSafeFilepath(doc, validated.destination);
@@ -174,12 +175,12 @@ class ExportService {
       }
 
       // Before any async calls, reserve filename by creating it.
-      final outFile = File(outFilepath);
-      outFile.createSync(recursive: true);
+      outFile = File(outFilepath);
+      outFile!.createSync(recursive: true);
 
       // Download document.
       final dcp = await _n1Sdk.getDocumentContentPackage(doc);
-      await _downloadDoc(url: dcp.url, destinationFile: outFile);
+      await _downloadDoc(url: dcp.url, destinationFile: outFile!);
 
       // Build export results and export event.
       ExportResults exportResults;
@@ -192,11 +193,19 @@ class ExportService {
         docId: doc.documentID,
         n1Path: _getNormalizedN1Path(doc),
         localPath:
-            path_.relative(outFile.path, from: validated.destination.path),
+            path_.relative(outFile!.path, from: validated.destination.path),
         exportedAsCopy: renamed,
       ));
       return exportResults;
     }, (error, stackTrace) {
+      // If download failed then delete the reserved file. This should be only
+      // files we created, but check for zero length in case of bug. (This also
+      // means incomplete download failures will not be deleted).
+      if (outFile != null && outFile!.statSync().size == 0) {
+        try {
+          outFile!.deleteSync();
+        } catch (ex) {/* well, we tried... */}
+      }
       return _DownloadFailure(_DownloadFailureType.unknownError, doc,
           results.docSkippedUnknownFailure());
     });
