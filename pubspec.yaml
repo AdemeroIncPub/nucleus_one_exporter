@@ -13,11 +13,7 @@ environment:
 dependencies:
   args: any
   characters: any
-  # cli_util: any
-  cli_util:
-    git:
-      url: https://github.com/jibbers42/cli_util
-      ref: stderr-use-ansi-color
+  cli_util: any
   collection: any
   dartx: any
   fpdart: any

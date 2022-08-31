@@ -109,11 +109,9 @@ packages:
   cli_util:
     dependency: "direct main"
     description:
-      path: "."
-      ref: stderr-use-ansi-color
-      resolved-ref: "2b12a7f205ad16ad37f7f4c0666c3307dbb451a6"
-      url: "https://github.com/jibbers42/cli_util"
-    source: git
+      name: cli_util
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "0.3.5"
   clock:
     dependency: transitive
@@ -606,4 +604,4 @@ packages:
     source: hosted
     version: "3.1.1"
 sdks:
-  dart: ">=2.18.0-146.0.dev <3.0.0"
+  dart: ">=2.18.0 <3.0.0"

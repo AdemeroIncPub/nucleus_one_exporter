@@ -1,7 +1,6 @@
 // ignore_for_file: non_constant_identifier_names, constant_identifier_names
 
 import 'dart:async';
-import 'dart:io' as io;
 
 import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
@@ -17,8 +16,9 @@ import '../../util/extensions.dart';
 import '../cli.dart';
 
 class ExportCommand extends Command<void> {
-  ExportCommand({ExportService? exportService})
-      : _exportService = exportService ?? GetIt.I<ExportService>() {
+  ExportCommand({ExportService? exportService, Logger? logger})
+      : _exportService = exportService ?? GetIt.I<ExportService>(),
+        _logger = logger ?? GetIt.I<Logger>() {
     argParser.addOption(
       _option_orgId,
       help: 'Organization ID. (required)',
@@ -52,12 +52,6 @@ class ExportCommand extends Command<void> {
       _flag_allowNonemptyDestination,
       help: 'If the specified path contains files or folders, export anyway.',
     );
-    argParser.addFlag(
-      _flag_verbose,
-      help: 'Enabled detailed output.',
-      abbr: 'v',
-      negatable: false,
-    );
   }
 
   static const _option_orgId = 'organization-id';
@@ -66,12 +60,12 @@ class ExportCommand extends Command<void> {
   static const _flag_copyIfExists = 'copy-if-exists';
   static const _flag_allowNonemptyDestination = 'allow-nonempty-destination';
   static const _option_maxConcurrentDownloads = 'max-concurrent-downloads';
-  static const _flag_verbose = 'verbose';
 
   static const _maxConcurrentDownloadsInvalidMessage =
       'The $_option_maxConcurrentDownloads option must be a number greater than zero.';
 
   final ExportService _exportService;
+  final Logger _logger;
 
   @override
   ArgParser get argParser => _argParser;
@@ -95,18 +89,14 @@ class ExportCommand extends Command<void> {
   @override
   Future<void> run() async {
     final args = argResults!;
-    final verbose = tryCast(args[_flag_verbose], false);
-    final Ansi ansi = Ansi(io.stdout.supportsAnsiEscapes);
-    final logger =
-        verbose ? Logger.verbose(ansi: ansi) : Logger.standard(ansi: ansi);
 
-    final listenToExportEventStream = _listenToExportEventStream(logger);
+    final listenToExportEventStream = _listenToExportEventStream(_logger);
 
     await _validate(args)
         .flatMapFuture((_) => _exportDocuments(args))
         .bimap(
           (err) => usageException(err.join('\n')),
-          (r) => _logSummary(logger, r, args[_flag_copyIfExists] as bool),
+          (r) => _logSummary(_logger, r, args[_flag_copyIfExists] as bool),
         )
         .run();
 
@@ -226,7 +216,7 @@ class ExportCommand extends Command<void> {
         },
         docSkippedUnknownFailure: (docId, n1Path) {
           final msg = 'Document ID: "$docId", N1 Path: "$n1Path"';
-          logger.stderr('$prefixFailure$msg');
+          logger.stderr('${ansi.red}$prefixFailure$msg${ansi.none}');
         },
       );
     });

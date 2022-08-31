@@ -12,7 +12,13 @@ CommandRunner<void> createRootCommand() {
   return CommandRunner(productId, productName, usageLineLength: usageLineLength)
     ..addCommand(ApiKeyCommand())
     ..addCommand(InfoCommand())
-    ..addCommand(ExportCommand());
+    ..addCommand(ExportCommand())
+    ..argParser.addFlag(
+      'verbose',
+      help: 'Enabled detailed output.',
+      abbr: 'v',
+      negatable: false,
+    );
 }
 
 int get usageLineLength => min(stdout.terminalColumns, 90);

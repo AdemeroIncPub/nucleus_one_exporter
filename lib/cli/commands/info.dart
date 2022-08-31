@@ -1,16 +1,19 @@
 import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
+import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../application/services/user_orgs_summary_service.dart';
 import '../cli.dart';
 
 class InfoCommand extends Command<void> {
-  InfoCommand({UserOrgsSummaryService? userOrgsSummaryService})
+  InfoCommand({UserOrgsSummaryService? userOrgsSummaryService, Logger? logger})
       : _userOrgsSummaryService =
-            userOrgsSummaryService ?? GetIt.I<UserOrgsSummaryService>();
+            userOrgsSummaryService ?? GetIt.I<UserOrgsSummaryService>(),
+        _logger = logger ?? GetIt.I<Logger>();
 
   final UserOrgsSummaryService _userOrgsSummaryService;
+  final Logger _logger;
 
   @override
   ArgParser get argParser => _argParser;
@@ -26,12 +29,14 @@ class InfoCommand extends Command<void> {
   @override
   Future<void> run() async {
     final summary = await _userOrgsSummaryService.getSummary();
-    final printer = InfoPrinter();
+    final printer = InfoPrinter(_logger);
     printer.printInfo(summary);
   }
 }
 
 class InfoPrinter {
+  InfoPrinter(Logger logger) : _logger = logger;
+
   void printInfo(UserOrgsSummary summary) {
     _printOrgCount(summary.orgInfos.length);
     for (final org in summary.orgInfos) {
@@ -44,23 +49,25 @@ class InfoPrinter {
     }
   }
 
+  final Logger _logger;
+
   void _printOrgCount(int count) {
-    print('Organizations: $count');
+    _logger.stdout('Organizations: $count');
   }
 
   void _printOrg(
       {required String id, required String name, required int projectCount}) {
-    print('- Organization');
-    print('  Name: $name');
-    print('  ID: $id');
-    print('  Projects: $projectCount');
+    _logger.stdout('- Organization');
+    _logger.stdout('  Name: $name');
+    _logger.stdout('  ID: $id');
+    _logger.stdout('  Projects: $projectCount');
   }
 
   void _printProject(
       {required String id, required String name, required int docCount}) {
-    print('  - Project');
-    print('    Name: $name');
-    print('    ID: $id');
-    print('    Documents: $docCount');
+    _logger.stdout('  - Project');
+    _logger.stdout('    Name: $name');
+    _logger.stdout('    ID: $id');
+    _logger.stdout('    Documents: $docCount');
   }
 }
