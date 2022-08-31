@@ -4,6 +4,15 @@ part 'export_event.freezed.dart';
 
 @freezed
 class ExportEvent with _$ExportEvent {
+  const factory ExportEvent.beginExport({
+    required String orgId,
+    required String orgName,
+    required String projectId,
+    required String projectName,
+    required String localPath,
+    required int docCount,
+  }) = BeginExport;
+
   const factory ExportEvent.docExportAttempt({
     required String docId,
     required String n1Path,

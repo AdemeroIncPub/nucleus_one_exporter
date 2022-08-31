@@ -82,7 +82,26 @@ class ExportService {
 
   TaskEither<ExportFailure, ExportResults> _exportDocuments(
       _Validated validated, final ExportResults results) {
+    final v = validated;
     return TaskEither.tryCatch(() async {
+      // Send BeginExport event.
+      final org = await _n1Sdk.getUserOrganization(organizationId: v.orgId);
+      final project = await _n1Sdk.getProject(
+          organizationId: v.orgId, projectId: v.projectId);
+      final docCount = await _n1Sdk.getDocumentCount(
+          organizationId: v.orgId,
+          projectId: v.projectId,
+          ignoreInbox: true,
+          ignoreRecycleBin: true);
+      _addExportEvent(ExportEvent.beginExport(
+          orgId: v.orgId,
+          orgName: org.organizationName,
+          projectId: v.projectId,
+          projectName: project.name,
+          docCount: docCount,
+          localPath: v.destination.path));
+
+      // Get document stream and do the export.
       final docStream = _getDocumentsStream(validated);
       final exportResults =
           await _exportDocumentsFromStream(docStream, validated)

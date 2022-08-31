@@ -14,6 +14,13 @@ class NucleusOneSdkService {
     return (await _n1App.users().getOrganizations()).items;
   }
 
+  Future<n1.UserOrganization> getUserOrganization({
+    required String organizationId,
+  }) async {
+    return (await getUserOrganizations())
+        .firstWhere((o) => o.organizationID == organizationId);
+  }
+
   Future<List<n1.OrganizationProject>> getOrganizationProjects({
     required String organizationId,
   }) async {
@@ -25,6 +32,14 @@ class NucleusOneSdkService {
             .getProjects(organizationId: organizationId))
         .results
         .items;
+  }
+
+  Future<n1.OrganizationProject> getProject({
+    required String organizationId,
+    required String projectId,
+  }) async {
+    return (await getOrganizationProjects(organizationId: organizationId))
+        .firstWhere((p) => p.id == projectId);
   }
 
   Future<int> getDocumentCount({

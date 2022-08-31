@@ -174,6 +174,7 @@ class ExportCommand extends Command<void> {
     const prefixElapsed__ = 'Total Export Time        : ';
 
     String msg = '\n'
+        'Export finished.\n'
         '$prefixExported_${results.totalExported}\n'
         '$prefixAttempted${results.totalAttempted}\n';
 
@@ -197,9 +198,23 @@ class ExportCommand extends Command<void> {
     const prefixExists = '[Skipped (Already Exists)] ';
     const prefixFailure = '[Skipped (Unknown Failure)] ';
 
+    var totalDocs = 0;
+    var docsProcessed = -1;
+    final sw = Stopwatch()..start();
     return _exportService.exportEventStream.listen((event) {
       event.when(
-        docExportAttempt: (docId, n1Path) {/* use this to show progress */},
+        beginExport:
+            ((orgId, orgName, projectId, projectName, localPath, docCount) {
+          totalDocs = docCount;
+        }),
+        docExportAttempt: (docId, n1Path) {
+          docsProcessed += 1;
+          if (sw.elapsed > const Duration(seconds: 5)) {
+            sw.reset();
+            logger.stdout(
+                '* Export ${(docsProcessed * 100.0 / totalDocs).floor()}% complete...');
+          }
+        },
         docExported: (docId, n1Path, localPath, exportedAsCopy) {
           final msg = 'Document ID: "$docId", N1 Path: "$n1Path", '
               'Local Path: "$localPath"';
