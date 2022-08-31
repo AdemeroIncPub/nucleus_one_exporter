@@ -2,7 +2,7 @@
 
 import 'package:storagebox/storagebox.dart';
 
-import '../runtime_helper.dart';
+import '../util/runtime_helper.dart';
 import 'constants.dart';
 
 class Settings {

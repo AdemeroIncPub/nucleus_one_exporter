@@ -11,8 +11,8 @@ import 'package:get_it/get_it.dart';
 import '../../application/services/export_event.dart';
 import '../../application/services/export_results.dart';
 import '../../application/services/export_service.dart';
-import '../../runtime_helper.dart';
 import '../../util/extensions.dart';
+import '../../util/runtime_helper.dart';
 import '../cli.dart';
 
 class ExportCommand extends Command<void> {
