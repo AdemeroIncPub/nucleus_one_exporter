@@ -22,7 +22,9 @@ dependencies:
   http: any
   meta: any
   nucleus_one_dart_sdk:
-    path: ../nucleus_one_dart_sdk
+    git:
+      url: https://github.com/jibbers42/nucleus_one_dart_sdk
+      ref: my-ApiMappingRefresh
   path: any
   quiver: any
   rxdart: any

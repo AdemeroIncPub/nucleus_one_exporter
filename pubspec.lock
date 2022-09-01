@@ -340,9 +340,11 @@ packages:
   nucleus_one_dart_sdk:
     dependency: "direct main"
     description:
-      path: "../nucleus_one_dart_sdk"
-      relative: true
-    source: path
+      path: "."
+      ref: my-ApiMappingRefresh
+      resolved-ref: "968abd51d3a29ff555dbfbb779032c333b9fa3e3"
+      url: "https://github.com/jibbers42/nucleus_one_dart_sdk"
+    source: git
     version: "0.0.0"
   package_config:
     dependency: transitive
