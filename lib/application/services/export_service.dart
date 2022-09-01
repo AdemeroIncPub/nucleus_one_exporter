@@ -86,7 +86,7 @@ class ExportService {
     return TaskEither.tryCatch(() async {
       // Send BeginExport event.
       final org = await _n1Sdk.getUserOrganization(organizationId: v.orgId);
-      final project = await _n1Sdk.getProject(
+      final project = await _n1Sdk.getUserProject(
           organizationId: v.orgId, projectId: v.projectId);
       final docCount = await _n1Sdk.getDocumentCount(
           organizationId: v.orgId,
@@ -97,7 +97,7 @@ class ExportService {
           orgId: v.orgId,
           orgName: org.organizationName,
           projectId: v.projectId,
-          projectName: project.name,
+          projectName: project.projectName,
           docCount: docCount,
           localPath: v.destination.path));
 

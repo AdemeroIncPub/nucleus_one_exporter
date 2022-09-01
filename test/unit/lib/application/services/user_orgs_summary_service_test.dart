@@ -40,19 +40,19 @@ void main() {
         final orgId = myUoapwdc.org.organizationID;
         // Project IDs must be distinct - filter generated dups.
         myUoapwdc.projectsWithDocCount = myUoapwdc.projectsWithDocCount
-            .distinctBy((e) => e.project.id)
+            .distinctBy((e) => e.project.projectID)
             .toList();
 
         final projects =
             myUoapwdc.projectsWithDocCount.map((e) => e.project).toList();
         mt
-            .when(() => mockNucleusOneSdkService.getOrganizationProjects(
-                organizationId: orgId))
+            .when(() =>
+                mockNucleusOneSdkService.getUserProjects(organizationId: orgId))
             .thenAnswer((_) async => projects);
 
         // Setup doc counts
         for (final pwdc in myUoapwdc.projectsWithDocCount) {
-          final projectId = pwdc.project.id;
+          final projectId = pwdc.project.projectID;
           mt
               .when(() => mockNucleusOneSdkService.getDocumentCount(
                   organizationId: orgId,
@@ -79,8 +79,8 @@ void main() {
             orgInfo.projectInfos.length, myUoapwdc.projectsWithDocCount.length);
         orgInfo.projectInfos.forEachIndexed((j, projectInfo) {
           final pwdc = myUoapwdc.projectsWithDocCount[j];
-          expect(pwdc.project.id, projectInfo.id);
-          expect(pwdc.project.name, projectInfo.name);
+          expect(pwdc.project.projectID, projectInfo.id);
+          expect(pwdc.project.projectName, projectInfo.name);
           expect(pwdc.docCount, projectInfo.docCount);
         });
       });

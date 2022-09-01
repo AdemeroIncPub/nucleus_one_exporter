@@ -12,7 +12,7 @@ class MyUserOrgAndProjectsWithDocCount {
 class MyUserOrgProjectWithDocCount {
   MyUserOrgProjectWithDocCount(this.project, this.docCount);
 
-  n1.OrganizationProject project;
+  n1.UserOrganizationProject project;
   int docCount;
 }
 
@@ -46,10 +46,10 @@ extension MyGenerators on Any {
 
   Generator<MyUserOrgProjectWithDocCount> get _myUserOrgProjectWithDocCount =>
       any.combine2(
-        organizationProject,
+        userOrganizationProject,
         any.positiveIntOrZero,
         (
-          n1.OrganizationProject userOrganizationProject,
+          n1.UserOrganizationProject userOrganizationProject,
           int docCount,
         ) =>
             MyUserOrgProjectWithDocCount(userOrganizationProject, docCount),
@@ -77,6 +77,67 @@ extension MyGenerators on Any {
             organizationID: organizationID,
             organizationName: organizationName,
             userEmail: userEmail,
+          );
+        },
+      );
+
+  Generator<n1.UserOrganizationProject> get userOrganizationProject =>
+      any.combine2(
+        any.combine7(
+          any.list(printableAscii),
+          any.bool,
+          any.printableAscii,
+          any.printableAsciiWithSpace,
+          any.printableAscii,
+          any.printableAscii,
+          any.bool,
+          (
+            List<String> assignmentTypes,
+            bool hasAssignment,
+            String organizationID,
+            String organizationName,
+            String projectAccessType,
+            String projectID,
+            bool projectIsDisabled,
+          ) {
+            return Tuple7(
+              assignmentTypes,
+              hasAssignment,
+              organizationID,
+              organizationName,
+              projectAccessType,
+              projectID,
+              projectIsDisabled,
+            );
+          },
+        ),
+        any.combine2(
+          any.printableAsciiWithSpace,
+          any.printableAscii,
+          (
+            String projectName,
+            String userEmail,
+          ) {
+            return Tuple2(
+              projectName,
+              userEmail,
+            );
+          },
+        ),
+        (
+          Tuple7<List<String>, bool, String, String, String, String, bool> a,
+          Tuple2<String, String> b,
+        ) {
+          return n1.UserOrganizationProject(
+            assignmentTypes: a.item1,
+            hasAssignment: a.item2,
+            organizationID: a.item3,
+            organizationName: a.item4,
+            projectAccessType: a.item5,
+            projectID: a.item6,
+            projectIsDisabled: a.item7,
+            projectName: b.item1,
+            userEmail: b.item2,
           );
         },
       );

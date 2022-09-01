@@ -15,15 +15,15 @@ import 'package:nucleus_one_exporter/cli/cli.dart';
 Future<void> main(List<String> args) async {
   await _initializeDependencies(args);
   final logger = GetIt.I.get<Logger>();
+  final ansi = logger.ansi;
 
   final rootCommand = createRootCommand();
-  return rootCommand
-      .run(args)
-      .onError<n1.HttpException>((error, stackTrace) =>
-          logger.stderr('Error communicating with Nucleus One API. '
-              '${["Status Code: ${error.status}", error.message].join(". ")}'))
-      .onError<UsageException>(
-          (error, stackTrace) => logger.stderr(error.toString()));
+  return rootCommand.run(args).onError<n1.HttpException>((error, stackTrace) {
+    logger.stderr('${ansi.red}'
+        'Error communicating with Nucleus One API. '
+        '${["Status Code: ${error.status}", error.message].join(". ")}'
+        '${ansi.none}');
+  }).onError<UsageException>((error, stackTrace) => logger.stderr('$error'));
 }
 
 Future<void> _initializeDependencies(List<String> args) async {
