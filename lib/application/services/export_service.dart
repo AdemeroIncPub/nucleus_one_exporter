@@ -55,9 +55,9 @@ class ExportService {
     required String orgId,
     required String projectId,
     required String destination,
-    int maxConcurrentDownloads = 4,
-    bool copyIfExists = false,
     bool allowNonEmptyDestination = false,
+    bool copyIfExists = false,
+    int maxConcurrentDownloads = 4,
   }) async {
     final results = ExportResults(DateTime.now());
 
@@ -65,9 +65,9 @@ class ExportService {
         orgId: orgId,
         projectId: projectId,
         destination: destination,
-        maxConcurrentDownloads: maxConcurrentDownloads,
-        copyIfExists: copyIfExists,
         allowNonEmptyDestination: allowNonEmptyDestination,
+        copyIfExists: copyIfExists,
+        maxConcurrentDownloads: maxConcurrentDownloads,
         pathValidator: _pathValidator);
 
     return validated
@@ -280,9 +280,9 @@ class _Validated {
     required this.orgId,
     required this.projectId,
     required this.destination,
-    required this.maxConcurrentDownloads,
-    required this.copyIfExists,
     required this.allowNonEmptyDestination,
+    required this.copyIfExists,
+    required this.maxConcurrentDownloads,
     required this.pathValidator,
   });
 
@@ -290,9 +290,9 @@ class _Validated {
     required String orgId,
     required String projectId,
     required String destination,
-    required int maxConcurrentDownloads,
-    required bool copyIfExists,
     required bool allowNonEmptyDestination,
+    required bool copyIfExists,
+    required int maxConcurrentDownloads,
     required PathValidator pathValidator,
   }) {
     final failures = <ExportFailure>[];
@@ -322,9 +322,9 @@ class _Validated {
           orgId: orgId,
           projectId: projectId,
           destination: Directory(destination),
-          maxConcurrentDownloads: maxConcurrentDownloads,
-          copyIfExists: copyIfExists,
           allowNonEmptyDestination: allowNonEmptyDestination,
+          copyIfExists: copyIfExists,
+          maxConcurrentDownloads: maxConcurrentDownloads,
           pathValidator: pathValidator));
     }
   }
@@ -332,8 +332,8 @@ class _Validated {
   final String orgId;
   final String projectId;
   final Directory destination;
-  final int maxConcurrentDownloads;
-  final bool copyIfExists;
   final bool allowNonEmptyDestination;
+  final bool copyIfExists;
+  final int maxConcurrentDownloads;
   final PathValidator pathValidator;
 }

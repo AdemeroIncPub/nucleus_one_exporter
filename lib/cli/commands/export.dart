@@ -21,13 +21,13 @@ class ExportCommand extends Command<void> {
         _logger = logger ?? GetIt.I<Logger>() {
     argParser.addOption(
       _option_orgId,
-      help: 'Organization ID. (required)',
+      help: 'Organization ID to export from. (required)',
       abbr: 'o',
       valueHelp: 'id',
     );
     argParser.addOption(
       _option_projectId,
-      help: 'Project ID. (required)',
+      help: 'Project ID to export from. (required)',
       abbr: 'p',
       valueHelp: 'id',
     );
@@ -37,6 +37,15 @@ class ExportCommand extends Command<void> {
       abbr: 'd',
       valueHelp: 'local path',
     );
+    argParser.addFlag(
+      _flag_allowNonemptyDestination,
+      help: 'If set, allow export when path contains files or folders.',
+    );
+    argParser.addFlag(
+      _flag_copyIfExists,
+      help: 'Create a copy if the file already exists. If not set, existing '
+          'files will be skipped.',
+    );
     argParser.addOption(
       _option_maxConcurrentDownloads,
       help: 'Maximum number of documents to download simultaneously.',
@@ -44,21 +53,13 @@ class ExportCommand extends Command<void> {
       valueHelp: 'max',
       defaultsTo: '4',
     );
-    argParser.addFlag(
-      _flag_copyIfExists,
-      help: 'Create a copy if the file already exists.',
-    );
-    argParser.addFlag(
-      _flag_allowNonemptyDestination,
-      help: 'If the specified path contains files or folders, export anyway.',
-    );
   }
 
   static const _option_orgId = 'organization-id';
   static const _option_projectId = 'project-id';
   static const _option_destination = 'destination';
-  static const _flag_copyIfExists = 'copy-if-exists';
   static const _flag_allowNonemptyDestination = 'allow-nonempty-destination';
+  static const _flag_copyIfExists = 'copy-if-exists';
   static const _option_maxConcurrentDownloads = 'max-concurrent-downloads';
 
   static const _maxConcurrentDownloadsInvalidMessage =
@@ -136,10 +137,10 @@ class ExportCommand extends Command<void> {
           orgId: tryCast(args[_option_orgId], ''),
           projectId: tryCast(args[_option_projectId], ''),
           destination: tryCast(args[_option_destination], ''),
-          maxConcurrentDownloads: _getMaxDownloads(args)!,
-          copyIfExists: args[_flag_copyIfExists] as bool,
           allowNonEmptyDestination:
               args[_flag_allowNonemptyDestination] as bool,
+          copyIfExists: args[_flag_copyIfExists] as bool,
+          maxConcurrentDownloads: _getMaxDownloads(args)!,
         )
         // todo(apn): this should not show usage
         .mapLeft(_mapExportFailures2Messages);
