@@ -3,7 +3,8 @@ module.exports = {
     extends: ['@commitlint/config-conventional'],
     rules: {
         // Add scopes as needed
-        'scope-enum': [2, 'always', [
+      'scope-enum': [2, 'always', [
+            'gui',
             'lib',
             'cli'
         ]],

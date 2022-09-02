@@ -5,7 +5,11 @@ machine. A GUI tool is expected to follow in the future.
 
 For more information about Nucleus One, see https://nucleus.one/.
 
-## Usage
+## GUI Usage
+- Ensure the Flutter SDK is installed on your machine.
+- TODO(apn)
+
+## CLI Usage
 - Ensure the Dart or Flutter SDK is installed on your machine.
 - Clone this repository to your machine.
 - Open a terminal window to your cloned repository (to the same folder as this
@@ -36,6 +40,7 @@ For more information about Nucleus One, see https://nucleus.one/.
   ```
 
 ## Development
+Ensure the Flutter SDK is installed on your machine.
 
 ### Pull Requests and Commits
 
@@ -56,5 +61,5 @@ to be written direclty in your editor.
 ### Testing
 
 ```
-dart test
+flutter test
 ```
