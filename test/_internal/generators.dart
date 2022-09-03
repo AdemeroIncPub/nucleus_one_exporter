@@ -48,11 +48,7 @@ extension MyGenerators on Any {
       any.combine2(
         userOrganizationProject,
         any.positiveIntOrZero,
-        (
-          n1.UserOrganizationProject userOrganizationProject,
-          int docCount,
-        ) =>
-            MyUserOrgProjectWithDocCount(userOrganizationProject, docCount),
+        MyUserOrgProjectWithDocCount.new,
       );
 
   Generator<n1.UserOrganization> get userOrganization => any.combine6(

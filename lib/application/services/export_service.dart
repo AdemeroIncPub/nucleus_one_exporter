@@ -77,7 +77,7 @@ class ExportService {
             .mapLeft((l) => [l]))
         .map((r) => r.setFinished())
         .run()
-        .whenComplete(() => _httpClient.close());
+        .whenComplete(_httpClient.close);
   }
 
   TaskEither<ExportFailure, ExportResults> _exportDocuments(
@@ -204,7 +204,7 @@ class ExportService {
       if (outFile != null && outFile!.statSync().size == 0) {
         try {
           outFile!.deleteSync();
-        } catch (ex) {/* well, we tried... */}
+        } on Exception {/* well, we tried... */}
       }
       return _DownloadFailure(_DownloadFailureType.unknownError, doc,
           results.docSkippedUnknownFailure());

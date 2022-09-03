@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_positional_boolean_parameters
+
 import 'package:glados/glados.dart';
 import 'package:nucleus_one_exporter/application/path_validator.dart';
 import 'package:path/path.dart' as path_;
