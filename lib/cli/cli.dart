@@ -9,7 +9,11 @@ import 'commands/export.dart';
 import 'commands/info.dart';
 
 CommandRunner<void> createRootCommand() {
-  return CommandRunner(productId, productName, usageLineLength: usageLineLength)
+  return CommandRunner(
+    productId,
+    '$productName\nFor more information about Nucleus One, visit $marketingUrl.',
+    usageLineLength: usageLineLength,
+  )
     ..addCommand(ApiKeyCommand())
     ..addCommand(InfoCommand())
     ..addCommand(ExportCommand())

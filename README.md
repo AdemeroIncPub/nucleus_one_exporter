@@ -3,7 +3,7 @@
 Use this CLI tool to export documents from a Nucleus One project to your local
 machine. A GUI tool is expected to follow in the future.
 
-For more information about Nucleus One, see https://nucleus.one/.
+For more information about Nucleus One, visit https://nucleus.one/.
 
 ## GUI Usage
 - Ensure the Flutter SDK is installed on your machine.
@@ -15,9 +15,9 @@ For more information about Nucleus One, see https://nucleus.one/.
 - Open a terminal window to your cloned repository (to the same folder as this
   README.md).
 - Get required dependencies:
-   ```
-   dart pub get
-   ```
+  ```
+  dart pub get
+  ```
 - Generate an api key in your user profile in the Nucleus One web app.
 - Set your api key:
   ```

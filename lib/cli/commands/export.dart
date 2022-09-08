@@ -39,7 +39,8 @@ class ExportCommand extends Command<void> {
     );
     argParser.addFlag(
       _flag_allowNonemptyDestination,
-      help: 'If set, allow export when path contains files or folders.',
+      help:
+          'If set, allow export even if destination contains files or folders.',
     );
     argParser.addFlag(
       _flag_copyIfExists,
