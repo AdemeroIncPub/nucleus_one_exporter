@@ -1,16 +1,16 @@
 import 'package:get_it/get_it.dart';
 import 'package:glados/glados.dart';
 import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
-import 'package:nucleus_one_exporter/application/services/api_key_service.dart';
+import 'package:nucleus_one_exporter/application/settings.dart';
 
-import '../../../../_internal/fakes.dart';
-import '../../../../_internal/generators.dart';
-import '../../../../_internal/mocks.dart';
+import '../../../_internal/fakes.dart';
+import '../../../_internal/generators.dart';
+import '../../../_internal/mocks.dart';
 
 final _gi = GetIt.I;
 
 void main() {
-  group('setApiKey tests', () {
+  group('modify apiKey tests', () {
     setUp(() async {
       _gi.registerLazySingletonAsync<n1.NucleusOneApp>(
           () => Future.value(MockNucleusOneApp()));
@@ -25,15 +25,15 @@ void main() {
       "setApiKey does nothing if key doesn't change",
       (newApiKey) async {
         final initialN1App = _gi<n1.NucleusOneApp>();
-        final settings = FakeSettings();
-        settings.apiKey = newApiKey;
-        final sut = ApiKeyService(settings: settings);
+        final sbw = FakeStorageBoxWrapper();
+        sbw[Settings.key_apiKey] = newApiKey;
+        final sut = Settings(storageBoxWrapper: sbw);
         expect(initialN1App, same(_gi<n1.NucleusOneApp>()));
-        expect(settings.apiKey, newApiKey);
+        expect(sbw[Settings.key_apiKey], newApiKey);
 
         await sut.setApiKey(newApiKey);
 
-        expect(settings.apiKey, newApiKey);
+        expect(sbw[Settings.key_apiKey], newApiKey);
         final newN1App = _gi<n1.NucleusOneApp>();
         expect(newN1App, same(initialN1App));
       },
@@ -51,14 +51,14 @@ void main() {
             }
 
             final initialN1App = _gi<n1.NucleusOneApp>();
-            final settings = FakeSettings();
-            final sut = ApiKeyService(settings: settings);
-            expect(settings.apiKey, '');
+            final sbw = FakeStorageBoxWrapper();
+            final sut = Settings(storageBoxWrapper: sbw);
+            expect(sbw[Settings.key_apiKey], '');
             expect(initialN1App, same(_gi<n1.NucleusOneApp>()));
 
             await sut.setApiKey(newApiKey);
 
-            expect(settings.apiKey, newApiKey);
+            expect(sbw[Settings.key_apiKey], newApiKey);
             final newN1App = _gi<n1.NucleusOneApp>();
             expect(newN1App, isNot(same(initialN1App)));
             expect(newN1App, same(_gi<n1.NucleusOneApp>()));
@@ -70,11 +70,11 @@ void main() {
     group(
       'setApiKey starts with the previous key set',
       () {
-        var settings = FakeSettings();
+        var sbw = FakeStorageBoxWrapper();
         var oldKey = '';
 
         setUp(() {
-          settings = FakeSettings();
+          sbw = FakeStorageBoxWrapper();
         });
 
         Glados(any.printableAscii).test(
@@ -86,13 +86,13 @@ void main() {
             }
 
             final initialN1App = _gi<n1.NucleusOneApp>();
-            final sut = ApiKeyService(settings: settings);
-            expect(settings.apiKey, oldKey);
+            final sut = Settings(storageBoxWrapper: sbw);
+            expect(sbw[Settings.key_apiKey], oldKey);
             expect(initialN1App, same(_gi<n1.NucleusOneApp>()));
 
             await sut.setApiKey(newApiKey);
 
-            expect(settings.apiKey, newApiKey);
+            expect(sbw[Settings.key_apiKey], newApiKey);
             final newN1App = _gi<n1.NucleusOneApp>();
             expect(newN1App, isNot(same(initialN1App)));
             expect(newN1App, same(_gi<n1.NucleusOneApp>()));
@@ -101,22 +101,22 @@ void main() {
         );
       },
     );
-  });
 
-  group('removeApiKey tests', () {
-    Glados(any.printableAscii).test(
-      'removeApiKey removes any key',
-      (apiKey) {
-        // Arrange
-        final settings = FakeSettings();
-        settings.apiKey = apiKey;
-        final sut = ApiKeyService(settings: settings);
+    group("setApiKey to '' tests", () {
+      Glados(any.printableAscii).test(
+        'removeApiKey removes any key',
+        (apiKey) async {
+          // Arrange
+          final sbw = FakeStorageBoxWrapper();
+          sbw[Settings.key_apiKey] = apiKey;
+          final sut = Settings(storageBoxWrapper: sbw);
 
-        sut.removeApiKey();
+          await sut.setApiKey('');
 
-        expect('', settings.apiKey);
-      },
-    );
+          expect('', sbw[Settings.key_apiKey]);
+        },
+      );
+    });
   });
 
   group('getApiKey tests', () {
@@ -124,13 +124,13 @@ void main() {
       'getApiKey returns any key',
       (apiKey) {
         // Arrange
-        final settings = FakeSettings();
-        final sut = ApiKeyService(settings: settings);
-        expect('', sut.getApiKey());
+        final sbw = FakeStorageBoxWrapper();
+        final sut = Settings(storageBoxWrapper: sbw);
+        expect('', sut.apiKey);
 
-        settings.apiKey = apiKey;
+        sbw[Settings.key_apiKey] = apiKey;
 
-        expect(apiKey, sut.getApiKey());
+        expect(apiKey, sut.apiKey);
       },
     );
   });

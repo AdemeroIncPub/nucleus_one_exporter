@@ -3,15 +3,15 @@ import 'package:args/command_runner.dart';
 import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
 
-import '../../application/services/api_key_service.dart';
+import '../../application/settings.dart';
 import '../cli.dart';
 
 class ApiKeyRemoveCommand extends Command<void> {
-  ApiKeyRemoveCommand({ApiKeyService? apiKeyService, Logger? logger})
-      : _apiKeyService = apiKeyService ?? GetIt.I<ApiKeyService>(),
+  ApiKeyRemoveCommand({Settings? settings, Logger? logger})
+      : _settings = settings ?? GetIt.I<Settings>(),
         _logger = logger ?? GetIt.I<Logger>();
 
-  final ApiKeyService _apiKeyService;
+  final Settings _settings;
   final Logger _logger;
 
   @override
@@ -25,8 +25,8 @@ class ApiKeyRemoveCommand extends Command<void> {
   String get description => 'Remove your API key from this device.';
 
   @override
-  void run() {
-    _apiKeyService.removeApiKey();
+  Future<void> run() async {
+    await _settings.setApiKey('');
     _logger.stdout('API key removed.');
   }
 }

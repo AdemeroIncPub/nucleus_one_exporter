@@ -3,15 +3,15 @@ import 'package:args/command_runner.dart';
 import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
 
-import '../../application/services/api_key_service.dart';
+import '../../application/settings.dart';
 import '../cli.dart';
 
 class ApiKeySetCommand extends Command<void> {
-  ApiKeySetCommand({ApiKeyService? apiKeyService, Logger? logger})
-      : _apiKeyService = apiKeyService ?? GetIt.I<ApiKeyService>(),
+  ApiKeySetCommand({Settings? settings, Logger? logger})
+      : _settings = settings ?? GetIt.I<Settings>(),
         _logger = logger ?? GetIt.I<Logger>();
 
-  final ApiKeyService _apiKeyService;
+  final Settings _settings;
   final Logger _logger;
 
   @override
@@ -38,7 +38,7 @@ class ApiKeySetCommand extends Command<void> {
     }
 
     final newApiKey = (argResults?.rest[0])!;
-    await _apiKeyService.setApiKey(newApiKey);
+    await _settings.setApiKey(newApiKey);
     _logger.stdout('API key set: $newApiKey');
   }
 }

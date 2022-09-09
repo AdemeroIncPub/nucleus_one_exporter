@@ -6,7 +6,6 @@ import 'package:get_it/get_it.dart';
 import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
 import 'package:nucleus_one_exporter/application/nucleus_one_sdk_service.dart';
 import 'package:nucleus_one_exporter/application/path_validator.dart';
-import 'package:nucleus_one_exporter/application/services/api_key_service.dart';
 import 'package:nucleus_one_exporter/application/services/export_service.dart';
 import 'package:nucleus_one_exporter/application/services/user_orgs_summary_service.dart';
 import 'package:nucleus_one_exporter/application/settings.dart';
@@ -37,8 +36,8 @@ Future<void> _initializeDependencies(List<String> args) async {
 
   final gi = GetIt.I;
   gi.registerSingleton<Logger>(logger);
+  gi.registerSingleton<StorageBoxWrapper>(StorageBoxWrapper());
   gi.registerSingleton<Settings>(Settings());
-  gi.registerSingleton<ApiKeyService>(ApiKeyService());
   gi.registerSingleton<PathValidator>(PathValidator());
   gi.registerSingleton<NucleusOneSdkService>(NucleusOneSdkService());
   gi.registerSingleton<ExportService>(ExportService());
