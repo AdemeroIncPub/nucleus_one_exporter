@@ -1,31 +1,41 @@
+import 'package:collection/collection.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
 import 'package:url_launcher/link.dart';
 
 import '../application/constants.dart';
+import '../application/services/user_orgs_summary_service.dart';
+import 'providers.dart';
 import 'util/dialog_helper.dart';
 import 'util/style.dart';
 
-const orgList = <String>['org 1', 'org 2', 'org 3'];
-const projectList = <String>['project 1', 'project 2', 'project 3'];
-
-class ExportSettingsScreen extends StatefulWidget {
+class ExportSettingsScreen extends ConsumerStatefulWidget {
   const ExportSettingsScreen({super.key});
 
   @override
-  State<ExportSettingsScreen> createState() => _ExportSettingsScreenState();
+  ConsumerState createState() => _ExportSettingsScreenState();
 }
 
-class _ExportSettingsScreenState extends State<ExportSettingsScreen> {
+class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
   bool allowNonEmptyDestination = false;
   final apiKeyTextFieldController = TextEditingController();
   bool copyIfExists = false;
   final destinationTextFieldController = TextEditingController();
   final maxDownloadsTextFieldController = TextEditingController(text: '4');
-  String? orgValue;
-  String? projectValue;
+  String? selectedOrgId;
+  String? selectedProjectId;
+  AsyncValue<UserOrgsSummary> userOrgsSummary = const AsyncLoading();
+
+  @override
+  void initState() {
+    super.initState();
+    final settings = ref.read(settingsProvider);
+    apiKeyTextFieldController.text = settings.apiKey;
+  }
 
   Column _introText(BuildContext context) {
     final theme = Theme.of(context);
@@ -80,7 +90,7 @@ class _ExportSettingsScreenState extends State<ExportSettingsScreen> {
           );
           if (apiKey != null) {
             apiKeyTextFieldController.text = apiKey;
-            /* TODO(apn): refresh data */
+            await ref.read(settingsProvider).setApiKey(apiKey);
           }
         },
       ),
@@ -88,9 +98,17 @@ class _ExportSettingsScreenState extends State<ExportSettingsScreen> {
         child: TextField(
           controller: apiKeyTextFieldController,
           readOnly: true,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             labelText: 'API Key',
             hintText: 'Use the edit button to set your API key.',
+            errorText: userOrgsSummary.whenOrNull(
+              error: (error, stackTrace) {
+                if (error is n1.HttpException) {
+                  return 'Error connecting to Nucleus One. Please verify your API key is correct.';
+                }
+                return 'Unknown error connecting to Nucleus One.';
+              },
+            ),
           ),
         ),
       ),
@@ -100,26 +118,37 @@ class _ExportSettingsScreenState extends State<ExportSettingsScreen> {
   TableRow _refreshDataRow() {
     return _buildTableRow(
       item2: TextButton(
-        onPressed: () {},
+        onPressed: () {
+          ref.refresh(userOrgsSummaryProvider);
+        },
         child: const Text('⟳ Refresh organization and project lists'),
       ),
     );
   }
 
   TableRow _orgDropdownRow() {
+    final items = userOrgsSummary.whenOrNull(
+      data: (summaryInfo) {
+        return summaryInfo.orgInfos.map(
+          (orgInfo) => DropdownMenuItem(
+            value: orgInfo.id,
+            child: Text(orgInfo.name),
+          ),
+        );
+      },
+    );
+
     return _buildTableRow(
       item2: DropdownButton(
-        value: orgValue,
+        value: _existingDropdownValueOrNull(
+          selectedOrgId,
+          items?.map((item) => item.value!),
+        ),
         hint: const Text('Select Organization'),
-        items: orgList
-            .map((value) => DropdownMenuItem(
-                  value: value,
-                  child: Text(value),
-                ))
-            .toList(),
+        items: items?.toList(),
         onChanged: (value) {
           setState(() {
-            orgValue = value;
+            selectedOrgId = value;
           });
         },
       ),
@@ -127,19 +156,30 @@ class _ExportSettingsScreenState extends State<ExportSettingsScreen> {
   }
 
   TableRow _projectDropdownRow() {
+    final items = userOrgsSummary.whenOrNull(
+      data: (summaryInfo) {
+        final selectedOrg = summaryInfo.orgInfos
+            .firstWhereOrNull((orgInfo) => orgInfo.id == selectedOrgId);
+        return selectedOrg?.projectInfos.map(
+          (projectInfo) => DropdownMenuItem(
+            value: projectInfo.id,
+            child: Text(projectInfo.name),
+          ),
+        );
+      },
+    );
+
     return _buildTableRow(
       item2: DropdownButton(
-        value: projectValue,
+        value: _existingDropdownValueOrNull(
+          selectedProjectId,
+          items?.map((item) => item.value!),
+        ),
         hint: const Text('Select Project'),
-        items: projectList
-            .map((value) => DropdownMenuItem(
-                  value: value,
-                  child: Text(value),
-                ))
-            .toList(),
+        items: items?.toList(),
         onChanged: (value) {
           setState(() {
-            projectValue = value;
+            selectedProjectId = value;
           });
         },
       ),
@@ -208,6 +248,17 @@ class _ExportSettingsScreenState extends State<ExportSettingsScreen> {
     );
   }
 
+  Widget _exportButton() {
+    return ElevatedButton(
+      onPressed: userOrgsSummary.whenOrNull(
+        data: (data) => () async {
+          //validate
+        },
+      ),
+      child: const Text('Export Documents'),
+    );
+  }
+
   TableRow _maxConcurrentDownloadsControlsRow(BuildContext context) {
     return _buildTableRow(
       item2: Row(
@@ -252,6 +303,19 @@ class _ExportSettingsScreenState extends State<ExportSettingsScreen> {
     ]);
   }
 
+  String? _existingDropdownValueOrNull(
+    String? proposedValue,
+    Iterable<String>? values,
+  ) {
+    if (proposedValue == null || values == null) {
+      return null;
+    }
+    if (values.any((v) => v == proposedValue)) {
+      return proposedValue;
+    }
+    return null;
+  }
+
   Table _settingsTable(BuildContext context) {
     return Table(
       columnWidths: const <int, TableColumnWidth>{
@@ -278,8 +342,38 @@ class _ExportSettingsScreenState extends State<ExportSettingsScreen> {
     );
   }
 
+  Column _mainContent(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          productName,
+          style: Theme.of(context).textTheme.headlineLarge,
+        ),
+        const SizedBox(height: Insets.compSmall),
+        Align(
+          alignment: Alignment.topLeft,
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 800),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _introText(context),
+                const SizedBox(height: Insets.compSmall),
+                _settingsTable(context),
+                const SizedBox(height: Insets.compLarge),
+                _exportButton(),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    userOrgsSummary = ref.watch(userOrgsSummaryProvider);
+
     return Scaffold(
       body: Scrollbar(
         thumbVisibility: true,
@@ -287,34 +381,7 @@ class _ExportSettingsScreenState extends State<ExportSettingsScreen> {
           primary: true,
           child: Container(
             margin: const EdgeInsets.all(Insets.compLarge).copyWith(top: 12),
-            child: Column(
-              children: [
-                Text(
-                  productName,
-                  style: Theme.of(context).textTheme.headlineLarge,
-                ),
-                const SizedBox(height: Insets.compSmall),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Container(
-                    constraints: const BoxConstraints(maxWidth: 800),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _introText(context),
-                        const SizedBox(height: Insets.compSmall),
-                        _settingsTable(context),
-                        const SizedBox(height: Insets.compLarge),
-                        ElevatedButton(
-                          onPressed: () {},
-                          child: const Text('Export Documents'),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            child: _mainContent(context),
           ),
         ),
       ),

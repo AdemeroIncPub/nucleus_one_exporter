@@ -2,6 +2,8 @@ import 'package:get_it/get_it.dart';
 import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
 
 class NucleusOneSdkService {
+  NucleusOneSdkService({this.n1App});
+
   n1.NucleusOneApp? n1App;
 
   // It's hard to know when n1.NucleusOneApp singleton might be reset (changed

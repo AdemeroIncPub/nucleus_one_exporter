@@ -1,14 +1,13 @@
 // ignore_for_file: constant_identifier_names
 
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:meta/meta.dart';
-import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
 import 'package:storagebox/storagebox.dart';
 
 import '../util/runtime_helper.dart';
 import 'constants.dart';
 
-class Settings {
+class Settings extends ChangeNotifier {
   Settings({StorageBoxWrapper? storageBoxWrapper})
       : _sbw = storageBoxWrapper ?? GetIt.I<StorageBoxWrapper>();
 
@@ -27,8 +26,9 @@ class Settings {
     // If api key changed, save new key and recreate NucleusOneApp.
     if (newApiKey != oldApiKey) {
       _sbw[key_apiKey] = newApiKey;
-      await GetIt.I.resetLazySingleton<n1.NucleusOneApp>();
-      await GetIt.I.isReady<n1.NucleusOneApp>();
+      notifyListeners();
+      // await GetIt.I.resetLazySingleton<n1.NucleusOneApp>();
+      // await GetIt.I.isReady<n1.NucleusOneApp>();
     }
   }
 }
