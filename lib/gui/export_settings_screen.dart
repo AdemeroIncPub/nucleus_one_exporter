@@ -21,20 +21,68 @@ class ExportSettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
-  bool allowNonEmptyDestination = false;
   final apiKeyTextFieldController = TextEditingController();
-  bool copyIfExists = false;
   final destinationTextFieldController = TextEditingController();
   final maxDownloadsTextFieldController = TextEditingController(text: '4');
+
+  bool allowNonEmptyDestination = false;
+  bool copyIfExists = false;
+  AsyncValue<UserOrgsSummary> userOrgsSummary = const AsyncLoading();
+
   String? selectedOrgId;
   String? selectedProjectId;
-  AsyncValue<UserOrgsSummary> userOrgsSummary = const AsyncLoading();
 
   @override
   void initState() {
     super.initState();
     final settings = ref.read(settingsProvider);
     apiKeyTextFieldController.text = settings.apiKey;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    userOrgsSummary = ref.watch(userOrgsSummaryProvider);
+
+    return Scaffold(
+      body: Scrollbar(
+        thumbVisibility: true,
+        child: SingleChildScrollView(
+          primary: true,
+          child: Container(
+            margin: const EdgeInsets.all(Insets.compLarge).copyWith(top: 12),
+            child: _mainContent(context),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Column _mainContent(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          productName,
+          style: Theme.of(context).textTheme.headlineLarge,
+        ),
+        const SizedBox(height: Insets.compSmall),
+        Align(
+          alignment: Alignment.topLeft,
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 800),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _introText(context),
+                const SizedBox(height: Insets.compSmall),
+                _settingsTable(context),
+                const SizedBox(height: Insets.compLarge),
+                _exportButton(),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   Column _introText(BuildContext context) {
@@ -71,6 +119,32 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
             ],
           ),
         ),
+      ],
+    );
+  }
+
+  Table _settingsTable(BuildContext context) {
+    return Table(
+      columnWidths: const <int, TableColumnWidth>{
+        0: IntrinsicColumnWidth(),
+        1: FlexColumnWidth(),
+      },
+      textBaseline: TextBaseline.alphabetic,
+      defaultVerticalAlignment: TableCellVerticalAlignment.baseline,
+      children: [
+        _apiKeyControlsRow(context),
+        _spacerRow(height: Insets.compSmall),
+        _refreshDataRow(),
+        _spacerRow(height: Insets.compSmall),
+        _orgDropdownRow(),
+        _spacerRow(height: Insets.compSmall),
+        _projectDropdownRow(),
+        _spacerRow(height: Insets.compSmall),
+        _destinationControlsRow(context),
+        _spacerRow(height: Insets.compSmall),
+        _optionControlsRow(),
+        _spacerRow(height: Insets.compSmall),
+        _maxConcurrentDownloadsControlsRow(context),
       ],
     );
   }
@@ -248,17 +322,6 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
     );
   }
 
-  Widget _exportButton() {
-    return ElevatedButton(
-      onPressed: userOrgsSummary.whenOrNull(
-        data: (data) => () async {
-          //validate
-        },
-      ),
-      child: const Text('Export Documents'),
-    );
-  }
-
   TableRow _maxConcurrentDownloadsControlsRow(BuildContext context) {
     return _buildTableRow(
       item2: Row(
@@ -289,6 +352,17 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
     );
   }
 
+  Widget _exportButton() {
+    return ElevatedButton(
+      onPressed: userOrgsSummary.whenOrNull(
+        data: (data) => () async {
+          //validate
+        },
+      ),
+      child: const Text('Export Documents'),
+    );
+  }
+
   TableRow _spacerRow({required double height}) {
     return _buildTableRow(item2: SizedBox(height: height));
   }
@@ -314,77 +388,5 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
       return proposedValue;
     }
     return null;
-  }
-
-  Table _settingsTable(BuildContext context) {
-    return Table(
-      columnWidths: const <int, TableColumnWidth>{
-        0: IntrinsicColumnWidth(),
-        1: FlexColumnWidth(),
-      },
-      textBaseline: TextBaseline.alphabetic,
-      defaultVerticalAlignment: TableCellVerticalAlignment.baseline,
-      children: [
-        _apiKeyControlsRow(context),
-        _spacerRow(height: Insets.compSmall),
-        _refreshDataRow(),
-        _spacerRow(height: Insets.compSmall),
-        _orgDropdownRow(),
-        _spacerRow(height: Insets.compSmall),
-        _projectDropdownRow(),
-        _spacerRow(height: Insets.compSmall),
-        _destinationControlsRow(context),
-        _spacerRow(height: Insets.compSmall),
-        _optionControlsRow(),
-        _spacerRow(height: Insets.compSmall),
-        _maxConcurrentDownloadsControlsRow(context),
-      ],
-    );
-  }
-
-  Column _mainContent(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          productName,
-          style: Theme.of(context).textTheme.headlineLarge,
-        ),
-        const SizedBox(height: Insets.compSmall),
-        Align(
-          alignment: Alignment.topLeft,
-          child: Container(
-            constraints: const BoxConstraints(maxWidth: 800),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _introText(context),
-                const SizedBox(height: Insets.compSmall),
-                _settingsTable(context),
-                const SizedBox(height: Insets.compLarge),
-                _exportButton(),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    userOrgsSummary = ref.watch(userOrgsSummaryProvider);
-
-    return Scaffold(
-      body: Scrollbar(
-        thumbVisibility: true,
-        child: SingleChildScrollView(
-          primary: true,
-          child: Container(
-            margin: const EdgeInsets.all(Insets.compLarge).copyWith(top: 12),
-            child: _mainContent(context),
-          ),
-        ),
-      ),
-    );
   }
 }
