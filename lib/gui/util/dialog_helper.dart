@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 
 Future<String?> showTextInputDialog(
   BuildContext context, {
+  BoxConstraints? contentConstraints,
   String? text,
   Widget? title,
   String? labelText,
+  String? helperText,
   String? hintText,
 }) async {
   final textFieldController = TextEditingController();
@@ -19,14 +21,18 @@ Future<String?> showTextInputDialog(
     builder: (context) {
       return AlertDialog(
         title: title,
-        content: TextField(
-          autofocus: true,
-          controller: textFieldController,
-          decoration: InputDecoration(
-            hintText: hintText,
-            labelText: labelText,
+        content: Container(
+          constraints: contentConstraints,
+          child: TextField(
+            autofocus: true,
+            controller: textFieldController,
+            decoration: InputDecoration(
+              hintText: hintText,
+              helperText: helperText,
+              labelText: labelText,
+            ),
+            onSubmitted: (value) => submitHandler(context, value),
           ),
-          onSubmitted: (value) => submitHandler(context, value),
         ),
         actions: <Widget>[
           ElevatedButton(

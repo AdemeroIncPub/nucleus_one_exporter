@@ -50,14 +50,14 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
           primary: true,
           child: Container(
             margin: const EdgeInsets.all(Insets.compLarge).copyWith(top: 12),
-            child: _mainContent(context),
+            child: _mainContent(),
           ),
         ),
       ),
     );
   }
 
-  Column _mainContent(BuildContext context) {
+  Column _mainContent() {
     return Column(
       children: [
         Text(
@@ -72,9 +72,9 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _introText(context),
+                _introText(),
                 const SizedBox(height: Insets.compSmall),
-                _settingsTable(context),
+                _settingsTable(),
                 const SizedBox(height: Insets.compLarge),
                 _exportButton(),
               ],
@@ -85,7 +85,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
     );
   }
 
-  Column _introText(BuildContext context) {
+  Column _introText() {
     final theme = Theme.of(context);
 
     return Column(
@@ -123,7 +123,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
     );
   }
 
-  Table _settingsTable(BuildContext context) {
+  Table _settingsTable() {
     return Table(
       columnWidths: const <int, TableColumnWidth>{
         0: IntrinsicColumnWidth(),
@@ -132,7 +132,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
       textBaseline: TextBaseline.alphabetic,
       defaultVerticalAlignment: TableCellVerticalAlignment.baseline,
       children: [
-        _apiKeyControlsRow(context),
+        _apiKeyControlsRow(),
         _spacerRow(height: Insets.compSmall),
         _refreshDataRow(),
         _spacerRow(height: Insets.compSmall),
@@ -140,16 +140,16 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
         _spacerRow(height: Insets.compSmall),
         _projectDropdownRow(),
         _spacerRow(height: Insets.compSmall),
-        _destinationControlsRow(context),
+        _destinationControlsRow(),
         _spacerRow(height: Insets.compSmall),
         _optionControlsRow(),
         _spacerRow(height: Insets.compSmall),
-        _maxConcurrentDownloadsControlsRow(context),
+        _maxConcurrentDownloadsControlsRow(),
       ],
     );
   }
 
-  TableRow _apiKeyControlsRow(BuildContext context) {
+  TableRow _apiKeyControlsRow() {
     return _buildTableRow(
       item1: IconButton(
         icon: const Icon(Icons.edit),
@@ -157,14 +157,16 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
         onPressed: () async {
           final apiKey = await showTextInputDialog(
             context,
+            contentConstraints: const BoxConstraints(minWidth: 500),
             title: const Text('Set API Key'),
             text: apiKeyTextFieldController.text,
-            hintText:
-                'Generate keys in your profile in the Nucleus One web app.',
+            helperText:
+                'Generate API keys in your profile in the Nucleus One web app.',
+            hintText: 'Your API Key',
           );
           if (apiKey != null) {
             apiKeyTextFieldController.text = apiKey;
-            await ref.read(settingsProvider).setApiKey(apiKey);
+            ref.read(settingsProvider).setApiKey(apiKey);
           }
         },
       ),
@@ -260,7 +262,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
     );
   }
 
-  TableRow _destinationControlsRow(BuildContext context) {
+  TableRow _destinationControlsRow() {
     return _buildTableRow(
       item1: IconButton(
         icon: const Icon(Icons.edit),
@@ -322,7 +324,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
     );
   }
 
-  TableRow _maxConcurrentDownloadsControlsRow(BuildContext context) {
+  TableRow _maxConcurrentDownloadsControlsRow() {
     return _buildTableRow(
       item2: Row(
         textBaseline: TextBaseline.alphabetic,

@@ -31,14 +31,14 @@ class ApiKeySetCommand extends Command<void> {
       '${runner!.executableName} ${parent!.name} $name <your API key> [arguments]';
 
   @override
-  Future<void> run() async {
+  void run() {
     if (argResults?.rest.length != 1) {
       usageException(
           'The $name command takes a single argument, your API key.');
     }
 
     final newApiKey = (argResults?.rest[0])!;
-    await _settings.setApiKey(newApiKey);
+    _settings.setApiKey(newApiKey);
     _logger.stdout('API key set: $newApiKey');
   }
 }

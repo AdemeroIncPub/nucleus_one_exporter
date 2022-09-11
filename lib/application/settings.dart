@@ -20,15 +20,13 @@ class Settings extends ChangeNotifier {
     return _sbw[key_apiKey];
   }
 
-  Future<void> setApiKey(String newApiKey) async {
+  void setApiKey(String newApiKey) {
     final oldApiKey = apiKey;
 
     // If api key changed, save new key and recreate NucleusOneApp.
     if (newApiKey != oldApiKey) {
       _sbw[key_apiKey] = newApiKey;
       notifyListeners();
-      // await GetIt.I.resetLazySingleton<n1.NucleusOneApp>();
-      // await GetIt.I.isReady<n1.NucleusOneApp>();
     }
   }
 }

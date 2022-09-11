@@ -1,41 +1,56 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
 import 'package:glados/glados.dart';
 import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
+import 'package:nucleus_one_exporter/application/nucleus_one_sdk_service.dart';
 import 'package:nucleus_one_exporter/application/settings.dart';
+import 'package:nucleus_one_exporter/gui/providers.dart';
 
 import '../../../_internal/fakes.dart';
 import '../../../_internal/generators.dart';
-import '../../../_internal/mocks.dart';
 
 final _gi = GetIt.I;
 
 void main() {
   group('modify apiKey tests', () {
-    setUp(() async {
-      _gi.registerLazySingletonAsync<n1.NucleusOneApp>(
-          () => Future.value(MockNucleusOneApp()));
-      return _gi.isReady<n1.NucleusOneApp>();
+    setUp(() {
+      // _gi.registerSingleton<StorageBoxWrapper>(FakeStorageBoxWrapper());
     });
 
     tearDown(() async {
-      return _gi.reset();
+      // This is needed since the GetIt.reset() that follows also clears
+      // the sdk's registrations, but leaving the sdk still initialized. Perhaps
+      // the sdk should be using it's own GetIt.asNewInstance()?
+      // await n1.NucleusOne.resetSdk();
+      // await _gi.reset();
     });
 
     Glados(any.printableAscii).test(
-      "setApiKey does nothing if key doesn't change",
+      // tags: 'only',
+      'setApiKey does nothing if key does not change',
       (newApiKey) async {
-        final initialN1App = _gi<n1.NucleusOneApp>();
-        final sbw = FakeStorageBoxWrapper();
+        _gi.registerSingleton<StorageBoxWrapper>(FakeStorageBoxWrapper());
+        final sbw = _gi.get<StorageBoxWrapper>();
         sbw[Settings.key_apiKey] = newApiKey;
-        final sut = Settings(storageBoxWrapper: sbw);
-        expect(initialN1App, same(_gi<n1.NucleusOneApp>()));
+        final container = ProviderContainer();
+        Future<NucleusOneSdkService> getN1SdkSvc() =>
+            container.read(nucleusOneSdkServiceProvider.future);
+
+        final initialN1SdkSvc = await getN1SdkSvc();
+        expect(initialN1SdkSvc, same(await getN1SdkSvc()));
         expect(sbw[Settings.key_apiKey], newApiKey);
 
-        await sut.setApiKey(newApiKey);
+        final Settings sut = container.read(settingsProvider);
+        sut.setApiKey(newApiKey);
 
         expect(sbw[Settings.key_apiKey], newApiKey);
-        final newN1App = _gi<n1.NucleusOneApp>();
-        expect(newN1App, same(initialN1App));
+        final newN1SdkSvc = await getN1SdkSvc();
+        expect(newN1SdkSvc, same(initialN1SdkSvc));
+
+        container.dispose();
+        await n1.NucleusOne.resetSdk();
+        await _gi.unregister<StorageBoxWrapper>();
+        await _gi.reset();
       },
     );
 
@@ -43,6 +58,7 @@ void main() {
       "setApiKey starts with default of '' (blank)",
       () {
         Glados(any.printableAscii).test(
+          // tags: 'only',
           'setApiKey sets any key and resets NucleusOneApp _if_ key changed',
           (newApiKey) async {
             if (newApiKey == '') {
@@ -50,18 +66,28 @@ void main() {
               return;
             }
 
-            final initialN1App = _gi<n1.NucleusOneApp>();
-            final sbw = FakeStorageBoxWrapper();
-            final sut = Settings(storageBoxWrapper: sbw);
-            expect(sbw[Settings.key_apiKey], '');
-            expect(initialN1App, same(_gi<n1.NucleusOneApp>()));
+            _gi.registerSingleton<StorageBoxWrapper>(FakeStorageBoxWrapper());
+            final sbw = _gi.get<StorageBoxWrapper>();
+            final container = ProviderContainer();
+            Future<NucleusOneSdkService> getN1SdkSvc() =>
+                container.read(nucleusOneSdkServiceProvider.future);
 
-            await sut.setApiKey(newApiKey);
+            final initialN1SdkSvc = await getN1SdkSvc();
+            expect(sbw[Settings.key_apiKey], '');
+            expect(initialN1SdkSvc, same(await getN1SdkSvc()));
+
+            final Settings sut = container.read(settingsProvider);
+            sut.setApiKey(newApiKey);
 
             expect(sbw[Settings.key_apiKey], newApiKey);
-            final newN1App = _gi<n1.NucleusOneApp>();
-            expect(newN1App, isNot(same(initialN1App)));
-            expect(newN1App, same(_gi<n1.NucleusOneApp>()));
+            final newN1SdkSvc = await getN1SdkSvc();
+            expect(newN1SdkSvc, isNot(same(initialN1SdkSvc)));
+            expect(newN1SdkSvc, same(await getN1SdkSvc()));
+
+            container.dispose();
+            await n1.NucleusOne.resetSdk();
+            await _gi.unregister<StorageBoxWrapper>();
+            await _gi.reset();
           },
         );
       },
@@ -70,14 +96,14 @@ void main() {
     group(
       'setApiKey starts with the previous key set',
       () {
-        var sbw = FakeStorageBoxWrapper();
         var oldKey = '';
 
         setUp(() {
-          sbw = FakeStorageBoxWrapper();
+          _gi.registerSingleton<StorageBoxWrapper>(FakeStorageBoxWrapper());
         });
 
         Glados(any.printableAscii).test(
+          // tags: 'only',
           'setApiKey sets any key and resets NucleusOneApp _if_ key changed',
           (newApiKey) async {
             if (newApiKey == oldKey) {
@@ -85,18 +111,26 @@ void main() {
               return;
             }
 
-            final initialN1App = _gi<n1.NucleusOneApp>();
-            final sut = Settings(storageBoxWrapper: sbw);
-            expect(sbw[Settings.key_apiKey], oldKey);
-            expect(initialN1App, same(_gi<n1.NucleusOneApp>()));
+            final sbw = _gi.get<StorageBoxWrapper>();
+            final container = ProviderContainer();
+            Future<NucleusOneSdkService> getN1SdkSvc() =>
+                container.read(nucleusOneSdkServiceProvider.future);
 
-            await sut.setApiKey(newApiKey);
+            final initialN1SdkSvc = await getN1SdkSvc();
+            expect(sbw[Settings.key_apiKey], oldKey);
+            expect(initialN1SdkSvc, same(await getN1SdkSvc()));
+
+            final Settings sut = container.read(settingsProvider);
+            sut.setApiKey(newApiKey);
 
             expect(sbw[Settings.key_apiKey], newApiKey);
-            final newN1App = _gi<n1.NucleusOneApp>();
-            expect(newN1App, isNot(same(initialN1App)));
-            expect(newN1App, same(_gi<n1.NucleusOneApp>()));
+            final newN1SdkSvc = await getN1SdkSvc();
+            expect(newN1SdkSvc, isNot(same(initialN1SdkSvc)));
+            expect(newN1SdkSvc, same(await getN1SdkSvc()));
             oldKey = newApiKey;
+
+            container.dispose();
+            await n1.NucleusOne.resetSdk();
           },
         );
       },
@@ -105,15 +139,16 @@ void main() {
     group("setApiKey to '' tests", () {
       Glados(any.printableAscii).test(
         'removeApiKey removes any key',
-        (apiKey) async {
+        (apiKey) {
           // Arrange
           final sbw = FakeStorageBoxWrapper();
           sbw[Settings.key_apiKey] = apiKey;
           final sut = Settings(storageBoxWrapper: sbw);
+          expect(sbw[Settings.key_apiKey], apiKey);
 
-          await sut.setApiKey('');
+          sut.setApiKey('');
 
-          expect('', sbw[Settings.key_apiKey]);
+          expect(sbw[Settings.key_apiKey], '');
         },
       );
     });
@@ -126,11 +161,11 @@ void main() {
         // Arrange
         final sbw = FakeStorageBoxWrapper();
         final sut = Settings(storageBoxWrapper: sbw);
-        expect('', sut.apiKey);
+        expect(sut.apiKey, '');
 
         sbw[Settings.key_apiKey] = apiKey;
 
-        expect(apiKey, sut.apiKey);
+        expect(sut.apiKey, apiKey);
       },
     );
   });

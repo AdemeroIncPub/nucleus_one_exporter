@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get_it/get_it.dart';
 
+import 'application/settings.dart';
 import 'gui/export_settings_screen.dart';
 
-void main() {
+Future<void> main() async {
+  await _initializeDependencies();
+
   runApp(
     const ProviderScope(
       child: MyApp(),
@@ -26,4 +30,9 @@ class MyApp extends StatelessWidget {
       home: const ExportSettingsScreen(),
     );
   }
+}
+
+Future<void> _initializeDependencies() async {
+  final gi = GetIt.I;
+  gi.registerSingleton<StorageBoxWrapper>(StorageBoxWrapper());
 }

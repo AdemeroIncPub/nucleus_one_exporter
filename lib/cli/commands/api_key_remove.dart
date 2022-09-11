@@ -25,8 +25,8 @@ class ApiKeyRemoveCommand extends Command<void> {
   String get description => 'Remove your API key from this device.';
 
   @override
-  Future<void> run() async {
-    await _settings.setApiKey('');
+  void run() {
+    _settings.setApiKey('');
     _logger.stdout('API key removed.');
   }
 }
