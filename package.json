@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "commit": "git-cz",
-    "prepare": "husky install",
+    "prepare": "husky install && dart pub global activate derry",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "config": {

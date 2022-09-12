@@ -1,6 +1,9 @@
 name: nucleus_one_exporter
 description: A tool for exporting documents from Nucleus One.
-homepage: https://www.ademero.com
+homepage: https://nucleus.one
+
+scripts:
+  gen: dart run build_runner build --delete-conflicting-outputs
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
