@@ -1,17 +1,20 @@
 import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:cli_util/cli_logging.dart';
+import 'package:riverpod/riverpod.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../application/settings.dart';
+import '../../gui/providers.dart';
 import '../cli.dart';
 
 class ApiKeySetCommand extends Command<void> {
-  ApiKeySetCommand({Settings? settings, Logger? logger})
-      : _settings = settings ?? GetIt.I<Settings>(),
+  ApiKeySetCommand({SettingsNotifier? settingsNotifier, Logger? logger})
+      : _settingsNotifier = settingsNotifier ??
+            GetIt.I<ProviderContainer>().read(settingsProvider.notifier),
         _logger = logger ?? GetIt.I<Logger>();
 
-  final Settings _settings;
+  final SettingsNotifier _settingsNotifier;
   final Logger _logger;
 
   @override
@@ -38,7 +41,7 @@ class ApiKeySetCommand extends Command<void> {
     }
 
     final newApiKey = (argResults?.rest[0])!;
-    _settings.setApiKey(newApiKey);
+    _settingsNotifier.setApiKey(newApiKey);
     _logger.stdout('API key set: $newApiKey');
   }
 }

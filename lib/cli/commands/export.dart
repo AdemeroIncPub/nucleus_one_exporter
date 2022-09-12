@@ -7,17 +7,22 @@ import 'package:args/command_runner.dart';
 import 'package:cli_util/cli_logging.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:get_it/get_it.dart';
+import 'package:riverpod/riverpod.dart';
 
 import '../../application/services/export_event.dart';
 import '../../application/services/export_results.dart';
 import '../../application/services/export_service.dart';
+import '../../gui/providers.dart';
 import '../../util/extensions.dart';
 import '../../util/runtime_helper.dart';
 import '../cli.dart';
 
 class ExportCommand extends Command<void> {
-  ExportCommand({ExportService? exportService, Logger? logger})
-      : _exportService = exportService ?? GetIt.I<ExportService>(),
+  ExportCommand({
+    Future<ExportService>? exportService,
+    Logger? logger,
+  })  : _exportService = exportService ??
+            GetIt.I<ProviderContainer>().read(exportServiceProvider.future),
         _logger = logger ?? GetIt.I<Logger>() {
     argParser.addOption(
       _option_orgId,
@@ -66,7 +71,7 @@ class ExportCommand extends Command<void> {
   static const _maxConcurrentDownloadsInvalidMessage =
       'The $_option_maxConcurrentDownloads option must be a number greater than zero.';
 
-  final ExportService _exportService;
+  final Future<ExportService> _exportService;
   final Logger _logger;
 
   @override
@@ -92,7 +97,7 @@ class ExportCommand extends Command<void> {
   Future<void> run() async {
     final args = argResults!;
 
-    final listenToExportEventStream = _listenToExportEventStream(_logger);
+    final listenToExportEventStream = await _listenToExportEventStream(_logger);
 
     await _validate(args)
         .flatMapFuture((_) => _exportDocuments(args))
@@ -133,7 +138,8 @@ class ExportCommand extends Command<void> {
 
   Future<Either<List<String>, ExportResults>> _exportDocuments(
       ArgResults args) async {
-    return _exportService
+    final exportService = await _exportService;
+    return exportService
         .exportDocuments(
           orgId: tryCast(args[_option_orgId], ''),
           projectId: tryCast(args[_option_projectId], ''),
@@ -192,7 +198,8 @@ class ExportCommand extends Command<void> {
     return logger.stdout(msg);
   }
 
-  StreamSubscription<ExportEvent> _listenToExportEventStream(Logger logger) {
+  Future<StreamSubscription<ExportEvent>> _listenToExportEventStream(
+      Logger logger) async {
     final Ansi ansi = logger.ansi;
 
     const prefixExported = '[Exported] ';
@@ -203,7 +210,8 @@ class ExportCommand extends Command<void> {
     var totalDocs = 0;
     var docsProcessed = -1;
     final sw = Stopwatch()..start();
-    return _exportService.exportEventStream.listen((event) {
+    final exportService = await _exportService;
+    return exportService.exportEventStream.listen((event) {
       event.when(
         beginExport:
             ((orgId, orgName, projectId, projectName, localPath, docCount) {

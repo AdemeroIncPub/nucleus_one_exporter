@@ -1,32 +1,37 @@
 // ignore_for_file: constant_identifier_names
 
-import 'package:flutter/material.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:get_it/get_it.dart';
+import 'package:riverpod/riverpod.dart';
 import 'package:storagebox/storagebox.dart';
 
 import '../util/runtime_helper.dart';
 import 'constants.dart';
 
-class Settings extends ChangeNotifier {
-  Settings({StorageBoxWrapper? storageBoxWrapper})
-      : _sbw = storageBoxWrapper ?? GetIt.I<StorageBoxWrapper>();
+part 'settings.freezed.dart';
+
+@freezed
+class Settings with _$Settings {
+  factory Settings({required String apiKey}) = _Settings;
+}
+
+class SettingsNotifier extends StateNotifier<Settings> {
+  SettingsNotifier({StorageBoxWrapper? storageBoxWrapper})
+      : _sbw = storageBoxWrapper ?? GetIt.I<StorageBoxWrapper>(),
+        super(Settings(apiKey: storageBoxWrapper?[key_apiKey] ?? ''));
+
+  final StorageBoxWrapper _sbw;
 
   @visibleForTesting
   static const String key_apiKey = 'apiKey';
 
-  final StorageBoxWrapper _sbw;
-
-  String get apiKey {
-    return _sbw[key_apiKey];
-  }
-
   void setApiKey(String newApiKey) {
-    final oldApiKey = apiKey;
+    final oldApiKey = state.apiKey;
 
     // If api key changed, save new key and recreate NucleusOneApp.
     if (newApiKey != oldApiKey) {
       _sbw[key_apiKey] = newApiKey;
-      notifyListeners();
+      state = state.copyWith(apiKey: newApiKey);
     }
   }
 }

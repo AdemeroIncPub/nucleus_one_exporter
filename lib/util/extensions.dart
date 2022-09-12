@@ -23,3 +23,7 @@ extension MyFutureEitherOps<L, R> on Future<Either<L, R>> {
   Future<Either<L2, R>> mapLeft<L2>(L2 Function(L l) f) async =>
       (await this).fold((L l) => left(f(l)), right);
 }
+
+extension MyFutureOps<T> on Future<T> {
+  Future<R> flatMap<R>(Future<R> Function(T t) f) async => f(await this);
+}

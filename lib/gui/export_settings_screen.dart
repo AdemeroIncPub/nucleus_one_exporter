@@ -166,7 +166,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
           );
           if (apiKey != null) {
             apiKeyTextFieldController.text = apiKey;
-            ref.read(settingsProvider).setApiKey(apiKey);
+            ref.read(settingsProvider.notifier).setApiKey(apiKey);
           }
         },
       ),

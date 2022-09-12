@@ -2,17 +2,21 @@ import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
+import 'package:riverpod/riverpod.dart';
 
 import '../../application/services/user_orgs_summary_service.dart';
+import '../../gui/providers.dart';
 import '../cli.dart';
 
 class InfoCommand extends Command<void> {
-  InfoCommand({UserOrgsSummaryService? userOrgsSummaryService, Logger? logger})
-      : _userOrgsSummaryService =
-            userOrgsSummaryService ?? GetIt.I<UserOrgsSummaryService>(),
+  InfoCommand({
+    Future<UserOrgsSummary>? userOrgsSummary,
+    Logger? logger,
+  })  : _userOrgsSummary = userOrgsSummary ??
+            GetIt.I<ProviderContainer>().read(userOrgsSummaryProvider.future),
         _logger = logger ?? GetIt.I<Logger>();
 
-  final UserOrgsSummaryService _userOrgsSummaryService;
+  final Future<UserOrgsSummary> _userOrgsSummary;
   final Logger _logger;
 
   @override
@@ -28,7 +32,7 @@ class InfoCommand extends Command<void> {
 
   @override
   Future<void> run() async {
-    final summary = await _userOrgsSummaryService.getSummary();
+    final summary = await _userOrgsSummary;
     final printer = InfoPrinter(_logger);
     printer.printInfo(summary);
   }

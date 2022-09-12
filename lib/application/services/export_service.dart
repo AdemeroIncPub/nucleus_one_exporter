@@ -7,8 +7,10 @@ import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
 import 'package:path/path.dart' as path_;
+import 'package:riverpod/riverpod.dart';
 import 'package:rxdart/rxdart.dart';
 
+import '../../gui/providers.dart';
 import '../../util/runtime_helper.dart';
 import '../nucleus_one_sdk_service.dart';
 import '../path_validator.dart';
@@ -38,12 +40,15 @@ class _DownloadFailure {
 }
 
 class ExportService {
-  ExportService({NucleusOneSdkService? n1Sdk, PathValidator? pathValidator})
-      : _n1Sdk = n1Sdk ?? GetIt.I<NucleusOneSdkService>(),
+  ExportService(
+      {Future<NucleusOneSdkService>? n1SdkSvc, PathValidator? pathValidator})
+      : _n1SdkSvc = n1SdkSvc ??
+            GetIt.I<ProviderContainer>()
+                .read(nucleusOneSdkServiceProvider.future),
         _pathValidator = pathValidator ?? GetIt.I<PathValidator>(),
         _exportEventStreamController = StreamController<ExportEvent>();
 
-  final NucleusOneSdkService _n1Sdk;
+  final Future<NucleusOneSdkService> _n1SdkSvc;
   final PathValidator _pathValidator;
   final StreamController<ExportEvent> _exportEventStreamController;
   final http.Client _httpClient = http.Client();
@@ -85,10 +90,11 @@ class ExportService {
     final v = validated;
     return TaskEither.tryCatch(() async {
       // Send BeginExport event.
-      final org = await _n1Sdk.getUserOrganization(organizationId: v.orgId);
-      final project = await _n1Sdk.getUserProject(
+      final n1SdkSvc = await _n1SdkSvc;
+      final org = await n1SdkSvc.getUserOrganization(organizationId: v.orgId);
+      final project = await n1SdkSvc.getUserProject(
           organizationId: v.orgId, projectId: v.projectId);
-      final docCount = await _n1Sdk.getDocumentCount(
+      final docCount = await n1SdkSvc.getDocumentCount(
           organizationId: v.orgId,
           projectId: v.projectId,
           ignoreInbox: true,
@@ -143,7 +149,8 @@ class ExportService {
     var didReturnItems = false;
     String? cursor;
     do {
-      final qrDocs = await _n1Sdk.getDocuments(
+      final n1SdkSvc = await _n1SdkSvc;
+      final qrDocs = await n1SdkSvc.getDocuments(
           orgId: v.orgId, projectId: v.projectId, cursor: cursor);
       cursor = qrDocs.cursor;
       didReturnItems = qrDocs.results.items.isNotEmpty;
@@ -179,7 +186,8 @@ class ExportService {
       outFile!.createSync(recursive: true);
 
       // Download document.
-      final dcp = await _n1Sdk.getDocumentContentPackage(doc);
+      final n1SdkSvc = await _n1SdkSvc;
+      final dcp = await n1SdkSvc.getDocumentContentPackage(doc);
       await _downloadDoc(url: dcp.url, destinationFile: outFile!);
 
       // Build export results and export event.

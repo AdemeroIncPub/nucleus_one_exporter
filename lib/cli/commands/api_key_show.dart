@@ -2,13 +2,16 @@ import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
+import 'package:riverpod/riverpod.dart';
 
 import '../../application/settings.dart';
+import '../../gui/providers.dart';
 import '../cli.dart';
 
 class ApiKeyShowCommand extends Command<void> {
   ApiKeyShowCommand({Settings? settings, Logger? logger})
-      : _settings = settings ?? GetIt.I<Settings>(),
+      : _settings =
+            settings ?? GetIt.I<ProviderContainer>().read(settingsProvider),
         _logger = logger ?? GetIt.I<Logger>();
 
   final Settings _settings;

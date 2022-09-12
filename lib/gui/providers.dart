@@ -1,8 +1,11 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
+import 'package:riverpod/riverpod.dart';
 
 import '../application/nucleus_one_sdk_service.dart';
+import '../application/path_validator.dart';
+import '../application/services/export_service.dart';
 import '../application/services/user_orgs_summary_service.dart';
 import '../application/settings.dart';
 
@@ -10,9 +13,10 @@ final storageBoxWrapperProvider = Provider<StorageBoxWrapper>((ref) {
   return GetIt.I<StorageBoxWrapper>();
 });
 
-final settingsProvider = ChangeNotifierProvider<Settings>((ref) {
+final settingsProvider =
+    StateNotifierProvider<SettingsNotifier, Settings>((ref) {
   final sbw = ref.watch(storageBoxWrapperProvider);
-  return Settings(storageBoxWrapper: sbw);
+  return SettingsNotifier(storageBoxWrapper: sbw);
 });
 
 final nucleusOneSdkServiceProvider =
@@ -32,7 +36,20 @@ final nucleusOneSdkServiceProvider =
   return NucleusOneSdkService(n1App: n1App);
 });
 
-final userOrgsSummaryProvider = FutureProvider<UserOrgsSummary>((ref) async {
+final userOrgsSummaryServiceProvider =
+    FutureProvider<UserOrgsSummaryService>((ref) async {
   final n1SdkService = await ref.watch(nucleusOneSdkServiceProvider.future);
-  return UserOrgsSummaryService(n1Sdk: n1SdkService).getSummary();
+  return UserOrgsSummaryService(n1Sdk: n1SdkService);
+});
+
+final userOrgsSummaryProvider = FutureProvider<UserOrgsSummary>((ref) async {
+  final userOrgsSummaryService =
+      await ref.watch(userOrgsSummaryServiceProvider.future);
+  return userOrgsSummaryService.getSummary();
+});
+
+final exportServiceProvider = FutureProvider<ExportService>((ref) async {
+  final pathValidator = GetIt.I<PathValidator>();
+  final n1SdkSvc = ref.watch(nucleusOneSdkServiceProvider.future);
+  return ExportService(n1SdkSvc: n1SdkSvc, pathValidator: pathValidator);
 });

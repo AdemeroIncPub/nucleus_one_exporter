@@ -55,6 +55,7 @@ dependencies:
     path: ../nucleus_one_dart_sdk
   path: any
   quiver: any
+  riverpod: any
   rxdart: any
   storagebox: any
   tuple: any

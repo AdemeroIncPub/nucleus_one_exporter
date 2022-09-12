@@ -2,16 +2,19 @@ import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
+import 'package:riverpod/riverpod.dart';
 
 import '../../application/settings.dart';
+import '../../gui/providers.dart';
 import '../cli.dart';
 
 class ApiKeyRemoveCommand extends Command<void> {
-  ApiKeyRemoveCommand({Settings? settings, Logger? logger})
-      : _settings = settings ?? GetIt.I<Settings>(),
+  ApiKeyRemoveCommand({SettingsNotifier? settingsNotifier, Logger? logger})
+      : _settingsNotifier = settingsNotifier ??
+            GetIt.I<ProviderContainer>().read(settingsProvider.notifier),
         _logger = logger ?? GetIt.I<Logger>();
 
-  final Settings _settings;
+  final SettingsNotifier _settingsNotifier;
   final Logger _logger;
 
   @override
@@ -26,7 +29,7 @@ class ApiKeyRemoveCommand extends Command<void> {
 
   @override
   void run() {
-    _settings.setApiKey('');
+    _settingsNotifier.setApiKey('');
     _logger.stdout('API key removed.');
   }
 }
