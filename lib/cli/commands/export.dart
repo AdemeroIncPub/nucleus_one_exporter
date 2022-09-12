@@ -9,10 +9,10 @@ import 'package:fpdart/fpdart.dart';
 import 'package:get_it/get_it.dart';
 import 'package:riverpod/riverpod.dart';
 
+import '../../application/providers.dart';
 import '../../application/services/export_event.dart';
 import '../../application/services/export_results.dart';
 import '../../application/services/export_service.dart';
-import '../../gui/providers.dart';
 import '../../util/extensions.dart';
 import '../../util/runtime_helper.dart';
 import '../cli.dart';

@@ -1,11 +1,11 @@
 import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:cli_util/cli_logging.dart';
-import 'package:riverpod/riverpod.dart';
 import 'package:get_it/get_it.dart';
+import 'package:riverpod/riverpod.dart';
 
+import '../../application/providers.dart';
 import '../../application/settings.dart';
-import '../../gui/providers.dart';
 import '../cli.dart';
 
 class ApiKeySetCommand extends Command<void> {

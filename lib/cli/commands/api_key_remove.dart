@@ -4,8 +4,8 @@ import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
 import 'package:riverpod/riverpod.dart';
 
+import '../../application/providers.dart';
 import '../../application/settings.dart';
-import '../../gui/providers.dart';
 import '../cli.dart';
 
 class ApiKeyRemoveCommand extends Command<void> {

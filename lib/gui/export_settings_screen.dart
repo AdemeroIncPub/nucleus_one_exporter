@@ -8,8 +8,8 @@ import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
 import 'package:url_launcher/link.dart';
 
 import '../application/constants.dart';
+import '../application/providers.dart';
 import '../application/services/user_orgs_summary_service.dart';
-import 'providers.dart';
 import 'util/dialog_helper.dart';
 import 'util/style.dart';
 
