@@ -115,7 +115,6 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
                   },
                 ),
               ),
-              const TextSpan(text: '.'),
             ],
           ),
         ),
@@ -158,11 +157,11 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
           final apiKey = await showTextInputDialog(
             context,
             contentConstraints: const BoxConstraints(minWidth: 500),
-            title: const Text('Set API Key'),
+            title: const Text('Set API key'),
             text: apiKeyTextFieldController.text,
             helperText:
-                'Generate API keys in your profile in the Nucleus One web app.',
-            hintText: 'Your API Key',
+                'Generate API keys in your profile in the Nucleus One web app',
+            hintText: 'Your API key',
           );
           if (apiKey != null) {
             apiKeyTextFieldController.text = apiKey;
@@ -175,14 +174,14 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
           controller: apiKeyTextFieldController,
           readOnly: true,
           decoration: InputDecoration(
-            labelText: 'API Key',
-            hintText: 'Use the edit button to set your API key.',
+            labelText: 'API key',
+            hintText: 'Use the edit button to set your API key',
             errorText: userOrgsSummary.whenOrNull(
               error: (error, stackTrace) {
                 if (error is n1.HttpException) {
-                  return 'Error connecting to Nucleus One. Please verify your API key is correct.';
+                  return 'Error connecting to Nucleus One. Please verify your API key is correct';
                 }
-                return 'Unknown error connecting to Nucleus One.';
+                return 'Unknown error connecting to Nucleus One';
               },
             ),
           ),
@@ -220,7 +219,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
           selectedOrgId,
           items?.map((item) => item.value!),
         ),
-        hint: const Text('Select Organization'),
+        hint: const Text('Select organization'),
         items: items?.toList(),
         onChanged: (value) {
           setState(() {
@@ -251,7 +250,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
           selectedProjectId,
           items?.map((item) => item.value!),
         ),
-        hint: const Text('Select Project'),
+        hint: const Text('Select project'),
         items: items?.toList(),
         onChanged: (value) {
           setState(() {
@@ -269,7 +268,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
         tooltip: 'Edit',
         onPressed: () async {
           final destination = await FilePicker.platform.getDirectoryPath(
-            dialogTitle: 'Select export destination folder.',
+            dialogTitle: 'Select export destination folder',
             initialDirectory: destinationTextFieldController.text,
             lockParentWindow: true,
           );
@@ -284,7 +283,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
           readOnly: true,
           decoration: const InputDecoration(
             labelText: 'Destination',
-            hintText: 'Use the edit button to set your destination path.',
+            hintText: 'Use the edit button to set your destination path',
           ),
         ),
       ),
@@ -298,7 +297,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
           CheckboxListTile(
             title: const Text('Allow non-empty destination'),
             subtitle: const Text(
-                'If checked, allow export even if destination contains files or folders.'),
+                'If checked, allow export even if destination contains files or folders'),
             controlAffinity: ListTileControlAffinity.leading,
             value: allowNonEmptyDestination,
             onChanged: (value) {
@@ -310,7 +309,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
           CheckboxListTile(
             title: const Text('Copy if exists'),
             subtitle: const Text(
-                'Create a copy if the file already exists (otherwise skip).'),
+                'Create a copy if the file already exists (otherwise skip)'),
             controlAffinity: ListTileControlAffinity.leading,
             value: copyIfExists,
             onChanged: (value) {
@@ -345,7 +344,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
           const SizedBox(width: Insets.compSmall),
           Expanded(
             child: Text(
-              'Maximum number of documents to download simultaneously.',
+              'Maximum number of documents to download simultaneously',
               style: Theme.of(context).textTheme.titleMedium,
             ),
           ),
