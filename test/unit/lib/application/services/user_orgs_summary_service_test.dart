@@ -1,24 +1,13 @@
 import 'package:collection/collection.dart';
 import 'package:dartx/dartx.dart';
-import 'package:get_it/get_it.dart';
 import 'package:glados/glados.dart';
 import 'package:mocktail/mocktail.dart' as mt;
-import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
 import 'package:nucleus_one_exporter/application/services/user_orgs_summary_service.dart';
 
 import '../../../../_internal/generators.dart';
 import '../../../../_internal/mocks.dart';
 
 void main() {
-  setUp(() {
-    final n1App = MockNucleusOneApp();
-    GetIt.I.registerSingleton<n1.NucleusOneApp>(n1App);
-  });
-
-  tearDown(() async {
-    return GetIt.I.reset();
-  });
-
   Glados(any.list(any.myUserOrgAndProjectsWithDocCount)).test(
     'getSummary returns correct UserOrgsSummary',
     (myUserOrgAndProjectsWithDocCounts) async {
@@ -84,6 +73,8 @@ void main() {
           expect(pwdc.docCount, projectInfo.docCount);
         });
       });
+
+      mt.resetMocktailState();
     },
   );
 }

@@ -2,6 +2,8 @@ import 'package:glados/glados.dart';
 import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
 import 'package:tuple/tuple.dart';
 
+import 'mocks.dart';
+
 class MyUserOrgAndProjectsWithDocCount {
   MyUserOrgAndProjectsWithDocCount(this.org, this.projectsWithDocCount);
 
@@ -67,6 +69,7 @@ extension MyGenerators on Any {
           String userEmail,
         ) {
           return n1.UserOrganization(
+            app: MockNucleusOneApp(),
             assignmentTypes: assignmentTypes,
             hasAssignment: hasAssignment,
             isOrganizationMember: isOrganizationMember,
@@ -125,6 +128,7 @@ extension MyGenerators on Any {
           Tuple2<String, String> b,
         ) {
           return n1.UserOrganizationProject(
+            app: MockNucleusOneApp(),
             assignmentTypes: a.item1,
             hasAssignment: a.item2,
             organizationID: a.item3,
@@ -200,6 +204,7 @@ extension MyGenerators on Any {
           Tuple7<bool, String, String, String, String, String, String> b,
         ) {
           return n1.OrganizationProject(
+            app: MockNucleusOneApp(),
             accessType: a.item1,
             createdByUserEmail: a.item2,
             createdByUserID: a.item3,
