@@ -202,15 +202,11 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
   }
 
   TableRow _orgDropdownRow() {
-    final items = userOrgsSummary.whenOrNull(
-      data: (summaryInfo) {
-        return summaryInfo.orgInfos.map(
-          (orgInfo) => DropdownMenuItem(
-            value: orgInfo.id,
-            child: Text(orgInfo.name),
-          ),
-        );
-      },
+    final items = userOrgsSummary.asData?.value.orgInfos.map(
+      (orgInfo) => DropdownMenuItem(
+        value: orgInfo.id,
+        child: Text(orgInfo.name),
+      ),
     );
 
     return _buildTableRow(
@@ -231,18 +227,13 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
   }
 
   TableRow _projectDropdownRow() {
-    final items = userOrgsSummary.whenOrNull(
-      data: (summaryInfo) {
-        final selectedOrg = summaryInfo.orgInfos
-            .firstWhereOrNull((orgInfo) => orgInfo.id == selectedOrgId);
-        return selectedOrg?.projectInfos.map(
-          (projectInfo) => DropdownMenuItem(
-            value: projectInfo.id,
-            child: Text(projectInfo.name),
-          ),
-        );
-      },
-    );
+    final items = userOrgsSummary.asData?.value.orgInfos
+        .firstWhereOrNull((orgInfo) => orgInfo.id == selectedOrgId)
+        ?.projectInfos
+        .map((projectInfo) => DropdownMenuItem(
+              value: projectInfo.id,
+              child: Text(projectInfo.name),
+            ));
 
     return _buildTableRow(
       item2: DropdownButton(

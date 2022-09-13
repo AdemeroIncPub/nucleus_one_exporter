@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:get_it/get_it.dart';
 import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
 import 'package:riverpod/riverpod.dart';
@@ -23,17 +25,18 @@ final nucleusOneSdkServiceProvider =
     FutureProvider<NucleusOneSdkService>((ref) async {
   final apiKey =
       ref.watch(settingsProvider.select((settings) => settings.apiKey));
+  final apiKeyCompleter = Completer<NucleusOneSdkService>();
+  if (apiKey != '') {
+    // Calling NucleusOne.resetSdk() in case it has already been initialized (it's
+    // a no op if not initialized).
+    await n1.NucleusOne.resetSdk();
+    await n1.NucleusOne.intializeSdk();
 
-  // Calling NucleusOne.resetSdk() in case it has already been initialized (it's
-  // a no op if not initialized).
-  await n1.NucleusOne.resetSdk();
-  await n1.NucleusOne.intializeSdk();
-
-  // testing delay
-  // await Future<void>.delayed(const Duration(seconds: 2));
-
-  final n1App = n1.NucleusOneApp(options: n1.NucleusOneOptions(apiKey: apiKey));
-  return NucleusOneSdkService(n1App: n1App);
+    final n1App =
+        n1.NucleusOneApp(options: n1.NucleusOneOptions(apiKey: apiKey));
+    apiKeyCompleter.complete(NucleusOneSdkService(n1App: n1App));
+  }
+  return apiKeyCompleter.future;
 });
 
 final userOrgsSummaryServiceProvider =
