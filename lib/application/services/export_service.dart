@@ -45,7 +45,8 @@ class ExportService {
       : _n1SdkSvc = n1SdkSvc ??
             GetIt.I<ProviderContainer>()
                 .read(nucleusOneSdkServiceProvider.future),
-        _pathValidator = pathValidator ?? GetIt.I<PathValidator>(),
+        _pathValidator = pathValidator ??
+            GetIt.I<ProviderContainer>().read(pathValidatorProvider),
         _exportEventStreamController = StreamController<ExportEvent>();
 
   final Future<NucleusOneSdkService> _n1SdkSvc;

@@ -7,12 +7,14 @@ import 'package:riverpod/riverpod.dart';
 import '../../application/providers.dart';
 import '../../application/settings.dart';
 import '../cli.dart';
+import '../providers.dart';
 
 class ApiKeyShowCommand extends Command<void> {
   ApiKeyShowCommand({Settings? settings, Logger? logger})
       : _settings =
             settings ?? GetIt.I<ProviderContainer>().read(settingsProvider),
-        _logger = logger ?? GetIt.I<Logger>();
+        _logger =
+            logger ?? GetIt.I.get<ProviderContainer>().read(loggerProvider);
 
   final Settings _settings;
   final Logger _logger;

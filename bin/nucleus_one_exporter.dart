@@ -7,11 +7,12 @@ import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
 import 'package:nucleus_one_exporter/application/path_validator.dart';
 import 'package:nucleus_one_exporter/application/settings.dart';
 import 'package:nucleus_one_exporter/cli/cli.dart';
+import 'package:nucleus_one_exporter/cli/providers.dart';
 import 'package:riverpod/riverpod.dart';
 
 Future<void> main(List<String> args) async {
   await _initializeDependencies(args);
-  final logger = GetIt.I.get<Logger>();
+  final logger = GetIt.I.get<ProviderContainer>().read(loggerProvider);
   final ansi = logger.ansi;
 
   final rootCommand = createRootCommand();
@@ -24,17 +25,10 @@ Future<void> main(List<String> args) async {
 }
 
 Future<void> _initializeDependencies(List<String> args) async {
-  var verbose = false;
-  if (args.contains('-v') || args.contains('--verbose')) {
-    verbose = true;
-  }
-  final Ansi ansi = Ansi(io.stdout.supportsAnsiEscapes);
-  final logger =
-      verbose ? Logger.verbose(ansi: ansi) : Logger.standard(ansi: ansi);
+  final container = ProviderContainer();
+  container.read(cliArgsProvider.notifier).state = args;
 
   final gi = GetIt.I;
-  gi.registerSingleton<ProviderContainer>(ProviderContainer());
-  gi.registerSingleton<Logger>(logger);
+  gi.registerSingleton<ProviderContainer>(container);
   gi.registerSingleton<StorageBoxWrapper>(StorageBoxWrapper());
-  gi.registerSingleton<PathValidator>(PathValidator());
 }

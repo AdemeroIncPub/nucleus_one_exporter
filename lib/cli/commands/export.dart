@@ -16,6 +16,7 @@ import '../../application/services/export_service.dart';
 import '../../util/extensions.dart';
 import '../../util/runtime_helper.dart';
 import '../cli.dart';
+import '../providers.dart';
 
 class ExportCommand extends Command<void> {
   ExportCommand({
@@ -23,7 +24,8 @@ class ExportCommand extends Command<void> {
     Logger? logger,
   })  : _exportService = exportService ??
             GetIt.I<ProviderContainer>().read(exportServiceProvider.future),
-        _logger = logger ?? GetIt.I<Logger>() {
+        _logger =
+            logger ?? GetIt.I.get<ProviderContainer>().read(loggerProvider) {
     argParser.addOption(
       _option_orgId,
       help: 'Organization ID to export from. (required)',

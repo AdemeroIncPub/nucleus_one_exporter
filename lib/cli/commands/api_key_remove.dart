@@ -7,12 +7,14 @@ import 'package:riverpod/riverpod.dart';
 import '../../application/providers.dart';
 import '../../application/settings.dart';
 import '../cli.dart';
+import '../providers.dart';
 
 class ApiKeyRemoveCommand extends Command<void> {
   ApiKeyRemoveCommand({SettingsNotifier? settingsNotifier, Logger? logger})
       : _settingsNotifier = settingsNotifier ??
             GetIt.I<ProviderContainer>().read(settingsProvider.notifier),
-        _logger = logger ?? GetIt.I<Logger>();
+        _logger =
+            logger ?? GetIt.I.get<ProviderContainer>().read(loggerProvider);
 
   final SettingsNotifier _settingsNotifier;
   final Logger _logger;

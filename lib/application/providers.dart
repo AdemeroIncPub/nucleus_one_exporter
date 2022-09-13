@@ -8,15 +8,16 @@ import 'services/export_service.dart';
 import 'services/user_orgs_summary_service.dart';
 import 'settings.dart';
 
-final storageBoxWrapperProvider = Provider<StorageBoxWrapper>((ref) {
-  return GetIt.I<StorageBoxWrapper>();
-});
+final storageBoxWrapperProvider =
+    Provider<StorageBoxWrapper>((ref) => GetIt.I<StorageBoxWrapper>());
 
 final settingsProvider =
     StateNotifierProvider<SettingsNotifier, Settings>((ref) {
   final sbw = ref.watch(storageBoxWrapperProvider);
   return SettingsNotifier(storageBoxWrapper: sbw);
 });
+
+final pathValidatorProvider = Provider<PathValidator>((ref) => PathValidator());
 
 final nucleusOneSdkServiceProvider =
     FutureProvider<NucleusOneSdkService>((ref) async {
@@ -48,7 +49,7 @@ final userOrgsSummaryProvider = FutureProvider<UserOrgsSummary>((ref) async {
 });
 
 final exportServiceProvider = FutureProvider<ExportService>((ref) async {
-  final pathValidator = GetIt.I<PathValidator>();
+  final pathValidator = ref.watch(pathValidatorProvider);
   final n1SdkSvc = ref.watch(nucleusOneSdkServiceProvider.future);
   return ExportService(n1SdkSvc: n1SdkSvc, pathValidator: pathValidator);
 });

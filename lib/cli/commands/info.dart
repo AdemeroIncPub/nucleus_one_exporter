@@ -7,6 +7,7 @@ import 'package:riverpod/riverpod.dart';
 import '../../application/providers.dart';
 import '../../application/services/user_orgs_summary_service.dart';
 import '../cli.dart';
+import '../providers.dart';
 
 class InfoCommand extends Command<void> {
   InfoCommand({
@@ -14,7 +15,8 @@ class InfoCommand extends Command<void> {
     Logger? logger,
   })  : _userOrgsSummary = userOrgsSummary ??
             GetIt.I<ProviderContainer>().read(userOrgsSummaryProvider.future),
-        _logger = logger ?? GetIt.I<Logger>();
+        _logger =
+            logger ?? GetIt.I.get<ProviderContainer>().read(loggerProvider);
 
   final Future<UserOrgsSummary> _userOrgsSummary;
   final Logger _logger;
