@@ -337,6 +337,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
                 controller: maxDownloadsTextFieldController,
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
+                  FilteringTextInputFormatter.deny(RegExp(r'^0')),
                 ],
               ),
             ),
