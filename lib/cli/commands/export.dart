@@ -24,8 +24,7 @@ class ExportCommand extends Command<void> {
     Logger? logger,
   })  : _exportService = exportService ??
             GetIt.I<ProviderContainer>().read(exportServiceProvider.future),
-        _logger =
-            logger ?? GetIt.I.get<ProviderContainer>().read(loggerProvider) {
+        _logger = logger ?? GetIt.I<ProviderContainer>().read(loggerProvider) {
     argParser.addOption(
       _option_orgId,
       help: 'Organization ID to export from. (required)',

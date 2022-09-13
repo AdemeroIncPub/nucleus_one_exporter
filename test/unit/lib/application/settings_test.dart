@@ -14,18 +14,6 @@ final _gi = GetIt.I;
 void main() {
   group('SettingsNotifier tests', () {
     group('modify apiKey tests', () {
-      setUp(() {
-        // _gi.registerSingleton<StorageBoxWrapper>(FakeStorageBoxWrapper());
-      });
-
-      tearDown(() async {
-        // This is needed since the GetIt.reset() that follows also clears
-        // the sdk's registrations, but leaving the sdk still initialized. Perhaps
-        // the sdk should be using it's own GetIt.asNewInstance()?
-        // await n1.NucleusOne.resetSdk();
-        // await _gi.reset();
-      });
-
       Glados(any.printableAscii).test(
         // tags: 'only',
         'setApiKey does nothing if key does not change',
@@ -51,7 +39,6 @@ void main() {
 
           container.dispose();
           await n1.NucleusOne.resetSdk();
-          await _gi.unregister<StorageBoxWrapper>();
           await _gi.reset();
         },
       );
@@ -87,7 +74,6 @@ void main() {
 
             container.dispose();
             await n1.NucleusOne.resetSdk();
-            await _gi.unregister<StorageBoxWrapper>();
             await _gi.reset();
           },
         );
@@ -98,6 +84,10 @@ void main() {
 
         setUp(() {
           _gi.registerSingleton<StorageBoxWrapper>(FakeStorageBoxWrapper());
+        });
+
+        tearDown(() async {
+          return _gi.reset();
         });
 
         Glados(any.printableAscii).test(

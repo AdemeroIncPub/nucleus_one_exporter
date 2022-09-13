@@ -38,7 +38,7 @@ final nucleusOneSdkServiceProvider =
 
 final userOrgsSummaryServiceProvider =
     FutureProvider<UserOrgsSummaryService>((ref) async {
-  final n1SdkService = await ref.watch(nucleusOneSdkServiceProvider.future);
+  final n1SdkService = ref.watch(nucleusOneSdkServiceProvider.future);
   return UserOrgsSummaryService(n1Sdk: n1SdkService);
 });
 

@@ -1,10 +1,6 @@
-import 'dart:io' as io;
-
 import 'package:args/command_runner.dart';
-import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
-import 'package:nucleus_one_exporter/application/path_validator.dart';
 import 'package:nucleus_one_exporter/application/settings.dart';
 import 'package:nucleus_one_exporter/cli/cli.dart';
 import 'package:nucleus_one_exporter/cli/providers.dart';
@@ -12,7 +8,7 @@ import 'package:riverpod/riverpod.dart';
 
 Future<void> main(List<String> args) async {
   await _initializeDependencies(args);
-  final logger = GetIt.I.get<ProviderContainer>().read(loggerProvider);
+  final logger = GetIt.I<ProviderContainer>().read(loggerProvider);
   final ansi = logger.ansi;
 
   final rootCommand = createRootCommand();

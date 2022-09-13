@@ -15,8 +15,7 @@ class InfoCommand extends Command<void> {
     Logger? logger,
   })  : _userOrgsSummary = userOrgsSummary ??
             GetIt.I<ProviderContainer>().read(userOrgsSummaryProvider.future),
-        _logger =
-            logger ?? GetIt.I.get<ProviderContainer>().read(loggerProvider);
+        _logger = logger ?? GetIt.I<ProviderContainer>().read(loggerProvider);
 
   final Future<UserOrgsSummary> _userOrgsSummary;
   final Logger _logger;

@@ -5,8 +5,8 @@ import 'package:get_it/get_it.dart';
 import 'application/settings.dart';
 import 'gui/export_settings_screen.dart';
 
-Future<void> main() async {
-  await _initializeDependencies();
+void main() {
+  _initializeDependencies();
 
   runApp(
     const ProviderScope(
@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-Future<void> _initializeDependencies() async {
+void _initializeDependencies() {
   final gi = GetIt.I;
   gi.registerSingleton<StorageBoxWrapper>(StorageBoxWrapper());
 }

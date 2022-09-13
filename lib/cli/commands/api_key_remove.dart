@@ -13,8 +13,7 @@ class ApiKeyRemoveCommand extends Command<void> {
   ApiKeyRemoveCommand({SettingsNotifier? settingsNotifier, Logger? logger})
       : _settingsNotifier = settingsNotifier ??
             GetIt.I<ProviderContainer>().read(settingsProvider.notifier),
-        _logger =
-            logger ?? GetIt.I.get<ProviderContainer>().read(loggerProvider);
+        _logger = logger ?? GetIt.I<ProviderContainer>().read(loggerProvider);
 
   final SettingsNotifier _settingsNotifier;
   final Logger _logger;

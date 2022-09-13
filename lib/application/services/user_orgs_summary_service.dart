@@ -1,16 +1,21 @@
 import 'package:get_it/get_it.dart';
+import 'package:riverpod/riverpod.dart';
 
 import '../nucleus_one_sdk_service.dart';
+import '../providers.dart';
 
 class UserOrgsSummaryService {
-  UserOrgsSummaryService({NucleusOneSdkService? n1Sdk})
-      : _n1Sdk = n1Sdk ?? GetIt.I<NucleusOneSdkService>();
+  UserOrgsSummaryService({Future<NucleusOneSdkService>? n1Sdk})
+      : _n1Sdk = n1Sdk ??
+            GetIt.I<ProviderContainer>()
+                .read(nucleusOneSdkServiceProvider.future);
 
-  final NucleusOneSdkService _n1Sdk;
+  final Future<NucleusOneSdkService> _n1Sdk;
 
   Future<UserOrgsSummary> getSummary() async {
     // Get Organizations.
-    final orgs = await _n1Sdk.getUserOrganizations();
+    final n1Sdk = await _n1Sdk;
+    final orgs = await n1Sdk.getUserOrganizations();
     final info = UserOrgsSummary();
     for (final org in orgs) {
       final orgInfo =
@@ -18,10 +23,10 @@ class UserOrgsSummaryService {
 
       // Get Projects.
       final projects =
-          await _n1Sdk.getUserProjects(organizationId: org.organizationID);
+          await n1Sdk.getUserProjects(organizationId: org.organizationID);
       for (final project in projects) {
         // Get Document count.
-        final docCount = await _n1Sdk.getDocumentCount(
+        final docCount = await n1Sdk.getDocumentCount(
             organizationId: org.organizationID,
             projectId: project.projectID,
             ignoreInbox: true,

@@ -52,7 +52,8 @@ void main() {
         }
       }
 
-      final sut = UserOrgsSummaryService(n1Sdk: mockNucleusOneSdkService);
+      final sut =
+          UserOrgsSummaryService(n1Sdk: Future.value(mockNucleusOneSdkService));
 
       // Act
       final info = await sut.getSummary();
