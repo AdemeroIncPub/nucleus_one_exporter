@@ -193,9 +193,9 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
   TableRow _refreshDataRow() {
     return _buildTableRow(
       item2: TextButton(
-        onPressed: () {
-          ref.refresh(userOrgsSummaryProvider);
-        },
+        onPressed: userOrgsSummary.whenOrNull(
+          data: (_) => () => ref.refresh(userOrgsSummaryProvider),
+        ),
         child: const Text('⟳ Refresh organization and project lists'),
       ),
     );
