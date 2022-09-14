@@ -11,7 +11,9 @@ import 'commands/info.dart';
 CommandRunner<void> createRootCommand() {
   return CommandRunner(
     productId,
-    '$productName\nFor more information about Nucleus One, visit $marketingUrl.',
+    '$productName\n'
+    'Export your Nucleus One documents to a local path.\n'
+    'For more information about Nucleus One, visit $marketingUrl.',
     usageLineLength: usageLineLength,
   )
     ..addCommand(ApiKeyCommand())

@@ -57,35 +57,41 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
     );
   }
 
-  Column _mainContent() {
-    return Column(
-      children: [
-        Text(
-          productName,
-          style: Theme.of(context).textTheme.headlineLarge,
+  Widget _mainContent() {
+    // This Align pushes the scrollbar all the way to the right.
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 800),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _titleText(),
+            const SizedBox(height: Insets.compSmall),
+            _headerText(),
+            const SizedBox(height: Insets.compSmall),
+            _settingsTable(),
+            const SizedBox(height: Insets.compLarge),
+            _footerText(),
+            const SizedBox(height: Insets.compLarge),
+            _exportButton(),
+          ],
         ),
-        const SizedBox(height: Insets.compSmall),
-        Align(
-          alignment: Alignment.topLeft,
-          child: Container(
-            constraints: const BoxConstraints(maxWidth: 800),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _introText(),
-                const SizedBox(height: Insets.compSmall),
-                _settingsTable(),
-                const SizedBox(height: Insets.compLarge),
-                _exportButton(),
-              ],
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 
-  Column _introText() {
+  Widget _titleText() {
+    return Align(
+      alignment: Alignment.center,
+      child: Text(
+        productName,
+        style: Theme.of(context).textTheme.headlineLarge,
+      ),
+    );
+  }
+
+  Column _headerText() {
     final theme = Theme.of(context);
 
     return Column(
@@ -298,6 +304,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
               });
             },
           ),
+          const SizedBox(height: Insets.compXSmall),
           CheckboxListTile(
             title: const Text('Copy if exists'),
             subtitle: const Text(
@@ -361,6 +368,16 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
           : null,
       child: const Text('Export Documents'),
     );
+  }
+
+  Widget _footerText() {
+    const text = 'During export, any characters that are not allowed in file '
+        'and folder names will be replaced with an underscore. Due to this '
+        "renaming, it's possible that the export will save a file with the "
+        'same name as another file not yet exported. With "Copy if exists" '
+        'unchecked, the second file will be skipped since the file already '
+        'exists. A warning will be issued. This mostly affects Windows.';
+    return const Text(text);
   }
 
   TableRow _spacerRow({required double height}) {
