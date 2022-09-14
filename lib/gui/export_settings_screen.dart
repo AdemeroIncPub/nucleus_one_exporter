@@ -265,6 +265,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
           );
           if (destination != null) {
             destinationTextFieldController.text = destination;
+            setState(() {}); // update Export button state
           }
         },
       ),
@@ -346,12 +347,18 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
   }
 
   Widget _exportButton() {
+    final enabled = selectedOrgId != null &&
+        selectedProjectId != null &&
+        destinationTextFieldController.text != '';
+
     return ElevatedButton(
-      onPressed: userOrgsSummary.whenOrNull(
-        data: (data) => () async {
-          //validate
-        },
-      ),
+      onPressed: (enabled)
+          ? userOrgsSummary.whenOrNull(
+              data: (data) => () async {
+                //validate
+              },
+            )
+          : null,
       child: const Text('Export Documents'),
     );
   }
