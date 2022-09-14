@@ -21,27 +21,27 @@ class ExportSettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
-  final apiKeyTextFieldController = TextEditingController();
-  final destinationTextFieldController = TextEditingController();
-  final maxDownloadsTextFieldController = TextEditingController(text: '4');
+  final _apiKeyTextFieldController = TextEditingController();
+  final _destinationTextFieldController = TextEditingController();
+  final _maxDownloadsTextFieldController = TextEditingController(text: '4');
 
-  bool allowNonEmptyDestination = false;
-  bool copyIfExists = false;
-  AsyncValue<UserOrgsSummary> userOrgsSummary = const AsyncLoading();
+  bool _allowNonEmptyDestination = false;
+  bool _copyIfExists = false;
+  AsyncValue<UserOrgsSummary> _userOrgsSummary = const AsyncLoading();
 
-  String? selectedOrgId;
-  String? selectedProjectId;
+  String? _selectedOrgId;
+  String? _selectedProjectId;
 
   @override
   void initState() {
     super.initState();
     final settings = ref.read(settingsProvider);
-    apiKeyTextFieldController.text = settings.apiKey;
+    _apiKeyTextFieldController.text = settings.apiKey;
   }
 
   @override
   Widget build(BuildContext context) {
-    userOrgsSummary = ref.watch(userOrgsSummaryProvider);
+    _userOrgsSummary = ref.watch(userOrgsSummaryProvider);
 
     return Scaffold(
       body: Scrollbar(
@@ -164,25 +164,25 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
             context,
             contentConstraints: const BoxConstraints(minWidth: 500),
             title: const Text('Set API key'),
-            text: apiKeyTextFieldController.text,
+            text: _apiKeyTextFieldController.text,
             helperText:
                 'Generate API keys in your profile in the Nucleus One web app',
             hintText: 'Your API key',
           );
           if (apiKey != null) {
-            apiKeyTextFieldController.text = apiKey;
+            _apiKeyTextFieldController.text = apiKey;
             ref.read(settingsProvider.notifier).setApiKey(apiKey);
           }
         },
       ),
       item2: SelectionArea(
         child: TextField(
-          controller: apiKeyTextFieldController,
+          controller: _apiKeyTextFieldController,
           readOnly: true,
           decoration: InputDecoration(
             labelText: 'API key',
             hintText: 'Use the edit button to set your API key',
-            errorText: userOrgsSummary.whenOrNull(
+            errorText: _userOrgsSummary.whenOrNull(
               error: (error, stackTrace) {
                 if (error is n1.HttpException) {
                   return 'Error connecting to Nucleus One. Please verify your API key is correct';
@@ -199,7 +199,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
   TableRow _refreshDataRow() {
     return _buildTableRow(
       item2: TextButton(
-        onPressed: userOrgsSummary.whenOrNull(
+        onPressed: _userOrgsSummary.whenOrNull(
           data: (_) => () => ref.refresh(userOrgsSummaryProvider),
         ),
         child: const Text('⟳ Refresh organization and project lists'),
@@ -208,7 +208,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
   }
 
   TableRow _orgDropdownRow() {
-    final items = userOrgsSummary.asData?.value.orgInfos.map(
+    final items = _userOrgsSummary.asData?.value.orgInfos.map(
       (orgInfo) => DropdownMenuItem(
         value: orgInfo.id,
         child: Text(orgInfo.name),
@@ -218,14 +218,14 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
     return _buildTableRow(
       item2: DropdownButton(
         value: _existingDropdownValueOrNull(
-          selectedOrgId,
+          _selectedOrgId,
           items?.map((item) => item.value!),
         ),
         hint: const Text('Select organization'),
         items: items?.toList(),
         onChanged: (value) {
           setState(() {
-            selectedOrgId = value;
+            _selectedOrgId = value;
           });
         },
       ),
@@ -233,8 +233,8 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
   }
 
   TableRow _projectDropdownRow() {
-    final items = userOrgsSummary.asData?.value.orgInfos
-        .firstWhereOrNull((orgInfo) => orgInfo.id == selectedOrgId)
+    final items = _userOrgsSummary.asData?.value.orgInfos
+        .firstWhereOrNull((orgInfo) => orgInfo.id == _selectedOrgId)
         ?.projectInfos
         .map((projectInfo) => DropdownMenuItem(
               value: projectInfo.id,
@@ -244,14 +244,14 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
     return _buildTableRow(
       item2: DropdownButton(
         value: _existingDropdownValueOrNull(
-          selectedProjectId,
+          _selectedProjectId,
           items?.map((item) => item.value!),
         ),
         hint: const Text('Select project'),
         items: items?.toList(),
         onChanged: (value) {
           setState(() {
-            selectedProjectId = value;
+            _selectedProjectId = value;
           });
         },
       ),
@@ -266,18 +266,18 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
         onPressed: () async {
           final destination = await FilePicker.platform.getDirectoryPath(
             dialogTitle: 'Select export destination folder',
-            initialDirectory: destinationTextFieldController.text,
+            initialDirectory: _destinationTextFieldController.text,
             lockParentWindow: true,
           );
           if (destination != null) {
-            destinationTextFieldController.text = destination;
+            _destinationTextFieldController.text = destination;
             setState(() {}); // update Export button state
           }
         },
       ),
       item2: SelectionArea(
         child: TextField(
-          controller: destinationTextFieldController,
+          controller: _destinationTextFieldController,
           readOnly: true,
           decoration: const InputDecoration(
             labelText: 'Destination',
@@ -297,10 +297,10 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
             subtitle: const Text(
                 'If checked, allow export even if destination contains files or folders'),
             controlAffinity: ListTileControlAffinity.leading,
-            value: allowNonEmptyDestination,
+            value: _allowNonEmptyDestination,
             onChanged: (value) {
               setState(() {
-                allowNonEmptyDestination = value!;
+                _allowNonEmptyDestination = value!;
               });
             },
           ),
@@ -310,10 +310,10 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
             subtitle: const Text(
                 'Create a copy if the file already exists (otherwise skip)'),
             controlAffinity: ListTileControlAffinity.leading,
-            value: copyIfExists,
+            value: _copyIfExists,
             onChanged: (value) {
               setState(() {
-                copyIfExists = value!;
+                _copyIfExists = value!;
               });
             },
           ),
@@ -333,7 +333,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
             child: IntrinsicWidth(
               child: TextField(
                 textAlign: TextAlign.center,
-                controller: maxDownloadsTextFieldController,
+                controller: _maxDownloadsTextFieldController,
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
                   FilteringTextInputFormatter.deny(RegExp(r'^0')),
@@ -354,13 +354,13 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
   }
 
   Widget _exportButton() {
-    final enabled = selectedOrgId != null &&
-        selectedProjectId != null &&
-        destinationTextFieldController.text != '';
+    final enabled = _selectedOrgId != null &&
+        _selectedProjectId != null &&
+        _destinationTextFieldController.text != '';
 
     return ElevatedButton(
       onPressed: (enabled)
-          ? userOrgsSummary.whenOrNull(
+          ? _userOrgsSummary.whenOrNull(
               data: (data) => () async {
                 //validate
               },
