@@ -8,8 +8,11 @@ import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
 import 'package:url_launcher/link.dart';
 
 import '../application/constants.dart';
+import '../application/path_validator.dart';
 import '../application/providers.dart';
+import '../application/services/export_documents_args.dart';
 import '../application/services/user_orgs_summary_service.dart';
+import 'export_screen.dart';
 import 'util/dialog_helper.dart';
 import 'util/style.dart';
 
@@ -21,6 +24,12 @@ class ExportSettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
+  static const _allowNonEmptyDestinationLabel = 'Allow non-empty destination';
+  static const _copyIfExistsLabel = 'Copy if exists';
+
+  static const _maxConcurrentDownloadsLabel =
+      'Maximum number of documents to download simultaneously';
+
   final _apiKeyTextFieldController = TextEditingController();
   final _destinationTextFieldController = TextEditingController();
   final _maxDownloadsTextFieldController = TextEditingController(text: '4');
@@ -55,6 +64,82 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _exportDocuments() async {
+    final validArgs = ExportDocumentsArgs(
+      orgId: _selectedOrgId ?? '',
+      projectId: _selectedProjectId ?? '',
+      destination: _destinationTextFieldController.text,
+      allowNonEmptyDestination: _allowNonEmptyDestination,
+      copyIfExists: _copyIfExists,
+      maxConcurrentDownloads: _maxDownloadsTextFieldController.text,
+    ).validate(PathValidator());
+
+    await validArgs.bimap(
+      (l) async {
+        final messages = l.map((failures) {
+          // The UI should prevent a number of these cases from happening, but...
+          switch (failures) {
+            case ExportDocumentsArgsValidationFailure.orgIdMissing:
+              return 'Select an organization.';
+            case ExportDocumentsArgsValidationFailure.projectIdMissing:
+              return 'Select a project.';
+            case ExportDocumentsArgsValidationFailure.destinationMissing:
+              return 'Select a destination.';
+            case ExportDocumentsArgsValidationFailure.destinationInvalid:
+              return 'Destination is not a valid path.';
+            case ExportDocumentsArgsValidationFailure.destinationNotEmpty:
+              return 'The destination folder already exists and is not empty. '
+                  'Check "$_allowNonEmptyDestinationLabel" to export anyway.';
+            case ExportDocumentsArgsValidationFailure.maxDownloadsInvalid:
+              return '"$_maxConcurrentDownloadsLabel" must be a '
+                  'number greater than zero.';
+            case ExportDocumentsArgsValidationFailure.unknownFailure:
+              return 'An unknown failure has ocurred.';
+          }
+        });
+
+        await showDialog<void>(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              scrollable: true,
+              title: const Align(
+                alignment: Alignment.center,
+                child: Text('Export Issues'),
+              ),
+              content: Container(
+                constraints: const BoxConstraints(maxWidth: 550),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Please correct the following issue(s):'),
+                    ...messages.expand(
+                      (msg) => [
+                        const SizedBox(height: Insets.compSmall),
+                        Text(msg),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              actionsAlignment: MainAxisAlignment.start,
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Close'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
+      (r) async => Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => ExportScreen(validArgs: r))),
+    ).run();
   }
 
   Widget _mainContent() {
@@ -293,7 +378,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
       item2: Column(
         children: [
           CheckboxListTile(
-            title: const Text('Allow non-empty destination'),
+            title: const Text(_allowNonEmptyDestinationLabel),
             subtitle: const Text(
                 'If checked, allow export even if destination contains files or folders'),
             controlAffinity: ListTileControlAffinity.leading,
@@ -306,7 +391,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
           ),
           const SizedBox(height: Insets.compXSmall),
           CheckboxListTile(
-            title: const Text('Copy if exists'),
+            title: const Text(_copyIfExistsLabel),
             subtitle: const Text(
                 'Create a copy if the file already exists (otherwise skip)'),
             controlAffinity: ListTileControlAffinity.leading,
@@ -338,6 +423,8 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
                   FilteringTextInputFormatter.digitsOnly,
                   FilteringTextInputFormatter.deny(RegExp(r'^0')),
                 ],
+                // setState to enable/disable export button
+                onChanged: (value) => setState(() {}),
               ),
             ),
           ),
@@ -356,14 +443,13 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
   Widget _exportButton() {
     final enabled = _selectedOrgId != null &&
         _selectedProjectId != null &&
-        _destinationTextFieldController.text != '';
+        _destinationTextFieldController.text.isNotEmpty &&
+        _maxDownloadsTextFieldController.text.isNotEmpty;
 
     return ElevatedButton(
       onPressed: (enabled)
           ? _userOrgsSummary.whenOrNull(
-              data: (data) => () async {
-                //validate
-              },
+              data: (data) => _exportDocuments,
             )
           : null,
       child: const Text('Export Documents'),

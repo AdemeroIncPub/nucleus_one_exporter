@@ -51,22 +51,20 @@ class ExportDocumentsArgs with _$ExportDocumentsArgs {
         failures.add(ExportDocumentsArgsValidationFailure.maxDownloadsInvalid);
       }
 
-      if (failures.isNotEmpty) {
-        throw LeftException(failures);
-      }
-
-      // At this point we have values for all args, so do further validation.
       Directory? destDir;
-      final destCanonical = path_.canonicalize(destination);
-      if (!pathValidator.isValid(destCanonical, PathType.absoluteFolderpath)) {
-        failures.add(ExportDocumentsArgsValidationFailure.destinationInvalid);
-      } else {
-        destDir = Directory(destCanonical);
-        if (!allowNonEmptyDestination &&
-            destDir.existsSync() &&
-            (!(await destDir.list().isEmpty))) {
-          failures
-              .add(ExportDocumentsArgsValidationFailure.destinationNotEmpty);
+      if (destination.isNotEmpty) {
+        final destCanonical = path_.canonicalize(destination);
+        if (!pathValidator.isValid(
+            destCanonical, PathType.absoluteFolderpath)) {
+          failures.add(ExportDocumentsArgsValidationFailure.destinationInvalid);
+        } else {
+          destDir = Directory(destCanonical);
+          if (!allowNonEmptyDestination &&
+              destDir.existsSync() &&
+              (!(await destDir.list().isEmpty))) {
+            failures
+                .add(ExportDocumentsArgsValidationFailure.destinationNotEmpty);
+          }
         }
       }
 

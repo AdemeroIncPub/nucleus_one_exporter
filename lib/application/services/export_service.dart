@@ -59,11 +59,11 @@ class ExportService {
       _exportEventStreamController.stream;
 
   TaskEither<List<ExportFailure>, ExportResults> exportDocuments(
-    ValidatedExportDocumentsArgs validated,
+    ValidatedExportDocumentsArgs validArgs,
   ) {
     final results = ExportResults(DateTime.now());
 
-    return _exportDocuments(validated, results)
+    return _exportDocuments(validArgs, results)
         .mapLeft((l) => [l])
         .map((r) => r.setFinished())
         // todo(apn): what's a better way to close http client after processing?
@@ -80,8 +80,8 @@ class ExportService {
   }
 
   TaskEither<ExportFailure, ExportResults> _exportDocuments(
-      ValidatedExportDocumentsArgs validated, final ExportResults results) {
-    final v = validated;
+      ValidatedExportDocumentsArgs validArgs, final ExportResults results) {
+    final v = validArgs;
     return TaskEither.tryCatch(() async {
       // Send BeginExport event.
       final n1SdkSvc = await _n1SdkSvc;
@@ -104,9 +104,9 @@ class ExportService {
           localPath: v.destination.path));
 
       // Get document stream and do the export.
-      final docStream = _getDocumentsStream(validated);
+      final docStream = _getDocumentsStream(validArgs);
       final exportResults =
-          await _exportDocumentsFromStream(docStream, validated)
+          await _exportDocumentsFromStream(docStream, validArgs)
               .fold<Either<_DownloadFailure, ExportResults>>(
         right(results),
         // Ignore individual export failures for now until we handle
@@ -129,22 +129,22 @@ class ExportService {
   }
 
   Stream<Either<_DownloadFailure, ExportResults>> _exportDocumentsFromStream(
-      Stream<n1.Document> docStream, ValidatedExportDocumentsArgs validated) {
+      Stream<n1.Document> docStream, ValidatedExportDocumentsArgs validArgs) {
     return docStream.flatMap(
-      maxConcurrent: validated.maxConcurrentDownloads,
+      maxConcurrent: validArgs.maxConcurrentDownloads,
       (doc) async* {
         _addExportEvent(ExportEvent.docExportAttempt(
           docId: doc.documentID,
           n1Path: _getNormalizedN1Path(doc),
         ));
-        yield (await _exportDocument(doc, validated).run());
+        yield (await _exportDocument(doc, validArgs).run());
       },
     );
   }
 
   Stream<n1.Document> _getDocumentsStream(
-      ValidatedExportDocumentsArgs validated) async* {
-    final v = validated;
+      ValidatedExportDocumentsArgs validArgs) async* {
+    final v = validArgs;
     var didReturnItems = false;
     String? cursor;
     do {
@@ -158,15 +158,15 @@ class ExportService {
   }
 
   TaskEither<_DownloadFailure, ExportResults> _exportDocument(
-      n1.Document doc, ValidatedExportDocumentsArgs validated) {
+      n1.Document doc, ValidatedExportDocumentsArgs validArgs) {
     final results = ExportResults(DateTime.now());
     File? outFile;
     return TaskEither.tryCatch(() async {
       // Make path.
-      var outFilepath = _makeSafeFilepath(doc, validated.destination);
+      var outFilepath = _makeSafeFilepath(doc, validArgs.destination);
       var renamed = false;
       if (File(outFilepath).existsSync()) {
-        if (validated.copyIfExists) {
+        if (validArgs.copyIfExists) {
           outFilepath = _makeAlternativeFilepathIfExists(outFilepath);
           renamed = true;
         } else {
@@ -174,7 +174,7 @@ class ExportService {
             docId: doc.documentID,
             n1Path: _getNormalizedN1Path(doc),
             localPath:
-                path_.relative(outFilepath, from: validated.destination.path),
+                path_.relative(outFilepath, from: validArgs.destination.path),
           ));
           return results.docSkippedAlreadyExists();
         }
@@ -200,7 +200,7 @@ class ExportService {
         docId: doc.documentID,
         n1Path: _getNormalizedN1Path(doc),
         localPath:
-            path_.relative(outFile!.path, from: validated.destination.path),
+            path_.relative(outFile!.path, from: validArgs.destination.path),
         exportedAsCopy: renamed,
       ));
       return exportResults;

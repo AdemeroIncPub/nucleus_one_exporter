@@ -113,10 +113,10 @@ class ExportCommand extends Command<void> {
       maxConcurrentDownloads:
           tryCast(args[_option_maxConcurrentDownloads], '0'),
     );
-    final validatedArgs = exportArgs.validate(_pathValidator);
+    final validArgs = exportArgs.validate(_pathValidator);
 
     final exportService = await _exportService;
-    await validatedArgs
+    await validArgs
         .mapLeft(_mapValidationFailures2ExportFailures)
         .mapLeft(_mapExportFailures2Messages)
         .flatMap((r) => exportService
@@ -169,7 +169,7 @@ class ExportCommand extends Command<void> {
         case ExportFailure.maxConcurrentDownloadsInvalid:
           return _maxConcurrentDownloadsInvalidMessage;
         case ExportFailure.unknownFailure:
-          return 'An unknown error has ocurred.';
+          return 'An unknown failure has ocurred.';
       }
     }).toList();
   }
