@@ -3,3 +3,9 @@ class ApplicationException implements Exception {
 
   final String message;
 }
+
+class LeftException<T> implements Exception {
+  LeftException(this.failure);
+
+  final T failure;
+}

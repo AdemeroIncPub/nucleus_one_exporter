@@ -9,6 +9,8 @@ import '../../../../_internal/mocks.dart';
 
 void main() {
   Glados(any.list(any.myUserOrgAndProjectsWithDocCount)).test(
+    skip:
+        'Skip until UserOrganizationProject vs OrganizationProject is figured out',
     'getSummary returns correct UserOrgsSummary',
     (myUserOrgAndProjectsWithDocCounts) async {
       // Arrange

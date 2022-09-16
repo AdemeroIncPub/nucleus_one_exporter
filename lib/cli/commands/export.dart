@@ -5,15 +5,15 @@ import 'dart:async';
 import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:cli_util/cli_logging.dart';
-import 'package:fpdart/fpdart.dart';
 import 'package:get_it/get_it.dart';
 import 'package:riverpod/riverpod.dart';
 
+import '../../application/path_validator.dart';
 import '../../application/providers.dart';
+import '../../application/services/export_documents_args.dart';
 import '../../application/services/export_event.dart';
 import '../../application/services/export_results.dart';
 import '../../application/services/export_service.dart';
-import '../../util/extensions.dart';
 import '../../util/runtime_helper.dart';
 import '../cli.dart';
 import '../providers.dart';
@@ -21,9 +21,12 @@ import '../providers.dart';
 class ExportCommand extends Command<void> {
   ExportCommand({
     Future<ExportService>? exportService,
+    PathValidator? pathValidator,
     Logger? logger,
   })  : _exportService = exportService ??
             GetIt.I<ProviderContainer>().read(exportServiceProvider.future),
+        _pathValidator = pathValidator ??
+            GetIt.I<ProviderContainer>().read(pathValidatorProvider),
         _logger = logger ?? GetIt.I<ProviderContainer>().read(loggerProvider) {
     argParser.addOption(
       _option_orgId,
@@ -73,6 +76,7 @@ class ExportCommand extends Command<void> {
       'The $_option_maxConcurrentDownloads option must be a number greater than zero.';
 
   final Future<ExportService> _exportService;
+  final PathValidator _pathValidator;
   final Logger _logger;
 
   @override
@@ -100,8 +104,25 @@ class ExportCommand extends Command<void> {
 
     final listenToExportEventStream = await _listenToExportEventStream(_logger);
 
-    await _validate(args)
-        .flatMapFuture((_) => _exportDocuments(args))
+    final exportArgs = ExportDocumentsArgs(
+      orgId: tryCast(args[_option_orgId], ''),
+      projectId: tryCast(args[_option_projectId], ''),
+      destination: tryCast(args[_option_destination], ''),
+      allowNonEmptyDestination: args[_flag_allowNonemptyDestination] as bool,
+      copyIfExists: args[_flag_copyIfExists] as bool,
+      maxConcurrentDownloads:
+          tryCast(args[_option_maxConcurrentDownloads], '0'),
+    );
+    final validatedArgs = exportArgs.validate(_pathValidator);
+
+    final exportService = await _exportService;
+    await validatedArgs
+        .mapLeft(_mapValidationFailures2ExportFailures)
+        .mapLeft(_mapExportFailures2Messages)
+        .flatMap((r) => exportService
+            .exportDocuments(r)
+            // todo(apn): errors from here maybe shouldn't show usage
+            .mapLeft(_mapExportFailures2Messages))
         .bimap(
           (err) => usageException(err.join('\n')),
           (r) => _logSummary(_logger, r, args[_flag_copyIfExists] as bool),
@@ -111,47 +132,26 @@ class ExportCommand extends Command<void> {
     await listenToExportEventStream.cancel();
   }
 
-  Either<List<String>, Unit> _validate(ArgResults results) {
-    final issues = <String>[];
-    if (!results.wasParsed(_option_orgId)) {
-      issues.add('The $_option_orgId option is required.');
-    }
-    if (!results.wasParsed(_option_projectId)) {
-      issues.add('The $_option_projectId option is required.');
-    }
-    if (!results.wasParsed(_option_destination)) {
-      issues.add('The $_option_destination option is required.');
-    }
-    if (_getMaxDownloads(results) == null) {
-      issues.add(_maxConcurrentDownloadsInvalidMessage);
-    }
-
-    if (issues.isNotEmpty) {
-      return left(issues);
-    }
-    return right(unit);
-  }
-
-  int? _getMaxDownloads(ArgResults argResults) {
-    return int.tryParse(
-        tryCast(argResults[_option_maxConcurrentDownloads], ''));
-  }
-
-  Future<Either<List<String>, ExportResults>> _exportDocuments(
-      ArgResults args) async {
-    final exportService = await _exportService;
-    return exportService
-        .exportDocuments(
-          orgId: tryCast(args[_option_orgId], ''),
-          projectId: tryCast(args[_option_projectId], ''),
-          destination: tryCast(args[_option_destination], ''),
-          allowNonEmptyDestination:
-              args[_flag_allowNonemptyDestination] as bool,
-          copyIfExists: args[_flag_copyIfExists] as bool,
-          maxConcurrentDownloads: _getMaxDownloads(args)!,
-        )
-        // todo(apn): this should not show usage
-        .mapLeft(_mapExportFailures2Messages);
+  List<ExportFailure> _mapValidationFailures2ExportFailures(
+      List<ExportDocumentsArgsValidationFailure> err) {
+    return err.map((e) {
+      switch (e) {
+        case ExportDocumentsArgsValidationFailure.orgIdMissing:
+          return ExportFailure.orgIdInvalid;
+        case ExportDocumentsArgsValidationFailure.projectIdMissing:
+          return ExportFailure.projectIdInvalid;
+        case ExportDocumentsArgsValidationFailure.destinationMissing:
+          return ExportFailure.destinationInvalid;
+        case ExportDocumentsArgsValidationFailure.destinationInvalid:
+          return ExportFailure.destinationInvalid;
+        case ExportDocumentsArgsValidationFailure.destinationNotEmpty:
+          return ExportFailure.destinationNotEmpty;
+        case ExportDocumentsArgsValidationFailure.maxDownloadsInvalid:
+          return ExportFailure.maxConcurrentDownloadsInvalid;
+        case ExportDocumentsArgsValidationFailure.unknownFailure:
+          return ExportFailure.unknownFailure;
+      }
+    }).toList();
   }
 
   List<String> _mapExportFailures2Messages(List<ExportFailure> err) {
@@ -168,7 +168,7 @@ class ExportCommand extends Command<void> {
               ' Use flag $_flag_allowNonemptyDestination to export anyway.';
         case ExportFailure.maxConcurrentDownloadsInvalid:
           return _maxConcurrentDownloadsInvalidMessage;
-        case ExportFailure.unknownError:
+        case ExportFailure.unknownFailure:
           return 'An unknown error has ocurred.';
       }
     }).toList();

@@ -14,6 +14,7 @@ import '../../util/runtime_helper.dart';
 import '../nucleus_one_sdk_service.dart';
 import '../path_validator.dart';
 import '../providers.dart';
+import 'export_documents_args.dart';
 import 'export_event.dart';
 import 'export_results.dart';
 
@@ -23,7 +24,7 @@ enum ExportFailure {
   destinationInvalid,
   destinationNotEmpty,
   maxConcurrentDownloadsInvalid,
-  unknownError,
+  unknownFailure,
 }
 
 enum _DownloadFailureType {
@@ -46,54 +47,48 @@ class ExportService {
             GetIt.I<ProviderContainer>()
                 .read(nucleusOneSdkServiceProvider.future),
         _pathValidator = pathValidator ??
-            GetIt.I<ProviderContainer>().read(pathValidatorProvider),
-        _exportEventStreamController = StreamController<ExportEvent>();
+            GetIt.I<ProviderContainer>().read(pathValidatorProvider);
 
   final Future<NucleusOneSdkService> _n1SdkSvc;
   final PathValidator _pathValidator;
-  final StreamController<ExportEvent> _exportEventStreamController;
+  final StreamController<ExportEvent> _exportEventStreamController =
+      StreamController<ExportEvent>();
   final http.Client _httpClient = http.Client();
 
   Stream<ExportEvent> get exportEventStream =>
       _exportEventStreamController.stream;
 
-  Future<Either<List<ExportFailure>, ExportResults>> exportDocuments({
-    required String orgId,
-    required String projectId,
-    required String destination,
-    bool allowNonEmptyDestination = false,
-    bool copyIfExists = false,
-    int maxConcurrentDownloads = 4,
-  }) async {
+  TaskEither<List<ExportFailure>, ExportResults> exportDocuments(
+    ValidatedExportDocumentsArgs validated,
+  ) {
     final results = ExportResults(DateTime.now());
 
-    final validated = _Validated.validate(
-        orgId: orgId,
-        projectId: projectId,
-        destination: destination,
-        allowNonEmptyDestination: allowNonEmptyDestination,
-        copyIfExists: copyIfExists,
-        maxConcurrentDownloads: maxConcurrentDownloads,
-        pathValidator: _pathValidator);
-
-    return validated
-        .toTaskEither()
-        .flatMap((v) => _checkNonEmptyDest(v)
-            .flatMap((v) => _exportDocuments(v, results))
-            .mapLeft((l) => [l]))
+    return _exportDocuments(validated, results)
+        .mapLeft((l) => [l])
         .map((r) => r.setFinished())
-        .run()
-        .whenComplete(_httpClient.close);
+        // todo(apn): what's a better way to close http client after processing?
+        .bimap(
+      (l) {
+        _httpClient.close();
+        return l;
+      },
+      (r) {
+        _httpClient.close();
+        return r;
+      },
+    );
   }
 
   TaskEither<ExportFailure, ExportResults> _exportDocuments(
-      _Validated validated, final ExportResults results) {
+      ValidatedExportDocumentsArgs validated, final ExportResults results) {
     final v = validated;
     return TaskEither.tryCatch(() async {
       // Send BeginExport event.
       final n1SdkSvc = await _n1SdkSvc;
       final org = await n1SdkSvc.getUserOrganization(organizationId: v.orgId);
-      final project = await n1SdkSvc.getUserProject(
+      // final project = await n1SdkSvc.getUserProject(
+      //     organizationId: v.orgId, projectId: v.projectId);
+      final project = await n1SdkSvc.getOrganizationProject(
           organizationId: v.orgId, projectId: v.projectId);
       final docCount = await n1SdkSvc.getDocumentCount(
           organizationId: v.orgId,
@@ -104,7 +99,7 @@ class ExportService {
           orgId: v.orgId,
           orgName: org.organizationName,
           projectId: v.projectId,
-          projectName: project.projectName,
+          projectName: project.name,
           docCount: docCount,
           localPath: v.destination.path));
 
@@ -130,22 +125,25 @@ class ExportService {
         ),
       );
       return exportResults.fold((l) => l.results, id);
-    }, (error, stackTrace) => tryCast(error, ExportFailure.unknownError));
+    }, (error, stackTrace) => tryCast(error, ExportFailure.unknownFailure));
   }
 
   Stream<Either<_DownloadFailure, ExportResults>> _exportDocumentsFromStream(
-      Stream<n1.Document> docStream, _Validated validated) {
-    return docStream.flatMap(maxConcurrent: validated.maxConcurrentDownloads,
-        (doc) async* {
-      _addExportEvent(ExportEvent.docExportAttempt(
-        docId: doc.documentID,
-        n1Path: _getNormalizedN1Path(doc),
-      ));
-      yield (await _exportDocument(doc, validated).run());
-    });
+      Stream<n1.Document> docStream, ValidatedExportDocumentsArgs validated) {
+    return docStream.flatMap(
+      maxConcurrent: validated.maxConcurrentDownloads,
+      (doc) async* {
+        _addExportEvent(ExportEvent.docExportAttempt(
+          docId: doc.documentID,
+          n1Path: _getNormalizedN1Path(doc),
+        ));
+        yield (await _exportDocument(doc, validated).run());
+      },
+    );
   }
 
-  Stream<n1.Document> _getDocumentsStream(_Validated validated) async* {
+  Stream<n1.Document> _getDocumentsStream(
+      ValidatedExportDocumentsArgs validated) async* {
     final v = validated;
     var didReturnItems = false;
     String? cursor;
@@ -160,7 +158,7 @@ class ExportService {
   }
 
   TaskEither<_DownloadFailure, ExportResults> _exportDocument(
-      n1.Document doc, _Validated validated) {
+      n1.Document doc, ValidatedExportDocumentsArgs validated) {
     final results = ExportResults(DateTime.now());
     File? outFile;
     return TaskEither.tryCatch(() async {
@@ -231,18 +229,6 @@ class ExportService {
     });
   }
 
-  TaskEither<ExportFailure, _Validated> _checkNonEmptyDest(
-      _Validated validated) {
-    return TaskEither.tryCatch(() async {
-      if (!validated.allowNonEmptyDestination &&
-          validated.destination.existsSync() &&
-          (!(await validated.destination.list().isEmpty))) {
-        throw Exception();
-      }
-      return validated;
-    }, (error, stackTrace) => ExportFailure.destinationNotEmpty);
-  }
-
   String _makeSafeFilepath(n1.Document doc, Directory destination) {
     String docPath = doc.documentFolderPath;
     if (docPath.startsWith(RegExp(r'[/\\]'))) {
@@ -282,67 +268,4 @@ class ExportService {
       _exportEventStreamController.add(event);
     }
   }
-}
-
-class _Validated {
-  _Validated._({
-    required this.orgId,
-    required this.projectId,
-    required this.destination,
-    required this.allowNonEmptyDestination,
-    required this.copyIfExists,
-    required this.maxConcurrentDownloads,
-    required this.pathValidator,
-  });
-
-  static Either<List<ExportFailure>, _Validated> validate({
-    required String orgId,
-    required String projectId,
-    required String destination,
-    required bool allowNonEmptyDestination,
-    required bool copyIfExists,
-    required int maxConcurrentDownloads,
-    required PathValidator pathValidator,
-  }) {
-    final failures = <ExportFailure>[];
-    if (orgId.isEmpty) {
-      failures.add(ExportFailure.orgIdInvalid);
-    }
-    if (projectId.isEmpty) {
-      failures.add(ExportFailure.projectIdInvalid);
-    }
-    if (destination.isEmpty) {
-      failures.add(ExportFailure.destinationInvalid);
-    }
-    if (maxConcurrentDownloads < 1) {
-      failures.add(ExportFailure.maxConcurrentDownloadsInvalid);
-    }
-
-    // ignore: parameter_assignments
-    destination = path_.canonicalize(destination);
-    if (!pathValidator.isValid(destination, PathType.absoluteFolderpath)) {
-      failures.add(ExportFailure.destinationInvalid);
-    }
-
-    if (failures.isNotEmpty) {
-      return left(failures);
-    } else {
-      return right(_Validated._(
-          orgId: orgId,
-          projectId: projectId,
-          destination: Directory(destination),
-          allowNonEmptyDestination: allowNonEmptyDestination,
-          copyIfExists: copyIfExists,
-          maxConcurrentDownloads: maxConcurrentDownloads,
-          pathValidator: pathValidator));
-    }
-  }
-
-  final String orgId;
-  final String projectId;
-  final Directory destination;
-  final bool allowNonEmptyDestination;
-  final bool copyIfExists;
-  final int maxConcurrentDownloads;
-  final PathValidator pathValidator;
 }

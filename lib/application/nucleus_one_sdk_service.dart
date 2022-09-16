@@ -5,28 +5,6 @@ class NucleusOneSdkService {
 
   n1.NucleusOneApp n1App;
 
-  // Future<List<n1.OrganizationProject>> getOrganizationProjects({
-  //   required String organizationId,
-  // }) async {
-  //   return (await _n1App
-  //           .organization(organizationId)
-  //           // todo(apn): (getAll: true) causes 0 results. Need to either fix
-  //           // the api call or change logic to gather all results via paging.
-  //           // .getProjects(organizationId: organizationId, getAll: true))
-  //           .getProjects(organizationId: organizationId))
-  //       .results
-  //       .items;
-  // }
-
-  // todo(apn): should return nullable
-  // Future<n1.OrganizationProject> getOrganizationProject({
-  //   required String organizationId,
-  //   required String projectId,
-  // }) async {
-  //   return (await getOrganizationProjects(organizationId: organizationId))
-  //       .firstWhere((p) => p.id == projectId);
-  // }
-
   Future<List<n1.UserOrganization>> getUserOrganizations() async {
     return (await n1App.users().getOrganizations()).items;
   }
@@ -37,6 +15,28 @@ class NucleusOneSdkService {
   }) async {
     return (await getUserOrganizations())
         .firstWhere((o) => o.organizationID == organizationId);
+  }
+
+  Future<List<n1.OrganizationProject>> getOrganizationProjects({
+    required String organizationId,
+  }) async {
+    return (await n1App
+            .organization(organizationId)
+            // todo(apn): (getAll: true) causes 0 results. Need to either fix
+            // the api call or change logic to gather all results via paging.
+            // .getProjects(organizationId: organizationId, getAll: true))
+            .getProjects(organizationId: organizationId))
+        .results
+        .items;
+  }
+
+  // todo(apn): should return nullable
+  Future<n1.OrganizationProject> getOrganizationProject({
+    required String organizationId,
+    required String projectId,
+  }) async {
+    return (await getOrganizationProjects(organizationId: organizationId))
+        .firstWhere((p) => p.id == projectId);
   }
 
   Future<List<n1.UserOrganizationProject>> getUserProjects({

@@ -22,18 +22,20 @@ class UserOrgsSummaryService {
           OrganizationInfo(id: org.organizationID, name: org.organizationName);
 
       // Get Projects.
-      final projects =
-          await n1Sdk.getUserProjects(organizationId: org.organizationID);
+      // final projects =
+      //     await n1Sdk.getUserProjects(organizationId: org.organizationID);
+      final projects = await n1Sdk.getOrganizationProjects(
+          organizationId: org.organizationID);
       for (final project in projects) {
         // Get Document count.
         final docCount = await n1Sdk.getDocumentCount(
             organizationId: org.organizationID,
-            projectId: project.projectID,
+            projectId: project.id,
             ignoreInbox: true,
             ignoreRecycleBin: true);
         final projectInfo = ProjectInfo(
-          id: project.projectID,
-          name: project.projectName,
+          id: project.id,
+          name: project.name,
           docCount: docCount,
         );
 

@@ -18,6 +18,11 @@ void main() {
         // tags: 'only',
         'setApiKey does nothing if key does not change',
         (newApiKey) async {
+          if (newApiKey == '') {
+            // The sdk providers do not complete if the key is blank.
+            return;
+          }
+
           _gi.registerSingleton<StorageBoxWrapper>(FakeStorageBoxWrapper());
           final sbw = _gi.get<StorageBoxWrapper>();
           sbw[SettingsNotifier.key_apiKey] = newApiKey;
@@ -25,12 +30,17 @@ void main() {
           Future<NucleusOneSdkService> getN1SdkSvc() =>
               container.read(nucleusOneSdkServiceProvider.future);
 
+          final SettingsNotifier sut =
+              container.read(settingsProvider.notifier);
+
+          // Set the key to get provider to emit
+          sut.setApiKey(newApiKey);
+
           final initialN1SdkSvc = await getN1SdkSvc();
           expect(initialN1SdkSvc, same(await getN1SdkSvc()));
           expect(sbw[SettingsNotifier.key_apiKey], newApiKey);
 
-          final SettingsNotifier sut =
-              container.read(settingsProvider.notifier);
+          // Set the key to the same key
           sut.setApiKey(newApiKey);
 
           expect(sbw[SettingsNotifier.key_apiKey], newApiKey);
@@ -50,6 +60,7 @@ void main() {
           (newApiKey) async {
             if (newApiKey == '') {
               // This test is for changing the key - it starts as '' already.
+              // Also, the sdk providers do not complete if the key is blank.
               return;
             }
 
@@ -59,15 +70,21 @@ void main() {
             Future<NucleusOneSdkService> getN1SdkSvc() =>
                 container.read(nucleusOneSdkServiceProvider.future);
 
-            final initialN1SdkSvc = await getN1SdkSvc();
-            expect(sbw[SettingsNotifier.key_apiKey], '');
-            expect(initialN1SdkSvc, same(await getN1SdkSvc()));
-
             final SettingsNotifier sut =
                 container.read(settingsProvider.notifier);
+
+            // Set the key to get provider to emit
             sut.setApiKey(newApiKey);
 
+            final initialN1SdkSvc = await getN1SdkSvc();
             expect(sbw[SettingsNotifier.key_apiKey], newApiKey);
+            expect(initialN1SdkSvc, same(await getN1SdkSvc()));
+
+            // Change the key
+            final newApiKeyChanged = '${newApiKey}changed';
+            sut.setApiKey(newApiKeyChanged);
+
+            expect(sbw[SettingsNotifier.key_apiKey], newApiKeyChanged);
             final newN1SdkSvc = await getN1SdkSvc();
             expect(newN1SdkSvc, isNot(same(initialN1SdkSvc)));
             expect(newN1SdkSvc, same(await getN1SdkSvc()));
@@ -94,8 +111,9 @@ void main() {
           // tags: 'only',
           'setApiKey sets any key and resets NucleusOneApp _if_ key changed',
           (newApiKey) async {
-            if (newApiKey == oldKey) {
-              // This test is for changing the key.
+            if (newApiKey == oldKey || newApiKey == '') {
+              // This test is for changing the key. Also, the sdk providers do
+              // not complete if the key is blank.
               return;
             }
 
@@ -104,19 +122,25 @@ void main() {
             Future<NucleusOneSdkService> getN1SdkSvc() =>
                 container.read(nucleusOneSdkServiceProvider.future);
 
-            final initialN1SdkSvc = await getN1SdkSvc();
-            expect(sbw[SettingsNotifier.key_apiKey], oldKey);
-            expect(initialN1SdkSvc, same(await getN1SdkSvc()));
-
             final SettingsNotifier sut =
                 container.read(settingsProvider.notifier);
+
+            // Set the key to get provider to emit
             sut.setApiKey(newApiKey);
 
+            final initialN1SdkSvc = await getN1SdkSvc();
             expect(sbw[SettingsNotifier.key_apiKey], newApiKey);
+            expect(initialN1SdkSvc, same(await getN1SdkSvc()));
+
+            // Change the key
+            final newApiKeyChanged = '${newApiKey}changed';
+            sut.setApiKey(newApiKeyChanged);
+
+            expect(sbw[SettingsNotifier.key_apiKey], newApiKeyChanged);
             final newN1SdkSvc = await getN1SdkSvc();
             expect(newN1SdkSvc, isNot(same(initialN1SdkSvc)));
             expect(newN1SdkSvc, same(await getN1SdkSvc()));
-            oldKey = newApiKey;
+            oldKey = newApiKeyChanged;
 
             container.dispose();
             await n1.NucleusOne.resetSdk();

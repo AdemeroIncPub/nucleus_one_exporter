@@ -28,7 +28,6 @@ class SettingsNotifier extends StateNotifier<Settings> {
   void setApiKey(String newApiKey) {
     final oldApiKey = state.apiKey;
 
-    // If api key changed, save new key and recreate NucleusOneApp.
     if (newApiKey != oldApiKey) {
       _sbw[key_apiKey] = newApiKey;
       state = state.copyWith(apiKey: newApiKey);
