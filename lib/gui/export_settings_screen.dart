@@ -26,7 +26,6 @@ class ExportSettingsScreen extends ConsumerStatefulWidget {
 class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
   static const _allowNonEmptyDestinationLabel = 'Allow non-empty destination';
   static const _copyIfExistsLabel = 'Copy if exists';
-
   static const _maxConcurrentDownloadsLabel =
       'Maximum number of documents to download simultaneously';
 
@@ -347,7 +346,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
     return _buildTableRow(
       item1: IconButton(
         icon: const Icon(Icons.edit),
-        tooltip: 'Edit',
+        tooltip: 'Browse',
         onPressed: () async {
           final destination = await FilePicker.platform.getDirectoryPath(
             dialogTitle: 'Select export destination folder',
@@ -431,7 +430,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
           const SizedBox(width: Insets.compSmall),
           Expanded(
             child: Text(
-              'Maximum number of documents to download simultaneously',
+              _maxConcurrentDownloadsLabel,
               style: Theme.of(context).textTheme.titleMedium,
             ),
           ),
