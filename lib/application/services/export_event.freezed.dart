@@ -29,6 +29,9 @@ mixin _$ExportEvent {
         docSkippedAlreadyExists,
     required TResult Function(String docId, String n1Path)
         docSkippedUnknownFailure,
+    required TResult Function(
+            Either<List<ExportFailure>, ExportResults> results)
+        exportFinished,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -43,6 +46,8 @@ mixin _$ExportEvent {
     TResult Function(String docId, String n1Path, String localPath)?
         docSkippedAlreadyExists,
     TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
+    TResult Function(Either<List<ExportFailure>, ExportResults> results)?
+        exportFinished,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -57,6 +62,8 @@ mixin _$ExportEvent {
     TResult Function(String docId, String n1Path, String localPath)?
         docSkippedAlreadyExists,
     TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
+    TResult Function(Either<List<ExportFailure>, ExportResults> results)?
+        exportFinished,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -69,6 +76,7 @@ mixin _$ExportEvent {
         docSkippedAlreadyExists,
     required TResult Function(DocSkippedUnknownFailure value)
         docSkippedUnknownFailure,
+    required TResult Function(ExportFinished value) exportFinished,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -78,6 +86,7 @@ mixin _$ExportEvent {
     TResult Function(DocExported value)? docExported,
     TResult Function(DocSkippedAlreadyExists value)? docSkippedAlreadyExists,
     TResult Function(DocSkippedUnknownFailure value)? docSkippedUnknownFailure,
+    TResult Function(ExportFinished value)? exportFinished,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -87,6 +96,7 @@ mixin _$ExportEvent {
     TResult Function(DocExported value)? docExported,
     TResult Function(DocSkippedAlreadyExists value)? docSkippedAlreadyExists,
     TResult Function(DocSkippedUnknownFailure value)? docSkippedUnknownFailure,
+    TResult Function(ExportFinished value)? exportFinished,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -242,6 +252,9 @@ class _$BeginExport implements BeginExport {
         docSkippedAlreadyExists,
     required TResult Function(String docId, String n1Path)
         docSkippedUnknownFailure,
+    required TResult Function(
+            Either<List<ExportFailure>, ExportResults> results)
+        exportFinished,
   }) {
     return beginExport(
         orgId, orgName, projectId, projectName, localPath, docCount);
@@ -260,6 +273,8 @@ class _$BeginExport implements BeginExport {
     TResult Function(String docId, String n1Path, String localPath)?
         docSkippedAlreadyExists,
     TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
+    TResult Function(Either<List<ExportFailure>, ExportResults> results)?
+        exportFinished,
   }) {
     return beginExport?.call(
         orgId, orgName, projectId, projectName, localPath, docCount);
@@ -278,6 +293,8 @@ class _$BeginExport implements BeginExport {
     TResult Function(String docId, String n1Path, String localPath)?
         docSkippedAlreadyExists,
     TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
+    TResult Function(Either<List<ExportFailure>, ExportResults> results)?
+        exportFinished,
     required TResult orElse(),
   }) {
     if (beginExport != null) {
@@ -297,6 +314,7 @@ class _$BeginExport implements BeginExport {
         docSkippedAlreadyExists,
     required TResult Function(DocSkippedUnknownFailure value)
         docSkippedUnknownFailure,
+    required TResult Function(ExportFinished value) exportFinished,
   }) {
     return beginExport(this);
   }
@@ -309,6 +327,7 @@ class _$BeginExport implements BeginExport {
     TResult Function(DocExported value)? docExported,
     TResult Function(DocSkippedAlreadyExists value)? docSkippedAlreadyExists,
     TResult Function(DocSkippedUnknownFailure value)? docSkippedUnknownFailure,
+    TResult Function(ExportFinished value)? exportFinished,
   }) {
     return beginExport?.call(this);
   }
@@ -321,6 +340,7 @@ class _$BeginExport implements BeginExport {
     TResult Function(DocExported value)? docExported,
     TResult Function(DocSkippedAlreadyExists value)? docSkippedAlreadyExists,
     TResult Function(DocSkippedUnknownFailure value)? docSkippedUnknownFailure,
+    TResult Function(ExportFinished value)? exportFinished,
     required TResult orElse(),
   }) {
     if (beginExport != null) {
@@ -436,6 +456,9 @@ class _$DocExportAttempt implements DocExportAttempt {
         docSkippedAlreadyExists,
     required TResult Function(String docId, String n1Path)
         docSkippedUnknownFailure,
+    required TResult Function(
+            Either<List<ExportFailure>, ExportResults> results)
+        exportFinished,
   }) {
     return docExportAttempt(docId, n1Path);
   }
@@ -453,6 +476,8 @@ class _$DocExportAttempt implements DocExportAttempt {
     TResult Function(String docId, String n1Path, String localPath)?
         docSkippedAlreadyExists,
     TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
+    TResult Function(Either<List<ExportFailure>, ExportResults> results)?
+        exportFinished,
   }) {
     return docExportAttempt?.call(docId, n1Path);
   }
@@ -470,6 +495,8 @@ class _$DocExportAttempt implements DocExportAttempt {
     TResult Function(String docId, String n1Path, String localPath)?
         docSkippedAlreadyExists,
     TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
+    TResult Function(Either<List<ExportFailure>, ExportResults> results)?
+        exportFinished,
     required TResult orElse(),
   }) {
     if (docExportAttempt != null) {
@@ -488,6 +515,7 @@ class _$DocExportAttempt implements DocExportAttempt {
         docSkippedAlreadyExists,
     required TResult Function(DocSkippedUnknownFailure value)
         docSkippedUnknownFailure,
+    required TResult Function(ExportFinished value) exportFinished,
   }) {
     return docExportAttempt(this);
   }
@@ -500,6 +528,7 @@ class _$DocExportAttempt implements DocExportAttempt {
     TResult Function(DocExported value)? docExported,
     TResult Function(DocSkippedAlreadyExists value)? docSkippedAlreadyExists,
     TResult Function(DocSkippedUnknownFailure value)? docSkippedUnknownFailure,
+    TResult Function(ExportFinished value)? exportFinished,
   }) {
     return docExportAttempt?.call(this);
   }
@@ -512,6 +541,7 @@ class _$DocExportAttempt implements DocExportAttempt {
     TResult Function(DocExported value)? docExported,
     TResult Function(DocSkippedAlreadyExists value)? docSkippedAlreadyExists,
     TResult Function(DocSkippedUnknownFailure value)? docSkippedUnknownFailure,
+    TResult Function(ExportFinished value)? exportFinished,
     required TResult orElse(),
   }) {
     if (docExportAttempt != null) {
@@ -642,6 +672,9 @@ class _$DocExported implements DocExported {
         docSkippedAlreadyExists,
     required TResult Function(String docId, String n1Path)
         docSkippedUnknownFailure,
+    required TResult Function(
+            Either<List<ExportFailure>, ExportResults> results)
+        exportFinished,
   }) {
     return docExported(docId, n1Path, localPath, exportedAsCopy);
   }
@@ -659,6 +692,8 @@ class _$DocExported implements DocExported {
     TResult Function(String docId, String n1Path, String localPath)?
         docSkippedAlreadyExists,
     TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
+    TResult Function(Either<List<ExportFailure>, ExportResults> results)?
+        exportFinished,
   }) {
     return docExported?.call(docId, n1Path, localPath, exportedAsCopy);
   }
@@ -676,6 +711,8 @@ class _$DocExported implements DocExported {
     TResult Function(String docId, String n1Path, String localPath)?
         docSkippedAlreadyExists,
     TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
+    TResult Function(Either<List<ExportFailure>, ExportResults> results)?
+        exportFinished,
     required TResult orElse(),
   }) {
     if (docExported != null) {
@@ -694,6 +731,7 @@ class _$DocExported implements DocExported {
         docSkippedAlreadyExists,
     required TResult Function(DocSkippedUnknownFailure value)
         docSkippedUnknownFailure,
+    required TResult Function(ExportFinished value) exportFinished,
   }) {
     return docExported(this);
   }
@@ -706,6 +744,7 @@ class _$DocExported implements DocExported {
     TResult Function(DocExported value)? docExported,
     TResult Function(DocSkippedAlreadyExists value)? docSkippedAlreadyExists,
     TResult Function(DocSkippedUnknownFailure value)? docSkippedUnknownFailure,
+    TResult Function(ExportFinished value)? exportFinished,
   }) {
     return docExported?.call(this);
   }
@@ -718,6 +757,7 @@ class _$DocExported implements DocExported {
     TResult Function(DocExported value)? docExported,
     TResult Function(DocSkippedAlreadyExists value)? docSkippedAlreadyExists,
     TResult Function(DocSkippedUnknownFailure value)? docSkippedUnknownFailure,
+    TResult Function(ExportFinished value)? exportFinished,
     required TResult orElse(),
   }) {
     if (docExported != null) {
@@ -841,6 +881,9 @@ class _$DocSkippedAlreadyExists implements DocSkippedAlreadyExists {
         docSkippedAlreadyExists,
     required TResult Function(String docId, String n1Path)
         docSkippedUnknownFailure,
+    required TResult Function(
+            Either<List<ExportFailure>, ExportResults> results)
+        exportFinished,
   }) {
     return docSkippedAlreadyExists(docId, n1Path, localPath);
   }
@@ -858,6 +901,8 @@ class _$DocSkippedAlreadyExists implements DocSkippedAlreadyExists {
     TResult Function(String docId, String n1Path, String localPath)?
         docSkippedAlreadyExists,
     TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
+    TResult Function(Either<List<ExportFailure>, ExportResults> results)?
+        exportFinished,
   }) {
     return docSkippedAlreadyExists?.call(docId, n1Path, localPath);
   }
@@ -875,6 +920,8 @@ class _$DocSkippedAlreadyExists implements DocSkippedAlreadyExists {
     TResult Function(String docId, String n1Path, String localPath)?
         docSkippedAlreadyExists,
     TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
+    TResult Function(Either<List<ExportFailure>, ExportResults> results)?
+        exportFinished,
     required TResult orElse(),
   }) {
     if (docSkippedAlreadyExists != null) {
@@ -893,6 +940,7 @@ class _$DocSkippedAlreadyExists implements DocSkippedAlreadyExists {
         docSkippedAlreadyExists,
     required TResult Function(DocSkippedUnknownFailure value)
         docSkippedUnknownFailure,
+    required TResult Function(ExportFinished value) exportFinished,
   }) {
     return docSkippedAlreadyExists(this);
   }
@@ -905,6 +953,7 @@ class _$DocSkippedAlreadyExists implements DocSkippedAlreadyExists {
     TResult Function(DocExported value)? docExported,
     TResult Function(DocSkippedAlreadyExists value)? docSkippedAlreadyExists,
     TResult Function(DocSkippedUnknownFailure value)? docSkippedUnknownFailure,
+    TResult Function(ExportFinished value)? exportFinished,
   }) {
     return docSkippedAlreadyExists?.call(this);
   }
@@ -917,6 +966,7 @@ class _$DocSkippedAlreadyExists implements DocSkippedAlreadyExists {
     TResult Function(DocExported value)? docExported,
     TResult Function(DocSkippedAlreadyExists value)? docSkippedAlreadyExists,
     TResult Function(DocSkippedUnknownFailure value)? docSkippedUnknownFailure,
+    TResult Function(ExportFinished value)? exportFinished,
     required TResult orElse(),
   }) {
     if (docSkippedAlreadyExists != null) {
@@ -1029,6 +1079,9 @@ class _$DocSkippedUnknownFailure implements DocSkippedUnknownFailure {
         docSkippedAlreadyExists,
     required TResult Function(String docId, String n1Path)
         docSkippedUnknownFailure,
+    required TResult Function(
+            Either<List<ExportFailure>, ExportResults> results)
+        exportFinished,
   }) {
     return docSkippedUnknownFailure(docId, n1Path);
   }
@@ -1046,6 +1099,8 @@ class _$DocSkippedUnknownFailure implements DocSkippedUnknownFailure {
     TResult Function(String docId, String n1Path, String localPath)?
         docSkippedAlreadyExists,
     TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
+    TResult Function(Either<List<ExportFailure>, ExportResults> results)?
+        exportFinished,
   }) {
     return docSkippedUnknownFailure?.call(docId, n1Path);
   }
@@ -1063,6 +1118,8 @@ class _$DocSkippedUnknownFailure implements DocSkippedUnknownFailure {
     TResult Function(String docId, String n1Path, String localPath)?
         docSkippedAlreadyExists,
     TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
+    TResult Function(Either<List<ExportFailure>, ExportResults> results)?
+        exportFinished,
     required TResult orElse(),
   }) {
     if (docSkippedUnknownFailure != null) {
@@ -1081,6 +1138,7 @@ class _$DocSkippedUnknownFailure implements DocSkippedUnknownFailure {
         docSkippedAlreadyExists,
     required TResult Function(DocSkippedUnknownFailure value)
         docSkippedUnknownFailure,
+    required TResult Function(ExportFinished value) exportFinished,
   }) {
     return docSkippedUnknownFailure(this);
   }
@@ -1093,6 +1151,7 @@ class _$DocSkippedUnknownFailure implements DocSkippedUnknownFailure {
     TResult Function(DocExported value)? docExported,
     TResult Function(DocSkippedAlreadyExists value)? docSkippedAlreadyExists,
     TResult Function(DocSkippedUnknownFailure value)? docSkippedUnknownFailure,
+    TResult Function(ExportFinished value)? exportFinished,
   }) {
     return docSkippedUnknownFailure?.call(this);
   }
@@ -1105,6 +1164,7 @@ class _$DocSkippedUnknownFailure implements DocSkippedUnknownFailure {
     TResult Function(DocExported value)? docExported,
     TResult Function(DocSkippedAlreadyExists value)? docSkippedAlreadyExists,
     TResult Function(DocSkippedUnknownFailure value)? docSkippedUnknownFailure,
+    TResult Function(ExportFinished value)? exportFinished,
     required TResult orElse(),
   }) {
     if (docSkippedUnknownFailure != null) {
@@ -1124,4 +1184,186 @@ abstract class DocSkippedUnknownFailure implements ExportEvent {
   @JsonKey(ignore: true)
   _$$DocSkippedUnknownFailureCopyWith<_$DocSkippedUnknownFailure>
       get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$ExportFinishedCopyWith<$Res> {
+  factory _$$ExportFinishedCopyWith(
+          _$ExportFinished value, $Res Function(_$ExportFinished) then) =
+      __$$ExportFinishedCopyWithImpl<$Res>;
+  $Res call({Either<List<ExportFailure>, ExportResults> results});
+}
+
+/// @nodoc
+class __$$ExportFinishedCopyWithImpl<$Res>
+    extends _$ExportEventCopyWithImpl<$Res>
+    implements _$$ExportFinishedCopyWith<$Res> {
+  __$$ExportFinishedCopyWithImpl(
+      _$ExportFinished _value, $Res Function(_$ExportFinished) _then)
+      : super(_value, (v) => _then(v as _$ExportFinished));
+
+  @override
+  _$ExportFinished get _value => super._value as _$ExportFinished;
+
+  @override
+  $Res call({
+    Object? results = freezed,
+  }) {
+    return _then(_$ExportFinished(
+      results: results == freezed
+          ? _value.results
+          : results // ignore: cast_nullable_to_non_nullable
+              as Either<List<ExportFailure>, ExportResults>,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$ExportFinished implements ExportFinished {
+  const _$ExportFinished({required this.results});
+
+  @override
+  final Either<List<ExportFailure>, ExportResults> results;
+
+  @override
+  String toString() {
+    return 'ExportEvent.exportFinished(results: $results)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ExportFinished &&
+            const DeepCollectionEquality().equals(other.results, results));
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(results));
+
+  @JsonKey(ignore: true)
+  @override
+  _$$ExportFinishedCopyWith<_$ExportFinished> get copyWith =>
+      __$$ExportFinishedCopyWithImpl<_$ExportFinished>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String orgId, String orgName, String projectId,
+            String projectName, String localPath, int docCount)
+        beginExport,
+    required TResult Function(String docId, String n1Path) docExportAttempt,
+    required TResult Function(
+            String docId, String n1Path, String localPath, bool exportedAsCopy)
+        docExported,
+    required TResult Function(String docId, String n1Path, String localPath)
+        docSkippedAlreadyExists,
+    required TResult Function(String docId, String n1Path)
+        docSkippedUnknownFailure,
+    required TResult Function(
+            Either<List<ExportFailure>, ExportResults> results)
+        exportFinished,
+  }) {
+    return exportFinished(results);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult Function(String orgId, String orgName, String projectId,
+            String projectName, String localPath, int docCount)?
+        beginExport,
+    TResult Function(String docId, String n1Path)? docExportAttempt,
+    TResult Function(
+            String docId, String n1Path, String localPath, bool exportedAsCopy)?
+        docExported,
+    TResult Function(String docId, String n1Path, String localPath)?
+        docSkippedAlreadyExists,
+    TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
+    TResult Function(Either<List<ExportFailure>, ExportResults> results)?
+        exportFinished,
+  }) {
+    return exportFinished?.call(results);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String orgId, String orgName, String projectId,
+            String projectName, String localPath, int docCount)?
+        beginExport,
+    TResult Function(String docId, String n1Path)? docExportAttempt,
+    TResult Function(
+            String docId, String n1Path, String localPath, bool exportedAsCopy)?
+        docExported,
+    TResult Function(String docId, String n1Path, String localPath)?
+        docSkippedAlreadyExists,
+    TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
+    TResult Function(Either<List<ExportFailure>, ExportResults> results)?
+        exportFinished,
+    required TResult orElse(),
+  }) {
+    if (exportFinished != null) {
+      return exportFinished(results);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(BeginExport value) beginExport,
+    required TResult Function(DocExportAttempt value) docExportAttempt,
+    required TResult Function(DocExported value) docExported,
+    required TResult Function(DocSkippedAlreadyExists value)
+        docSkippedAlreadyExists,
+    required TResult Function(DocSkippedUnknownFailure value)
+        docSkippedUnknownFailure,
+    required TResult Function(ExportFinished value) exportFinished,
+  }) {
+    return exportFinished(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult Function(BeginExport value)? beginExport,
+    TResult Function(DocExportAttempt value)? docExportAttempt,
+    TResult Function(DocExported value)? docExported,
+    TResult Function(DocSkippedAlreadyExists value)? docSkippedAlreadyExists,
+    TResult Function(DocSkippedUnknownFailure value)? docSkippedUnknownFailure,
+    TResult Function(ExportFinished value)? exportFinished,
+  }) {
+    return exportFinished?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(BeginExport value)? beginExport,
+    TResult Function(DocExportAttempt value)? docExportAttempt,
+    TResult Function(DocExported value)? docExported,
+    TResult Function(DocSkippedAlreadyExists value)? docSkippedAlreadyExists,
+    TResult Function(DocSkippedUnknownFailure value)? docSkippedUnknownFailure,
+    TResult Function(ExportFinished value)? exportFinished,
+    required TResult orElse(),
+  }) {
+    if (exportFinished != null) {
+      return exportFinished(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class ExportFinished implements ExportEvent {
+  const factory ExportFinished(
+          {required final Either<List<ExportFailure>, ExportResults> results}) =
+      _$ExportFinished;
+
+  Either<List<ExportFailure>, ExportResults> get results;
+  @JsonKey(ignore: true)
+  _$$ExportFinishedCopyWith<_$ExportFinished> get copyWith =>
+      throw _privateConstructorUsedError;
 }

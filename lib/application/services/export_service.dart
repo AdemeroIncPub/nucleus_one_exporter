@@ -51,36 +51,41 @@ class ExportService {
 
   final Future<NucleusOneSdkService> _n1SdkSvc;
   final PathValidator _pathValidator;
-  final StreamController<ExportEvent> _exportEventStreamController =
-      StreamController<ExportEvent>();
   final http.Client _httpClient = http.Client();
 
-  Stream<ExportEvent> get exportEventStream =>
-      _exportEventStreamController.stream;
-
-  TaskEither<List<ExportFailure>, ExportResults> exportDocuments(
+  Stream<ExportEvent> exportDocuments(
     ValidatedExportDocumentsArgs validArgs,
   ) {
     final results = ExportResults(DateTime.now());
+    final exportEventStreamController = StreamController<ExportEvent>();
+    final streamSink = exportEventStreamController.sink;
 
-    return _exportDocuments(validArgs, results)
+    unawaited(_exportDocuments(validArgs, streamSink, results)
         .mapLeft((l) => [l])
         .map((r) => r.setFinished())
         // todo(apn): what's a better way to close http client after processing?
         .bimap(
-      (l) {
-        _httpClient.close();
-        return l;
-      },
-      (r) {
-        _httpClient.close();
-        return r;
-      },
-    );
+          (l) {
+            streamSink.add(ExportEvent.exportFinished(results: left(l)));
+          },
+          (r) {
+            streamSink.add(ExportEvent.exportFinished(results: right(r)));
+          },
+        )
+        .run()
+        .whenComplete(() {
+          _httpClient.close();
+          exportEventStreamController.close();
+        }));
+
+    return exportEventStreamController.stream;
   }
 
   TaskEither<ExportFailure, ExportResults> _exportDocuments(
-      ValidatedExportDocumentsArgs validArgs, final ExportResults results) {
+    ValidatedExportDocumentsArgs validArgs,
+    StreamSink<ExportEvent> streamSink,
+    final ExportResults results,
+  ) {
     final v = validArgs;
     return TaskEither.tryCatch(() async {
       // Send BeginExport event.
@@ -95,7 +100,7 @@ class ExportService {
           projectId: v.projectId,
           ignoreInbox: true,
           ignoreRecycleBin: true);
-      _addExportEvent(ExportEvent.beginExport(
+      streamSink.add(ExportEvent.beginExport(
           orgId: v.orgId,
           orgName: org.organizationName,
           projectId: v.projectId,
@@ -106,7 +111,7 @@ class ExportService {
       // Get document stream and do the export.
       final docStream = _getDocumentsStream(validArgs);
       final exportResults =
-          await _exportDocumentsFromStream(docStream, validArgs)
+          await _exportDocumentsFromStream(docStream, validArgs, streamSink)
               .fold<Either<_DownloadFailure, ExportResults>>(
         right(results),
         // Ignore individual export failures for now until we handle
@@ -114,7 +119,7 @@ class ExportService {
         (acc, docResult) => acc.map(
           (accResults) => docResult.fold(
             (drL) {
-              _addExportEvent(ExportEvent.docSkippedUnknownFailure(
+              streamSink.add(ExportEvent.docSkippedUnknownFailure(
                 docId: drL.doc.documentID,
                 n1Path: _getNormalizedN1Path(drL.doc),
               ));
@@ -129,15 +134,18 @@ class ExportService {
   }
 
   Stream<Either<_DownloadFailure, ExportResults>> _exportDocumentsFromStream(
-      Stream<n1.Document> docStream, ValidatedExportDocumentsArgs validArgs) {
+    Stream<n1.Document> docStream,
+    ValidatedExportDocumentsArgs validArgs,
+    StreamSink<ExportEvent> streamSink,
+  ) {
     return docStream.flatMap(
       maxConcurrent: validArgs.maxConcurrentDownloads,
       (doc) async* {
-        _addExportEvent(ExportEvent.docExportAttempt(
+        streamSink.add(ExportEvent.docExportAttempt(
           docId: doc.documentID,
           n1Path: _getNormalizedN1Path(doc),
         ));
-        yield (await _exportDocument(doc, validArgs).run());
+        yield (await _exportDocument(doc, validArgs, streamSink).run());
       },
     );
   }
@@ -158,7 +166,10 @@ class ExportService {
   }
 
   TaskEither<_DownloadFailure, ExportResults> _exportDocument(
-      n1.Document doc, ValidatedExportDocumentsArgs validArgs) {
+    n1.Document doc,
+    ValidatedExportDocumentsArgs validArgs,
+    StreamSink<ExportEvent> streamSink,
+  ) {
     final results = ExportResults(DateTime.now());
     File? outFile;
     return TaskEither.tryCatch(() async {
@@ -170,7 +181,7 @@ class ExportService {
           outFilepath = _makeAlternativeFilepathIfExists(outFilepath);
           renamed = true;
         } else {
-          _addExportEvent(ExportEvent.docSkippedAlreadyExists(
+          streamSink.add(ExportEvent.docSkippedAlreadyExists(
             docId: doc.documentID,
             n1Path: _getNormalizedN1Path(doc),
             localPath:
@@ -196,7 +207,7 @@ class ExportService {
       } else {
         exportResults = results.docExported();
       }
-      _addExportEvent(ExportEvent.docExported(
+      streamSink.add(ExportEvent.docExported(
         docId: doc.documentID,
         n1Path: _getNormalizedN1Path(doc),
         localPath:
@@ -261,11 +272,4 @@ class ExportService {
 
   String _getNormalizedN1Path(n1.Document doc) =>
       path_.normalize(path_.join(doc.documentFolderPath, doc.name));
-
-  void _addExportEvent(ExportEvent event) {
-    final sc = _exportEventStreamController;
-    if (!sc.isClosed && !sc.isPaused && sc.hasListener) {
-      _exportEventStreamController.add(event);
-    }
-  }
 }

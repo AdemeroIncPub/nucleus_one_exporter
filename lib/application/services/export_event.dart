@@ -1,4 +1,8 @@
+import 'package:fpdart/fpdart.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+
+import 'export_results.dart';
+import 'export_service.dart';
 
 part 'export_event.freezed.dart';
 
@@ -35,4 +39,8 @@ class ExportEvent with _$ExportEvent {
     required String docId,
     required String n1Path,
   }) = DocSkippedUnknownFailure;
+
+  const factory ExportEvent.exportFinished({
+    required Either<List<ExportFailure>, ExportResults> results,
+  }) = ExportFinished;
 }

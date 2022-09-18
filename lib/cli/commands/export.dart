@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:cli_util/cli_logging.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:get_it/get_it.dart';
 import 'package:riverpod/riverpod.dart';
 
@@ -102,8 +103,6 @@ class ExportCommand extends Command<void> {
   Future<void> run() async {
     final args = argResults!;
 
-    final listenToExportEventStream = await _listenToExportEventStream(_logger);
-
     final exportArgs = ExportDocumentsArgs(
       orgId: tryCast(args[_option_orgId], ''),
       projectId: tryCast(args[_option_projectId], ''),
@@ -119,17 +118,31 @@ class ExportCommand extends Command<void> {
     await validArgs
         .mapLeft(_mapValidationFailures2ExportFailures)
         .mapLeft(_mapExportFailures2Messages)
-        .flatMap((r) => exportService
-            .exportDocuments(r)
-            // todo(apn): errors from here maybe shouldn't show usage
-            .mapLeft(_mapExportFailures2Messages))
+        .map((validArgs) => _exportDocuments(exportService, validArgs))
+        .map((r) async {
+          return (await r).results.mapLeft(_mapExportFailures2Messages);
+        })
+        .flatMap((r) => TaskEither.tryCatch(
+              () => r,
+              (error, stackTrace) =>
+                  _mapExportFailures2Messages([ExportFailure.unknownFailure]),
+            ))
         .bimap(
-          (err) => usageException(err.join('\n')),
-          (r) => _logSummary(_logger, r, args[_flag_copyIfExists] as bool),
+          (validationErrors) => usageException(validationErrors.join('\n')),
+          (r) => r.fold(
+            (l) => _logger.stderr(l.join('\n')),
+            (r) => _logSummary(_logger, r, args[_flag_copyIfExists] as bool),
+          ),
         )
         .run();
+  }
 
-    await listenToExportEventStream.cancel();
+  Future<ExportFinished> _exportDocuments(
+    ExportService exportService,
+    ValidatedExportDocumentsArgs validArgs,
+  ) {
+    final eventStream = exportService.exportDocuments(validArgs);
+    return _listenToExportEventStream(eventStream, _logger);
   }
 
   List<ExportFailure> _mapValidationFailures2ExportFailures(
@@ -199,8 +212,10 @@ class ExportCommand extends Command<void> {
     return logger.stdout(msg);
   }
 
-  Future<StreamSubscription<ExportEvent>> _listenToExportEventStream(
-      Logger logger) async {
+  Future<ExportFinished> _listenToExportEventStream(
+    Stream<ExportEvent> eventStream,
+    Logger logger,
+  ) async {
     final Ansi ansi = logger.ansi;
 
     const prefixExported = '[Exported] ';
@@ -211,8 +226,8 @@ class ExportCommand extends Command<void> {
     var totalDocs = 0;
     var docsProcessed = -1;
     final sw = Stopwatch()..start();
-    final exportService = await _exportService;
-    return exportService.exportEventStream.listen((event) {
+    final streamCompleter = Completer<ExportFinished>();
+    final sub = eventStream.listen((event) {
       event.when(
         beginExport:
             ((orgId, orgName, projectId, projectName, localPath, docCount) {
@@ -244,7 +259,11 @@ class ExportCommand extends Command<void> {
           final msg = 'Document ID: "$docId", N1 Path: "$n1Path"';
           logger.stderr('${ansi.red}$prefixFailure$msg${ansi.none}');
         },
+        exportFinished: (Either<List<ExportFailure>, ExportResults> results) {
+          streamCompleter.complete(ExportFinished(results: results));
+        },
       );
     });
+    return streamCompleter.future.whenComplete(() => sub.cancel());
   }
 }
