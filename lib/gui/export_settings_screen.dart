@@ -126,7 +126,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
               actionsAlignment: MainAxisAlignment.start,
               actions: <Widget>[
                 TextButton(
-                  child: const Text('Close'),
+                  child: const Text('OK'),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
@@ -144,7 +144,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
   Widget _mainContent() {
     // This Align pushes the scrollbar all the way to the right.
     return Align(
-      alignment: Alignment.topLeft,
+      alignment: Alignment.topCenter,
       child: Container(
         constraints: const BoxConstraints(maxWidth: 800),
         child: Column(
@@ -451,7 +451,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
               data: (data) => _exportDocuments,
             )
           : null,
-      child: const Text('Export Documents'),
+      child: const Text('EXPORT'),
     );
   }
 
@@ -461,7 +461,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
         "renaming, it's possible that the export will save a file with the "
         'same name as another file not yet exported. With "Copy if exists" '
         'unchecked, the second file will be skipped since the file already '
-        'exists. A warning will be issued. This mostly affects Windows.';
+        'exists. A warning will be logged. This mostly affects Windows.';
     return const Text(text);
   }
 

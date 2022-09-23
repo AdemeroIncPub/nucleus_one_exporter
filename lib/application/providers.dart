@@ -51,7 +51,8 @@ final userOrgsSummaryProvider = FutureProvider<UserOrgsSummary>((ref) async {
   return userOrgsSummaryService.getSummary();
 });
 
-final exportServiceProvider = FutureProvider<ExportService>((ref) async {
+final exportServiceProvider =
+    FutureProvider.autoDispose<ExportService>((ref) async {
   final pathValidator = ref.watch(pathValidatorProvider);
   final n1SdkSvc = ref.watch(nucleusOneSdkServiceProvider.future);
   return ExportService(n1SdkSvc: n1SdkSvc, pathValidator: pathValidator);

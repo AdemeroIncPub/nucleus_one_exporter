@@ -86,7 +86,7 @@ class __$$_SettingsCopyWithImpl<$Res> extends _$SettingsCopyWithImpl<$Res>
 /// @nodoc
 
 class _$_Settings implements _Settings {
-  _$_Settings({required this.apiKey});
+  const _$_Settings({required this.apiKey});
 
   @override
   final String apiKey;
@@ -115,7 +115,7 @@ class _$_Settings implements _Settings {
 }
 
 abstract class _Settings implements Settings {
-  factory _Settings({required final String apiKey}) = _$_Settings;
+  const factory _Settings({required final String apiKey}) = _$_Settings;
 
   @override
   String get apiKey;

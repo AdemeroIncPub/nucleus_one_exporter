@@ -12,7 +12,7 @@ part 'settings.freezed.dart';
 
 @freezed
 class Settings with _$Settings {
-  factory Settings({required String apiKey}) = _Settings;
+  const factory Settings({required String apiKey}) = _Settings;
 }
 
 class SettingsNotifier extends StateNotifier<Settings> {

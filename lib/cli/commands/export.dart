@@ -224,24 +224,28 @@ class ExportCommand extends Command<void> {
     const prefixFailure = '[Skipped (Unknown Failure)] ';
 
     var totalDocs = 0;
-    var docsProcessed = -1;
+    var docsProcessed = 0;
     final sw = Stopwatch()..start();
     final streamCompleter = Completer<ExportFinished>();
     final sub = eventStream.listen((event) {
+      void incrementDocsProcessed() {
+        docsProcessed += 1;
+        if (sw.elapsed > const Duration(seconds: 5)) {
+          sw.reset();
+          logger.stdout(
+              '* Export ${(docsProcessed * 100.0 / totalDocs).floor()}% complete...');
+        }
+      }
+
       event.when(
         beginExport:
             ((orgId, orgName, projectId, projectName, localPath, docCount) {
           totalDocs = docCount;
+          logger.stdout('* Export 0% complete...');
         }),
-        docExportAttempt: (docId, n1Path) {
-          docsProcessed += 1;
-          if (sw.elapsed > const Duration(seconds: 5)) {
-            sw.reset();
-            logger.stdout(
-                '* Export ${(docsProcessed * 100.0 / totalDocs).floor()}% complete...');
-          }
-        },
+        docExportAttempt: (docId, n1Path) {},
         docExported: (docId, n1Path, localPath, exportedAsCopy) {
+          incrementDocsProcessed();
           final msg = 'Document ID: "$docId", N1 Path: "$n1Path", '
               'Local Path: "$localPath"';
           if (exportedAsCopy) {
@@ -251,11 +255,13 @@ class ExportCommand extends Command<void> {
           }
         },
         docSkippedAlreadyExists: (docId, n1Path, localPath) {
+          incrementDocsProcessed();
           final msg = 'Document ID: "$docId", N1 Path: "$n1Path", '
               'Local Path: "$localPath"';
           logger.stdout('${ansi.yellow}$prefixExists$msg${ansi.none}');
         },
         docSkippedUnknownFailure: (docId, n1Path) {
+          incrementDocsProcessed();
           final msg = 'Document ID: "$docId", N1 Path: "$n1Path"';
           logger.stderr('${ansi.red}$prefixFailure$msg${ansi.none}');
         },

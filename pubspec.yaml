@@ -3,7 +3,8 @@ description: A tool for exporting documents from Nucleus One.
 homepage: https://nucleus.one
 
 scripts:
-  gen: dart run build_runner build --delete-conflicting-outputs
+  gen: flutter pub run build_runner build --delete-conflicting-outputs
+  outdated: flutter pub outdated --color
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -34,6 +35,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   args: any
+  async: any
   characters: any
   cli_util: any
   collection: any

@@ -20,7 +20,7 @@ enum ExportDocumentsArgsValidationFailure {
 
 @freezed
 class ExportDocumentsArgs with _$ExportDocumentsArgs {
-  factory ExportDocumentsArgs({
+  const factory ExportDocumentsArgs({
     required String orgId,
     required String projectId,
     required String destination,
@@ -91,7 +91,7 @@ class ExportDocumentsArgs with _$ExportDocumentsArgs {
 
 @freezed
 class ValidatedExportDocumentsArgs with _$ValidatedExportDocumentsArgs {
-  factory ValidatedExportDocumentsArgs._internal({
+  const factory ValidatedExportDocumentsArgs._internal({
     required String orgId,
     required String projectId,
     required Directory destination,

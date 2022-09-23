@@ -157,7 +157,7 @@ class __$$_ExportDocumentsArgsCopyWithImpl<$Res>
 /// @nodoc
 
 class _$_ExportDocumentsArgs extends _ExportDocumentsArgs {
-  _$_ExportDocumentsArgs(
+  const _$_ExportDocumentsArgs(
       {required this.orgId,
       required this.projectId,
       required this.destination,
@@ -219,14 +219,14 @@ class _$_ExportDocumentsArgs extends _ExportDocumentsArgs {
 }
 
 abstract class _ExportDocumentsArgs extends ExportDocumentsArgs {
-  factory _ExportDocumentsArgs(
+  const factory _ExportDocumentsArgs(
       {required final String orgId,
       required final String projectId,
       required final String destination,
       required final bool allowNonEmptyDestination,
       required final bool copyIfExists,
       required final String maxConcurrentDownloads}) = _$_ExportDocumentsArgs;
-  _ExportDocumentsArgs._() : super._();
+  const _ExportDocumentsArgs._() : super._();
 
   @override
   String get orgId;
@@ -418,7 +418,7 @@ class __$$_ValidatedExportDocumentsArgsCopyWithImpl<$Res>
 /// @nodoc
 
 class _$_ValidatedExportDocumentsArgs implements _ValidatedExportDocumentsArgs {
-  _$_ValidatedExportDocumentsArgs(
+  const _$_ValidatedExportDocumentsArgs(
       {required this.orgId,
       required this.projectId,
       required this.destination,
@@ -486,7 +486,7 @@ class _$_ValidatedExportDocumentsArgs implements _ValidatedExportDocumentsArgs {
 
 abstract class _ValidatedExportDocumentsArgs
     implements ValidatedExportDocumentsArgs {
-  factory _ValidatedExportDocumentsArgs(
+  const factory _ValidatedExportDocumentsArgs(
           {required final String orgId,
           required final String projectId,
           required final Directory destination,

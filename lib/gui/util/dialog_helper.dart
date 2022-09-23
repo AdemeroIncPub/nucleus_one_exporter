@@ -35,8 +35,8 @@ Future<String?> showTextInputDialog(
           ),
         ),
         actions: <Widget>[
-          ElevatedButton(
-            child: const Text('Cancel'),
+          TextButton(
+            child: const Text('CANCEL'),
             onPressed: () => Navigator.pop(context),
           ),
           ElevatedButton(

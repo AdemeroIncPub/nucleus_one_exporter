@@ -73,9 +73,9 @@ class ExportService {
           },
         )
         .run()
-        .whenComplete(() {
+        .whenComplete(() async {
           _httpClient.close();
-          exportEventStreamController.close();
+          await exportEventStreamController.close();
         }));
 
     return exportEventStreamController.stream;
