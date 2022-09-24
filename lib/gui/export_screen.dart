@@ -123,13 +123,8 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
       String prefixExported, String prefixExists, String prefixFailure) {
     final theme = Theme.of(context);
 
-    return exportState.recentExportEvents[index].when(
-      beginExport:
-          (orgId, orgName, projectId, projectName, localPath, docCount) {
-        assert(false, 'This event is not reported.');
-        return Container();
-      },
-      docExportAttempt: (docId, n1Path) {
+    return exportState.recentExportEvents[index].maybeWhen(
+      orElse: () {
         assert(false, 'This event is not reported.');
         return Container();
       },
@@ -163,10 +158,6 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
           style: theme.textTheme.bodyMedium
               ?.copyWith(color: theme.colorScheme.error),
         );
-      },
-      exportFinished: (results, canceledBeforeFinish) {
-        assert(false, 'This event is not reported.');
-        return Container();
       },
     );
   }
