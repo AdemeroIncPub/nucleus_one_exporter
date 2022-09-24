@@ -30,7 +30,8 @@ mixin _$ExportEvent {
     required TResult Function(String docId, String n1Path)
         docSkippedUnknownFailure,
     required TResult Function(
-            Either<List<ExportFailure>, ExportResults> results)
+            Either<List<ExportFailure>, ExportResults> results,
+            bool canceledBeforeComplete)
         exportFinished,
   }) =>
       throw _privateConstructorUsedError;
@@ -46,7 +47,8 @@ mixin _$ExportEvent {
     TResult Function(String docId, String n1Path, String localPath)?
         docSkippedAlreadyExists,
     TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
-    TResult Function(Either<List<ExportFailure>, ExportResults> results)?
+    TResult Function(Either<List<ExportFailure>, ExportResults> results,
+            bool canceledBeforeComplete)?
         exportFinished,
   }) =>
       throw _privateConstructorUsedError;
@@ -62,7 +64,8 @@ mixin _$ExportEvent {
     TResult Function(String docId, String n1Path, String localPath)?
         docSkippedAlreadyExists,
     TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
-    TResult Function(Either<List<ExportFailure>, ExportResults> results)?
+    TResult Function(Either<List<ExportFailure>, ExportResults> results,
+            bool canceledBeforeComplete)?
         exportFinished,
     required TResult orElse(),
   }) =>
@@ -253,7 +256,8 @@ class _$BeginExport implements BeginExport {
     required TResult Function(String docId, String n1Path)
         docSkippedUnknownFailure,
     required TResult Function(
-            Either<List<ExportFailure>, ExportResults> results)
+            Either<List<ExportFailure>, ExportResults> results,
+            bool canceledBeforeComplete)
         exportFinished,
   }) {
     return beginExport(
@@ -273,7 +277,8 @@ class _$BeginExport implements BeginExport {
     TResult Function(String docId, String n1Path, String localPath)?
         docSkippedAlreadyExists,
     TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
-    TResult Function(Either<List<ExportFailure>, ExportResults> results)?
+    TResult Function(Either<List<ExportFailure>, ExportResults> results,
+            bool canceledBeforeComplete)?
         exportFinished,
   }) {
     return beginExport?.call(
@@ -293,7 +298,8 @@ class _$BeginExport implements BeginExport {
     TResult Function(String docId, String n1Path, String localPath)?
         docSkippedAlreadyExists,
     TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
-    TResult Function(Either<List<ExportFailure>, ExportResults> results)?
+    TResult Function(Either<List<ExportFailure>, ExportResults> results,
+            bool canceledBeforeComplete)?
         exportFinished,
     required TResult orElse(),
   }) {
@@ -457,7 +463,8 @@ class _$DocExportAttempt implements DocExportAttempt {
     required TResult Function(String docId, String n1Path)
         docSkippedUnknownFailure,
     required TResult Function(
-            Either<List<ExportFailure>, ExportResults> results)
+            Either<List<ExportFailure>, ExportResults> results,
+            bool canceledBeforeComplete)
         exportFinished,
   }) {
     return docExportAttempt(docId, n1Path);
@@ -476,7 +483,8 @@ class _$DocExportAttempt implements DocExportAttempt {
     TResult Function(String docId, String n1Path, String localPath)?
         docSkippedAlreadyExists,
     TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
-    TResult Function(Either<List<ExportFailure>, ExportResults> results)?
+    TResult Function(Either<List<ExportFailure>, ExportResults> results,
+            bool canceledBeforeComplete)?
         exportFinished,
   }) {
     return docExportAttempt?.call(docId, n1Path);
@@ -495,7 +503,8 @@ class _$DocExportAttempt implements DocExportAttempt {
     TResult Function(String docId, String n1Path, String localPath)?
         docSkippedAlreadyExists,
     TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
-    TResult Function(Either<List<ExportFailure>, ExportResults> results)?
+    TResult Function(Either<List<ExportFailure>, ExportResults> results,
+            bool canceledBeforeComplete)?
         exportFinished,
     required TResult orElse(),
   }) {
@@ -673,7 +682,8 @@ class _$DocExported implements DocExported {
     required TResult Function(String docId, String n1Path)
         docSkippedUnknownFailure,
     required TResult Function(
-            Either<List<ExportFailure>, ExportResults> results)
+            Either<List<ExportFailure>, ExportResults> results,
+            bool canceledBeforeComplete)
         exportFinished,
   }) {
     return docExported(docId, n1Path, localPath, exportedAsCopy);
@@ -692,7 +702,8 @@ class _$DocExported implements DocExported {
     TResult Function(String docId, String n1Path, String localPath)?
         docSkippedAlreadyExists,
     TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
-    TResult Function(Either<List<ExportFailure>, ExportResults> results)?
+    TResult Function(Either<List<ExportFailure>, ExportResults> results,
+            bool canceledBeforeComplete)?
         exportFinished,
   }) {
     return docExported?.call(docId, n1Path, localPath, exportedAsCopy);
@@ -711,7 +722,8 @@ class _$DocExported implements DocExported {
     TResult Function(String docId, String n1Path, String localPath)?
         docSkippedAlreadyExists,
     TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
-    TResult Function(Either<List<ExportFailure>, ExportResults> results)?
+    TResult Function(Either<List<ExportFailure>, ExportResults> results,
+            bool canceledBeforeComplete)?
         exportFinished,
     required TResult orElse(),
   }) {
@@ -882,7 +894,8 @@ class _$DocSkippedAlreadyExists implements DocSkippedAlreadyExists {
     required TResult Function(String docId, String n1Path)
         docSkippedUnknownFailure,
     required TResult Function(
-            Either<List<ExportFailure>, ExportResults> results)
+            Either<List<ExportFailure>, ExportResults> results,
+            bool canceledBeforeComplete)
         exportFinished,
   }) {
     return docSkippedAlreadyExists(docId, n1Path, localPath);
@@ -901,7 +914,8 @@ class _$DocSkippedAlreadyExists implements DocSkippedAlreadyExists {
     TResult Function(String docId, String n1Path, String localPath)?
         docSkippedAlreadyExists,
     TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
-    TResult Function(Either<List<ExportFailure>, ExportResults> results)?
+    TResult Function(Either<List<ExportFailure>, ExportResults> results,
+            bool canceledBeforeComplete)?
         exportFinished,
   }) {
     return docSkippedAlreadyExists?.call(docId, n1Path, localPath);
@@ -920,7 +934,8 @@ class _$DocSkippedAlreadyExists implements DocSkippedAlreadyExists {
     TResult Function(String docId, String n1Path, String localPath)?
         docSkippedAlreadyExists,
     TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
-    TResult Function(Either<List<ExportFailure>, ExportResults> results)?
+    TResult Function(Either<List<ExportFailure>, ExportResults> results,
+            bool canceledBeforeComplete)?
         exportFinished,
     required TResult orElse(),
   }) {
@@ -1080,7 +1095,8 @@ class _$DocSkippedUnknownFailure implements DocSkippedUnknownFailure {
     required TResult Function(String docId, String n1Path)
         docSkippedUnknownFailure,
     required TResult Function(
-            Either<List<ExportFailure>, ExportResults> results)
+            Either<List<ExportFailure>, ExportResults> results,
+            bool canceledBeforeComplete)
         exportFinished,
   }) {
     return docSkippedUnknownFailure(docId, n1Path);
@@ -1099,7 +1115,8 @@ class _$DocSkippedUnknownFailure implements DocSkippedUnknownFailure {
     TResult Function(String docId, String n1Path, String localPath)?
         docSkippedAlreadyExists,
     TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
-    TResult Function(Either<List<ExportFailure>, ExportResults> results)?
+    TResult Function(Either<List<ExportFailure>, ExportResults> results,
+            bool canceledBeforeComplete)?
         exportFinished,
   }) {
     return docSkippedUnknownFailure?.call(docId, n1Path);
@@ -1118,7 +1135,8 @@ class _$DocSkippedUnknownFailure implements DocSkippedUnknownFailure {
     TResult Function(String docId, String n1Path, String localPath)?
         docSkippedAlreadyExists,
     TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
-    TResult Function(Either<List<ExportFailure>, ExportResults> results)?
+    TResult Function(Either<List<ExportFailure>, ExportResults> results,
+            bool canceledBeforeComplete)?
         exportFinished,
     required TResult orElse(),
   }) {
@@ -1191,7 +1209,9 @@ abstract class _$$ExportFinishedCopyWith<$Res> {
   factory _$$ExportFinishedCopyWith(
           _$ExportFinished value, $Res Function(_$ExportFinished) then) =
       __$$ExportFinishedCopyWithImpl<$Res>;
-  $Res call({Either<List<ExportFailure>, ExportResults> results});
+  $Res call(
+      {Either<List<ExportFailure>, ExportResults> results,
+      bool canceledBeforeComplete});
 }
 
 /// @nodoc
@@ -1208,12 +1228,17 @@ class __$$ExportFinishedCopyWithImpl<$Res>
   @override
   $Res call({
     Object? results = freezed,
+    Object? canceledBeforeComplete = freezed,
   }) {
     return _then(_$ExportFinished(
       results: results == freezed
           ? _value.results
           : results // ignore: cast_nullable_to_non_nullable
               as Either<List<ExportFailure>, ExportResults>,
+      canceledBeforeComplete: canceledBeforeComplete == freezed
+          ? _value.canceledBeforeComplete
+          : canceledBeforeComplete // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -1221,14 +1246,17 @@ class __$$ExportFinishedCopyWithImpl<$Res>
 /// @nodoc
 
 class _$ExportFinished implements ExportFinished {
-  const _$ExportFinished({required this.results});
+  const _$ExportFinished(
+      {required this.results, required this.canceledBeforeComplete});
 
   @override
   final Either<List<ExportFailure>, ExportResults> results;
+  @override
+  final bool canceledBeforeComplete;
 
   @override
   String toString() {
-    return 'ExportEvent.exportFinished(results: $results)';
+    return 'ExportEvent.exportFinished(results: $results, canceledBeforeComplete: $canceledBeforeComplete)';
   }
 
   @override
@@ -1236,12 +1264,16 @@ class _$ExportFinished implements ExportFinished {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ExportFinished &&
-            const DeepCollectionEquality().equals(other.results, results));
+            const DeepCollectionEquality().equals(other.results, results) &&
+            const DeepCollectionEquality()
+                .equals(other.canceledBeforeComplete, canceledBeforeComplete));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, const DeepCollectionEquality().hash(results));
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(results),
+      const DeepCollectionEquality().hash(canceledBeforeComplete));
 
   @JsonKey(ignore: true)
   @override
@@ -1263,10 +1295,11 @@ class _$ExportFinished implements ExportFinished {
     required TResult Function(String docId, String n1Path)
         docSkippedUnknownFailure,
     required TResult Function(
-            Either<List<ExportFailure>, ExportResults> results)
+            Either<List<ExportFailure>, ExportResults> results,
+            bool canceledBeforeComplete)
         exportFinished,
   }) {
-    return exportFinished(results);
+    return exportFinished(results, canceledBeforeComplete);
   }
 
   @override
@@ -1282,10 +1315,11 @@ class _$ExportFinished implements ExportFinished {
     TResult Function(String docId, String n1Path, String localPath)?
         docSkippedAlreadyExists,
     TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
-    TResult Function(Either<List<ExportFailure>, ExportResults> results)?
+    TResult Function(Either<List<ExportFailure>, ExportResults> results,
+            bool canceledBeforeComplete)?
         exportFinished,
   }) {
-    return exportFinished?.call(results);
+    return exportFinished?.call(results, canceledBeforeComplete);
   }
 
   @override
@@ -1301,12 +1335,13 @@ class _$ExportFinished implements ExportFinished {
     TResult Function(String docId, String n1Path, String localPath)?
         docSkippedAlreadyExists,
     TResult Function(String docId, String n1Path)? docSkippedUnknownFailure,
-    TResult Function(Either<List<ExportFailure>, ExportResults> results)?
+    TResult Function(Either<List<ExportFailure>, ExportResults> results,
+            bool canceledBeforeComplete)?
         exportFinished,
     required TResult orElse(),
   }) {
     if (exportFinished != null) {
-      return exportFinished(results);
+      return exportFinished(results, canceledBeforeComplete);
     }
     return orElse();
   }
@@ -1359,10 +1394,11 @@ class _$ExportFinished implements ExportFinished {
 
 abstract class ExportFinished implements ExportEvent {
   const factory ExportFinished(
-          {required final Either<List<ExportFailure>, ExportResults> results}) =
-      _$ExportFinished;
+      {required final Either<List<ExportFailure>, ExportResults> results,
+      required final bool canceledBeforeComplete}) = _$ExportFinished;
 
   Either<List<ExportFailure>, ExportResults> get results;
+  bool get canceledBeforeComplete;
   @JsonKey(ignore: true)
   _$$ExportFinishedCopyWith<_$ExportFinished> get copyWith =>
       throw _privateConstructorUsedError;

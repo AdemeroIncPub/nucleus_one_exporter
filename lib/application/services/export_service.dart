@@ -51,7 +51,10 @@ class ExportService {
 
   final Future<NucleusOneSdkService> _n1SdkSvc;
   final PathValidator _pathValidator;
-  final http.Client _httpClient = http.Client();
+
+  http.Client? _httpClient;
+  var _cancelExportRequested = false;
+  var _canceledBeforeComplete = false;
 
   Stream<ExportEvent> exportDocuments(
     ValidatedExportDocumentsArgs validArgs,
@@ -59,26 +62,39 @@ class ExportService {
     final results = ExportResults(DateTime.now());
     final exportEventStreamController = StreamController<ExportEvent>();
     final streamSink = exportEventStreamController.sink;
+    _httpClient = http.Client();
+    _cancelExportRequested = false;
+    _canceledBeforeComplete = false;
 
     unawaited(_exportDocuments(validArgs, streamSink, results)
         .mapLeft((l) => [l])
         .map((r) => r.setFinished())
-        // todo(apn): what's a better way to close http client after processing?
         .bimap(
           (l) {
-            streamSink.add(ExportEvent.exportFinished(results: left(l)));
+            streamSink.add(ExportEvent.exportFinished(
+              results: left(l),
+              canceledBeforeComplete: _canceledBeforeComplete,
+            ));
           },
           (r) {
-            streamSink.add(ExportEvent.exportFinished(results: right(r)));
+            streamSink.add(ExportEvent.exportFinished(
+              results: right(r),
+              canceledBeforeComplete: _canceledBeforeComplete,
+            ));
           },
         )
         .run()
         .whenComplete(() async {
-          _httpClient.close();
+          _httpClient?.close();
           await exportEventStreamController.close();
         }));
 
     return exportEventStreamController.stream;
+  }
+
+  /// The export may finish before cancel completes.
+  void cancelExport() {
+    _cancelExportRequested = true;
   }
 
   TaskEither<ExportFailure, ExportResults> _exportDocuments(
@@ -141,6 +157,10 @@ class ExportService {
     return docStream.flatMap(
       maxConcurrent: validArgs.maxConcurrentDownloads,
       (doc) async* {
+        if (_cancelExportRequested) {
+          _canceledBeforeComplete = true;
+          return;
+        }
         streamSink.add(ExportEvent.docExportAttempt(
           docId: doc.documentID,
           n1Path: _getNormalizedN1Path(doc),
@@ -156,6 +176,10 @@ class ExportService {
     var didReturnItems = false;
     String? cursor;
     do {
+      if (_cancelExportRequested) {
+        _canceledBeforeComplete = true;
+        return;
+      }
       final n1SdkSvc = await _n1SdkSvc;
       final qrDocs = await n1SdkSvc.getDocuments(
           orgId: v.orgId, projectId: v.projectId, cursor: cursor);
@@ -233,7 +257,7 @@ class ExportService {
       {required String url, required File destinationFile}) async {
     return Future.sync(() async {
       final request = http.Request('get', Uri.parse(url));
-      final response = await _httpClient.send(request);
+      final response = await _httpClient!.send(request);
       await for (final b in response.stream) {
         await destinationFile.writeAsBytes(b, mode: FileMode.writeOnlyAppend);
       }

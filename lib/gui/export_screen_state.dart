@@ -22,7 +22,7 @@ class ExportState with _$ExportState {
     @Default(0) int percent,
     @Default(0) int totalDocs,
     @Default(false) bool isFinished,
-    @Default(false) bool isCanceled,
+    @Default(false) bool wasCanceledBeforeFinish,
     ExportResults? exportResults,
   }) = __ExportState;
 }
@@ -54,26 +54,9 @@ class ExportStateNotifier extends StateNotifier<AsyncValue<ExportState>> {
     return notify;
   }
 
-  Future<void> cancel() async {
-    await _exportStreamSubscription.cancel();
-    state = state.map(
-      data: (data) {
-        return AsyncValue.data(
-          data.value.copyWith(
-            isCanceled: true,
-            isFinished: true,
-          ),
-        );
-      },
-      error: id,
-      loading: (loading) {
-        return AsyncValue.data(ExportState(
-          recentExportEvents: [],
-          isCanceled: true,
-          isFinished: true,
-        ));
-      },
-    );
+  /// The export may finish before cancel completes.
+  void cancelExport() {
+    _exportServiceAsync.asData?.value.cancelExport();
   }
 
   void _exportDocuments() {
@@ -121,26 +104,26 @@ class ExportStateNotifier extends StateNotifier<AsyncValue<ExportState>> {
         docExportAttempt: (docId, n1Path) {
           return state;
         },
-        docExported: (String docId, String n1Path, String localPath,
-            bool exportedAsCopy) {
+        docExported: (docId, n1Path, localPath, exportedAsCopy) {
           _recentExportEventsIsDirty = true;
           state.recentExportEvents.add(event);
           return incrementDocsProcessed(state);
         },
-        docSkippedAlreadyExists:
-            (String docId, String n1Path, String localPath) {
+        docSkippedAlreadyExists: (docId, n1Path, localPath) {
           _recentExportEventsIsDirty = true;
           state.recentExportEvents.add(event);
           return incrementDocsProcessed(state);
         },
-        docSkippedUnknownFailure: (String docId, String n1Path) {
+        docSkippedUnknownFailure: (docId, n1Path) {
           _recentExportEventsIsDirty = true;
           state.recentExportEvents.add(event);
           return incrementDocsProcessed(state);
         },
-        exportFinished: (Either<List<ExportFailure>, ExportResults> results) {
+        exportFinished: (Either<List<ExportFailure>, ExportResults> results,
+            canceledBeforeFinish) {
           return state.copyWith(
             isFinished: true,
+            wasCanceledBeforeFinish: canceledBeforeFinish,
             exportResults: results.fold(
               (l) => null,
               (r) => r,

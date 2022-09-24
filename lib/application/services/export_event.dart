@@ -42,5 +42,6 @@ class ExportEvent with _$ExportEvent {
 
   const factory ExportEvent.exportFinished({
     required Either<List<ExportFailure>, ExportResults> results,
+    required bool canceledBeforeComplete,
   }) = ExportFinished;
 }

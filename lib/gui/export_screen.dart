@@ -113,9 +113,7 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
         const SizedBox(height: Insets.compMedium),
         Align(
           alignment: Alignment.topLeft,
-          child: (exportState.isFinished || exportState.isCanceled)
-              ? _closeButton()
-              : _cancelButton(),
+          child: (exportState.isFinished) ? _closeButton() : _cancelButton(),
         ),
       ],
     );
@@ -166,7 +164,7 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
               ?.copyWith(color: theme.colorScheme.error),
         );
       },
-      exportFinished: (results) {
+      exportFinished: (results, canceledBeforeFinish) {
         assert(false, 'This event is not reported.');
         return Container();
       },
@@ -175,8 +173,8 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
 
   Widget _cancelButton() {
     return ElevatedButton(
-      onPressed: () async {
-        await ref.read(_exportDocumentsProviderWithArgs.notifier).cancel();
+      onPressed: () {
+        ref.read(_exportDocumentsProviderWithArgs.notifier).cancelExport();
       },
       child: const Text('CANCEL'),
     );
