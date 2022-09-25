@@ -102,13 +102,14 @@ class ExportCommand extends Command<void> {
   @override
   Future<void> run() async {
     final args = argResults!;
+    final copyIfExists = args[_flag_copyIfExists] as bool;
 
     final exportArgs = ExportDocumentsArgs(
       orgId: tryCast(args[_option_orgId], ''),
       projectId: tryCast(args[_option_projectId], ''),
       destination: tryCast(args[_option_destination], ''),
       allowNonEmptyDestination: args[_flag_allowNonemptyDestination] as bool,
-      copyIfExists: args[_flag_copyIfExists] as bool,
+      copyIfExists: copyIfExists,
       maxConcurrentDownloads:
           tryCast(args[_option_maxConcurrentDownloads], '0'),
     );
@@ -131,7 +132,7 @@ class ExportCommand extends Command<void> {
           (validationErrors) => usageException(validationErrors.join('\n')),
           (r) => r.fold(
             (l) => _logger.stderr(l.join('\n')),
-            (r) => _logSummary(_logger, r, args[_flag_copyIfExists] as bool),
+            (r) => _logSummary(_logger, r, copyIfExists),
           ),
         )
         .run();

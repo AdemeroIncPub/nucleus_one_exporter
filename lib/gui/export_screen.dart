@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,6 +33,7 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(_exportDocumentsProviderWithArgs, _exportDocumentsListener);
     final exportState = ref.watch(_exportDocumentsProviderWithArgs);
 
     return Scaffold(
@@ -209,5 +212,82 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
         _cancelButton(),
       ],
     );
+  }
+
+  void _exportDocumentsListener(
+      AsyncValue<ExportState>? previous, AsyncValue<ExportState> next) {
+    TableRow createTableRow({required String label, required String? value}) {
+      return TableRow(
+        children: [
+          Text(
+            label,
+            softWrap: false,
+          ),
+          Text(
+            ': ${value ?? 'unknown'}',
+            softWrap: false,
+          ),
+        ],
+      );
+    }
+
+    final exportState = next.asData?.value;
+    if (exportState != null) {
+      if (exportState.isFinished) {
+        final r = exportState.exportResults;
+        final content = Table(
+          columnWidths: const <int, TableColumnWidth>{
+            0: IntrinsicColumnWidth(),
+            1: IntrinsicColumnWidth(),
+          },
+          children: [
+            createTableRow(
+              label: 'Total Documents Exported',
+              value: r?.totalExported.toString(),
+            ),
+            createTableRow(
+              label: 'Total Documents Attempted',
+              value: r?.totalAttempted.toString(),
+            ),
+            if (widget.validArgs.copyIfExists)
+              createTableRow(
+                label: 'Exported as a Copy',
+                value: r?.exportedAsCopy.toString(),
+              )
+            else
+              createTableRow(
+                label: 'Skipped (Already Exists)',
+                value: r?.skippedAlreadyExists.toString(),
+              ),
+            createTableRow(
+              label: 'Skipped (Unknown Failure)',
+              value: r?.skippedUnknownFailure.toString(),
+            ),
+            createTableRow(
+              label: 'Total Export Time',
+              value: r?.elapsed.toString(),
+            ),
+          ],
+        );
+
+        unawaited(showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => AlertDialog(
+            title: (!exportState.wasCanceledBeforeFinish)
+                ? const Text('Export Complete')
+                : const Text('Export Canceled'),
+            content: content,
+            actionsAlignment: MainAxisAlignment.start,
+            actions: [
+              ElevatedButton(
+                onPressed: Navigator.of(context).pop,
+                child: const Text('CLOSE'),
+              )
+            ],
+          ),
+        ));
+      }
+    }
   }
 }
