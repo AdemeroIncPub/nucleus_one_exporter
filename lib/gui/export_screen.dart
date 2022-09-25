@@ -148,9 +148,17 @@ class _ExportScreenState extends ConsumerState<ExportScreen>
           ],
         ),
         const SizedBox(height: Insets.compMedium),
-        Align(
-          alignment: Alignment.topLeft,
-          child: (exportState.isFinished) ? _closeButton() : _cancelButton(),
+        Row(
+          children: [
+            if (exportState.isFinished)
+              _closeButton()
+            else
+              _cancelButton(enabled: !exportState.wasCancelRequested),
+            if (!exportState.isFinished && exportState.wasCancelRequested) ...[
+              const SizedBox(width: Insets.compMedium),
+              ..._cancelInProgress(),
+            ],
+          ],
         ),
       ],
     );
@@ -199,14 +207,18 @@ class _ExportScreenState extends ConsumerState<ExportScreen>
     );
   }
 
-  Widget _cancelButton() {
+  Widget _cancelButton({required bool enabled}) {
     return ElevatedButton(
-      onPressed: () async {
-        final cancelExport = await _confirmCancelExport();
-        if (cancelExport ?? false) {
-          ref.read(_exportDocumentsProviderWithArgs.notifier).cancelExport();
-        }
-      },
+      onPressed: (!enabled)
+          ? null
+          : () async {
+              final cancelExport = await _confirmCancelExport();
+              if (cancelExport ?? false) {
+                ref
+                    .read(_exportDocumentsProviderWithArgs.notifier)
+                    .cancelExport();
+              }
+            },
       child: const Text('CANCEL'),
     );
   }
@@ -220,12 +232,23 @@ class _ExportScreenState extends ConsumerState<ExportScreen>
     );
   }
 
+  List<Widget> _cancelInProgress() {
+    return [
+      const CircularProgressIndicator(),
+      const SizedBox(width: Insets.compSmall),
+      Text(
+        'Cancel in progress, finishing documents already started...',
+        style: TextStyle(color: Theme.of(context).colorScheme.primary),
+      ),
+    ];
+  }
+
   Widget _error(Object error, [StackTrace? stackTrace]) {
     // todo(apn): handle error
     return Column(
       children: [
         Expanded(child: Text(error.toString())),
-        _cancelButton(),
+        _cancelButton(enabled: true),
       ],
     );
   }
@@ -246,7 +269,7 @@ class _ExportScreenState extends ConsumerState<ExportScreen>
             ),
           ),
         ),
-        _cancelButton(),
+        _cancelButton(enabled: true),
       ],
     );
   }

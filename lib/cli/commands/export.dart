@@ -266,6 +266,7 @@ class ExportCommand extends Command<void> {
           final msg = 'Document ID: "$docId", N1 Path: "$n1Path"';
           logger.stderr('${ansi.red}$prefixFailure$msg${ansi.none}');
         },
+        cancelExportRequested: () {},
         exportFinished: (Either<List<ExportFailure>, ExportResults> results,
             canceledBeforeComplete) {
           streamCompleter.complete(

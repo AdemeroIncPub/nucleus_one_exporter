@@ -40,6 +40,8 @@ class ExportEvent with _$ExportEvent {
     required String n1Path,
   }) = DocSkippedUnknownFailure;
 
+  const factory ExportEvent.cancelExportRequested() = CancelExportRequested;
+
   const factory ExportEvent.exportFinished({
     required Either<List<ExportFailure>, ExportResults> results,
     required bool canceledBeforeComplete,

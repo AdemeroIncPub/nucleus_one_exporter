@@ -22,6 +22,7 @@ class ExportState with _$ExportState {
     @Default(0) int percent,
     @Default(0) int totalDocs,
     @Default(false) bool isFinished,
+    @Default(false) bool wasCancelRequested,
     @Default(false) bool wasCanceledBeforeFinish,
     ExportResults? exportResults,
   }) = __ExportState;
@@ -118,6 +119,9 @@ class ExportStateNotifier extends StateNotifier<AsyncValue<ExportState>> {
           _recentExportEventsIsDirty = true;
           state.recentExportEvents.add(event);
           return incrementDocsProcessed(state);
+        },
+        cancelExportRequested: () {
+          return state.copyWith(wasCancelRequested: true);
         },
         exportFinished: (Either<List<ExportFailure>, ExportResults> results,
             canceledBeforeFinish) {

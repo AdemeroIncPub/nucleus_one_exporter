@@ -22,6 +22,7 @@ mixin _$ExportState {
   int get percent => throw _privateConstructorUsedError;
   int get totalDocs => throw _privateConstructorUsedError;
   bool get isFinished => throw _privateConstructorUsedError;
+  bool get wasCancelRequested => throw _privateConstructorUsedError;
   bool get wasCanceledBeforeFinish => throw _privateConstructorUsedError;
   ExportResults? get exportResults => throw _privateConstructorUsedError;
 
@@ -41,6 +42,7 @@ abstract class $ExportStateCopyWith<$Res> {
       int percent,
       int totalDocs,
       bool isFinished,
+      bool wasCancelRequested,
       bool wasCanceledBeforeFinish,
       ExportResults? exportResults});
 
@@ -62,6 +64,7 @@ class _$ExportStateCopyWithImpl<$Res> implements $ExportStateCopyWith<$Res> {
     Object? percent = freezed,
     Object? totalDocs = freezed,
     Object? isFinished = freezed,
+    Object? wasCancelRequested = freezed,
     Object? wasCanceledBeforeFinish = freezed,
     Object? exportResults = freezed,
   }) {
@@ -85,6 +88,10 @@ class _$ExportStateCopyWithImpl<$Res> implements $ExportStateCopyWith<$Res> {
       isFinished: isFinished == freezed
           ? _value.isFinished
           : isFinished // ignore: cast_nullable_to_non_nullable
+              as bool,
+      wasCancelRequested: wasCancelRequested == freezed
+          ? _value.wasCancelRequested
+          : wasCancelRequested // ignore: cast_nullable_to_non_nullable
               as bool,
       wasCanceledBeforeFinish: wasCanceledBeforeFinish == freezed
           ? _value.wasCanceledBeforeFinish
@@ -122,6 +129,7 @@ abstract class _$$__ExportStateCopyWith<$Res>
       int percent,
       int totalDocs,
       bool isFinished,
+      bool wasCancelRequested,
       bool wasCanceledBeforeFinish,
       ExportResults? exportResults});
 
@@ -147,6 +155,7 @@ class __$$__ExportStateCopyWithImpl<$Res>
     Object? percent = freezed,
     Object? totalDocs = freezed,
     Object? isFinished = freezed,
+    Object? wasCancelRequested = freezed,
     Object? wasCanceledBeforeFinish = freezed,
     Object? exportResults = freezed,
   }) {
@@ -171,6 +180,10 @@ class __$$__ExportStateCopyWithImpl<$Res>
           ? _value.isFinished
           : isFinished // ignore: cast_nullable_to_non_nullable
               as bool,
+      wasCancelRequested: wasCancelRequested == freezed
+          ? _value.wasCancelRequested
+          : wasCancelRequested // ignore: cast_nullable_to_non_nullable
+              as bool,
       wasCanceledBeforeFinish: wasCanceledBeforeFinish == freezed
           ? _value.wasCanceledBeforeFinish
           : wasCanceledBeforeFinish // ignore: cast_nullable_to_non_nullable
@@ -192,6 +205,7 @@ class _$__ExportState implements __ExportState {
       this.percent = 0,
       this.totalDocs = 0,
       this.isFinished = false,
+      this.wasCancelRequested = false,
       this.wasCanceledBeforeFinish = false,
       this.exportResults});
 
@@ -211,13 +225,16 @@ class _$__ExportState implements __ExportState {
   final bool isFinished;
   @override
   @JsonKey()
+  final bool wasCancelRequested;
+  @override
+  @JsonKey()
   final bool wasCanceledBeforeFinish;
   @override
   final ExportResults? exportResults;
 
   @override
   String toString() {
-    return 'ExportState(recentExportEvents: $recentExportEvents, docsProcessed: $docsProcessed, percent: $percent, totalDocs: $totalDocs, isFinished: $isFinished, wasCanceledBeforeFinish: $wasCanceledBeforeFinish, exportResults: $exportResults)';
+    return 'ExportState(recentExportEvents: $recentExportEvents, docsProcessed: $docsProcessed, percent: $percent, totalDocs: $totalDocs, isFinished: $isFinished, wasCancelRequested: $wasCancelRequested, wasCanceledBeforeFinish: $wasCanceledBeforeFinish, exportResults: $exportResults)';
   }
 
   @override
@@ -233,6 +250,8 @@ class _$__ExportState implements __ExportState {
             const DeepCollectionEquality().equals(other.totalDocs, totalDocs) &&
             const DeepCollectionEquality()
                 .equals(other.isFinished, isFinished) &&
+            const DeepCollectionEquality()
+                .equals(other.wasCancelRequested, wasCancelRequested) &&
             const DeepCollectionEquality().equals(
                 other.wasCanceledBeforeFinish, wasCanceledBeforeFinish) &&
             const DeepCollectionEquality()
@@ -247,6 +266,7 @@ class _$__ExportState implements __ExportState {
       const DeepCollectionEquality().hash(percent),
       const DeepCollectionEquality().hash(totalDocs),
       const DeepCollectionEquality().hash(isFinished),
+      const DeepCollectionEquality().hash(wasCancelRequested),
       const DeepCollectionEquality().hash(wasCanceledBeforeFinish),
       const DeepCollectionEquality().hash(exportResults));
 
@@ -263,6 +283,7 @@ abstract class __ExportState implements ExportState {
       final int percent,
       final int totalDocs,
       final bool isFinished,
+      final bool wasCancelRequested,
       final bool wasCanceledBeforeFinish,
       final ExportResults? exportResults}) = _$__ExportState;
 
@@ -276,6 +297,8 @@ abstract class __ExportState implements ExportState {
   int get totalDocs;
   @override
   bool get isFinished;
+  @override
+  bool get wasCancelRequested;
   @override
   bool get wasCanceledBeforeFinish;
   @override
