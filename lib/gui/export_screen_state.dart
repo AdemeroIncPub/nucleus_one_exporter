@@ -121,6 +121,7 @@ class ExportStateNotifier extends StateNotifier<AsyncValue<ExportState>> {
         },
         exportFinished: (Either<List<ExportFailure>, ExportResults> results,
             canceledBeforeFinish) {
+          unawaited(_exportStreamSubscription.cancel());
           return state.copyWith(
             isFinished: true,
             wasCanceledBeforeFinish: canceledBeforeFinish,

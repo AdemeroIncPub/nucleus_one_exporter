@@ -34,14 +34,15 @@ Future<String?> showTextInputDialog(
             onSubmitted: (value) => submitHandler(context, value),
           ),
         ),
+        actionsAlignment: MainAxisAlignment.start,
         actions: <Widget>[
           TextButton(
             child: const Text('CANCEL'),
             onPressed: () => Navigator.pop(context),
           ),
           ElevatedButton(
-            child: const Text('OK'),
             onPressed: () => submitHandler(context, textFieldController.text),
+            child: const Text('OK'),
           ),
         ],
       );

@@ -65,6 +65,7 @@ dependencies:
   storagebox: any
   tuple: any
   url_launcher: any
+  window_manager: any
 
 dev_dependencies:
   build_runner: any

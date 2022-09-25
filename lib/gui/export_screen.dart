@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:window_manager/window_manager.dart';
 
 import '../application/constants.dart';
 import '../application/providers.dart';
@@ -10,7 +11,7 @@ import '../application/services/export_documents_args.dart';
 import 'export_screen_state.dart';
 import 'util/style.dart';
 
-final exportDocumentsProvider = StateNotifierProvider.autoDispose.family<
+final exportDocumentsProvider = StateNotifierProvider.family<
     ExportStateNotifier, AsyncValue<ExportState>, ValidatedExportDocumentsArgs>(
   (ref, validArgs) {
     final exportServiceAsync = ref.watch(exportServiceProvider);
@@ -21,15 +22,44 @@ final exportDocumentsProvider = StateNotifierProvider.autoDispose.family<
 class ExportScreen extends ConsumerStatefulWidget {
   const ExportScreen({super.key, required this.validArgs});
 
+  static const route = '/ExportScreen';
+
   final ValidatedExportDocumentsArgs validArgs;
 
   @override
   ConsumerState createState() => _ExportScreenState();
 }
 
-class _ExportScreenState extends ConsumerState<ExportScreen> {
+class _ExportScreenState extends ConsumerState<ExportScreen>
+    with
+        // ignore: prefer_mixin
+        WindowListener {
   late final _exportDocumentsProviderWithArgs =
       exportDocumentsProvider(widget.validArgs);
+
+  @override
+  void dispose() {
+    windowManager.removeListener(this);
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    windowManager.addListener(this);
+    unawaited(_init());
+  }
+
+  @override
+  Future<void> onWindowClose() async {
+    final bool isPreventClose = await windowManager.isPreventClose();
+    if (isPreventClose) {
+      final cancelExport = await _confirmCancelExport();
+      if (cancelExport ?? false) {
+        await windowManager.destroy();
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +86,10 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _init() async {
+    await windowManager.setPreventClose(true);
   }
 
   Widget _titleText() {
@@ -167,8 +201,11 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
 
   Widget _cancelButton() {
     return ElevatedButton(
-      onPressed: () {
-        ref.read(_exportDocumentsProviderWithArgs.notifier).cancelExport();
+      onPressed: () async {
+        final cancelExport = await _confirmCancelExport();
+        if (cancelExport ?? false) {
+          ref.read(_exportDocumentsProviderWithArgs.notifier).cancelExport();
+        }
       },
       child: const Text('CANCEL'),
     );
@@ -232,62 +269,93 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
     }
 
     final exportState = next.asData?.value;
-    if (exportState != null) {
-      if (exportState.isFinished) {
-        final r = exportState.exportResults;
-        final content = Table(
-          columnWidths: const <int, TableColumnWidth>{
-            0: IntrinsicColumnWidth(),
-            1: IntrinsicColumnWidth(),
-          },
-          children: [
+    if (exportState != null && exportState.isFinished) {
+      unawaited(windowManager.setPreventClose(false));
+      final r = exportState.exportResults;
+      final content = Table(
+        columnWidths: const <int, TableColumnWidth>{
+          0: IntrinsicColumnWidth(),
+          1: IntrinsicColumnWidth(),
+        },
+        children: [
+          createTableRow(
+            label: 'Total Documents Exported',
+            value: r?.totalExported.toString(),
+          ),
+          createTableRow(
+            label: 'Total Documents Attempted',
+            value: r?.totalAttempted.toString(),
+          ),
+          if (widget.validArgs.copyIfExists)
             createTableRow(
-              label: 'Total Documents Exported',
-              value: r?.totalExported.toString(),
-            ),
+              label: 'Exported as a Copy',
+              value: r?.exportedAsCopy.toString(),
+            )
+          else
             createTableRow(
-              label: 'Total Documents Attempted',
-              value: r?.totalAttempted.toString(),
+              label: 'Skipped (Already Exists)',
+              value: r?.skippedAlreadyExists.toString(),
             ),
-            if (widget.validArgs.copyIfExists)
-              createTableRow(
-                label: 'Exported as a Copy',
-                value: r?.exportedAsCopy.toString(),
-              )
-            else
-              createTableRow(
-                label: 'Skipped (Already Exists)',
-                value: r?.skippedAlreadyExists.toString(),
+          createTableRow(
+            label: 'Skipped (Unknown Failure)',
+            value: r?.skippedUnknownFailure.toString(),
+          ),
+          createTableRow(
+            label: 'Total Export Time',
+            value: r?.elapsed.toString(),
+          ),
+        ],
+      );
+
+      // close confirm cancel dialog if open
+      Navigator.popUntil(
+        context,
+        (route) => route.settings.name == ExportScreen.route,
+      );
+
+      unawaited(showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          title: (!exportState.wasCanceledBeforeFinish)
+              ? const Text('Export Complete')
+              : const Text('Export Canceled'),
+          content: content,
+          actionsAlignment: MainAxisAlignment.start,
+          actions: [
+            ElevatedButton(
+              onPressed: Navigator.of(context).pop,
+              child: const Text('CLOSE'),
+            )
+          ],
+        ),
+      ));
+    }
+  }
+
+  Future<bool?> _confirmCancelExport() {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Cancel Export'),
+          content: const Text('Would you like to cancel the export?'),
+          actionsAlignment: MainAxisAlignment.start,
+          actions: [
+            TextButton(
+              child: const Text('CONTINUE EXPORT'),
+              onPressed: () => Navigator.pop(context, false),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Theme.of(context).colorScheme.error,
               ),
-            createTableRow(
-              label: 'Skipped (Unknown Failure)',
-              value: r?.skippedUnknownFailure.toString(),
-            ),
-            createTableRow(
-              label: 'Total Export Time',
-              value: r?.elapsed.toString(),
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('CANCEL EXPORT'),
             ),
           ],
         );
-
-        unawaited(showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => AlertDialog(
-            title: (!exportState.wasCanceledBeforeFinish)
-                ? const Text('Export Complete')
-                : const Text('Export Canceled'),
-            content: content,
-            actionsAlignment: MainAxisAlignment.start,
-            actions: [
-              ElevatedButton(
-                onPressed: Navigator.of(context).pop,
-                child: const Text('CLOSE'),
-              )
-            ],
-          ),
-        ));
-      }
-    }
+      },
+    );
   }
 }

@@ -136,8 +136,10 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
           },
         );
       },
-      (r) async => Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (_) => ExportScreen(validArgs: r))),
+      (r) async => Navigator.of(context).push(MaterialPageRoute<void>(
+        settings: const RouteSettings(name: ExportScreen.route),
+        builder: (_) => ExportScreen(validArgs: r),
+      )),
     ).run();
   }
 
