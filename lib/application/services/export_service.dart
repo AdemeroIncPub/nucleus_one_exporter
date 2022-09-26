@@ -24,6 +24,7 @@ enum ExportFailure {
   destinationInvalid,
   destinationNotEmpty,
   maxConcurrentDownloadsInvalid,
+  logFileInvalid,
   unknownFailure,
 }
 
@@ -54,6 +55,7 @@ class ExportService {
 
   http.Client? _httpClient;
   StreamSink<ExportEvent>? _streamSink;
+  IOSink? _logFileSink;
   var _cancelExportRequested = false;
   var _canceledBeforeComplete = false;
 
@@ -87,10 +89,12 @@ class ExportService {
         .run()
         .whenComplete(() async {
           _httpClient?.close();
+          await _logFileSink?.flush();
+          await _logFileSink?.close();
           await exportEventStreamController.close();
         }));
 
-    return exportEventStreamController.stream;
+    return exportEventStreamController.stream.map(_logEvent);
   }
 
   /// The export may finish before cancel completes.
@@ -105,6 +109,12 @@ class ExportService {
   ) {
     final v = validArgs;
     return TaskEither.tryCatch(() async {
+      // Create log file.
+      if (v.logFile != null) {
+        v.logFile?.createSync(recursive: true);
+        _logFileSink = v.logFile?.openWrite(mode: FileMode.writeOnly);
+      }
+
       // Send BeginExport event.
       final n1SdkSvc = await _n1SdkSvc;
       final org = await n1SdkSvc.getUserOrganization(organizationId: v.orgId);
@@ -295,4 +305,21 @@ class ExportService {
 
   String _getNormalizedN1Path(n1.Document doc) =>
       path_.normalize(path_.join(doc.documentFolderPath, doc.name));
+
+  ExportEvent _logEvent(ExportEvent event) {
+    void logEvent(ExportEvent event) {
+      final msg = event.getLogMessage();
+      if (msg.isNotEmpty) {
+        _logFileSink?.writeln(msg);
+      }
+    }
+
+    event.maybeMap(
+      orElse: () {},
+      docExported: logEvent,
+      docSkippedAlreadyExists: logEvent,
+      docSkippedUnknownFailure: logEvent,
+    );
+    return event;
+  }
 }

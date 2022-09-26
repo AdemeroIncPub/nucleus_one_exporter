@@ -113,19 +113,13 @@ class _ExportScreenState extends ConsumerState<ExportScreen>
   }
 
   Widget _data(ExportState exportState) {
-    const prefixExported = '[Exported] ';
-    const prefixAsCopy = '[Exported As Copy] ';
-    const prefixExists = '[Skipped (Already Exists)] ';
-    const prefixFailure = '[Skipped (Unknown Failure)] ';
-
     return Column(
       children: [
         Expanded(
           child: ListView.separated(
             itemCount: exportState.recentExportEvents.length,
             itemBuilder: (context, index) {
-              return _listItem(exportState, index, prefixAsCopy, prefixExported,
-                  prefixExists, prefixFailure);
+              return _buildListItem(exportState, index);
             },
             separatorBuilder: (BuildContext context, int index) {
               return const SizedBox(height: Insets.compXSmall);
@@ -164,40 +158,34 @@ class _ExportScreenState extends ConsumerState<ExportScreen>
     );
   }
 
-  Widget _listItem(ExportState exportState, int index, String prefixAsCopy,
-      String prefixExported, String prefixExists, String prefixFailure) {
+  Widget _buildListItem(ExportState exportState, int index) {
     final theme = Theme.of(context);
 
-    return exportState.recentExportEvents[index].maybeWhen(
+    return exportState.recentExportEvents[index].maybeMap(
       orElse: () {
         assert(false, 'This event is not reported.');
         return Container();
       },
-      docExported: (docId, n1Path, localPath, exportedAsCopy) {
-        final msg = 'Document ID: "$docId", N1 Path: "$n1Path", '
-            'Local Path: "$localPath"';
-        if (exportedAsCopy) {
+      docExported: (e) {
+        if (e.exportedAsCopy) {
           return Text(
-            '$prefixAsCopy$msg',
+            e.getLogMessage(),
             style: TextStyle(color: Colors.amber.shade200),
           );
         } else {
-          // todo(apn): selection in ui for all, warnings, errors (chips?)
-          return Text('$prefixExported$msg');
+          // todo(apn): selection in ui for all, warnings, errors (chips?)?
+          return Text(e.getLogMessage());
         }
       },
-      docSkippedAlreadyExists: (docId, n1Path, localPath) {
-        final msg = 'Document ID: "$docId", N1 Path: "$n1Path", '
-            'Local Path: "$localPath"';
+      docSkippedAlreadyExists: (e) {
         return Text(
-          '$prefixExists$msg',
+          e.getLogMessage(),
           style: TextStyle(color: Colors.amber.shade200),
         );
       },
-      docSkippedUnknownFailure: (docId, n1Path) {
-        final msg = 'Document ID: "$docId", N1 Path: "$n1Path"';
+      docSkippedUnknownFailure: (e) {
         return Text(
-          '$prefixFailure$msg',
+          e.getLogMessage(),
           style: TextStyle(color: theme.colorScheme.error),
         );
       },
@@ -243,6 +231,7 @@ class _ExportScreenState extends ConsumerState<ExportScreen>
   Widget _error(Object error, [StackTrace? stackTrace]) {
     // todo(apn): handle error
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(child: Text(error.toString())),
         _cancelButton(enabled: true),

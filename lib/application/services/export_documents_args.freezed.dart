@@ -22,6 +22,7 @@ mixin _$ExportDocumentsArgs {
   bool get allowNonEmptyDestination => throw _privateConstructorUsedError;
   bool get copyIfExists => throw _privateConstructorUsedError;
   String get maxConcurrentDownloads => throw _privateConstructorUsedError;
+  String? get logFile => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $ExportDocumentsArgsCopyWith<ExportDocumentsArgs> get copyWith =>
@@ -39,7 +40,8 @@ abstract class $ExportDocumentsArgsCopyWith<$Res> {
       String destination,
       bool allowNonEmptyDestination,
       bool copyIfExists,
-      String maxConcurrentDownloads});
+      String maxConcurrentDownloads,
+      String? logFile});
 }
 
 /// @nodoc
@@ -59,6 +61,7 @@ class _$ExportDocumentsArgsCopyWithImpl<$Res>
     Object? allowNonEmptyDestination = freezed,
     Object? copyIfExists = freezed,
     Object? maxConcurrentDownloads = freezed,
+    Object? logFile = freezed,
   }) {
     return _then(_value.copyWith(
       orgId: orgId == freezed
@@ -85,6 +88,10 @@ class _$ExportDocumentsArgsCopyWithImpl<$Res>
           ? _value.maxConcurrentDownloads
           : maxConcurrentDownloads // ignore: cast_nullable_to_non_nullable
               as String,
+      logFile: logFile == freezed
+          ? _value.logFile
+          : logFile // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -102,7 +109,8 @@ abstract class _$$_ExportDocumentsArgsCopyWith<$Res>
       String destination,
       bool allowNonEmptyDestination,
       bool copyIfExists,
-      String maxConcurrentDownloads});
+      String maxConcurrentDownloads,
+      String? logFile});
 }
 
 /// @nodoc
@@ -124,6 +132,7 @@ class __$$_ExportDocumentsArgsCopyWithImpl<$Res>
     Object? allowNonEmptyDestination = freezed,
     Object? copyIfExists = freezed,
     Object? maxConcurrentDownloads = freezed,
+    Object? logFile = freezed,
   }) {
     return _then(_$_ExportDocumentsArgs(
       orgId: orgId == freezed
@@ -150,6 +159,10 @@ class __$$_ExportDocumentsArgsCopyWithImpl<$Res>
           ? _value.maxConcurrentDownloads
           : maxConcurrentDownloads // ignore: cast_nullable_to_non_nullable
               as String,
+      logFile: logFile == freezed
+          ? _value.logFile
+          : logFile // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -163,7 +176,8 @@ class _$_ExportDocumentsArgs extends _ExportDocumentsArgs {
       required this.destination,
       required this.allowNonEmptyDestination,
       required this.copyIfExists,
-      required this.maxConcurrentDownloads})
+      required this.maxConcurrentDownloads,
+      required this.logFile})
       : super._();
 
   @override
@@ -178,10 +192,12 @@ class _$_ExportDocumentsArgs extends _ExportDocumentsArgs {
   final bool copyIfExists;
   @override
   final String maxConcurrentDownloads;
+  @override
+  final String? logFile;
 
   @override
   String toString() {
-    return 'ExportDocumentsArgs(orgId: $orgId, projectId: $projectId, destination: $destination, allowNonEmptyDestination: $allowNonEmptyDestination, copyIfExists: $copyIfExists, maxConcurrentDownloads: $maxConcurrentDownloads)';
+    return 'ExportDocumentsArgs(orgId: $orgId, projectId: $projectId, destination: $destination, allowNonEmptyDestination: $allowNonEmptyDestination, copyIfExists: $copyIfExists, maxConcurrentDownloads: $maxConcurrentDownloads, logFile: $logFile)';
   }
 
   @override
@@ -198,7 +214,8 @@ class _$_ExportDocumentsArgs extends _ExportDocumentsArgs {
             const DeepCollectionEquality()
                 .equals(other.copyIfExists, copyIfExists) &&
             const DeepCollectionEquality()
-                .equals(other.maxConcurrentDownloads, maxConcurrentDownloads));
+                .equals(other.maxConcurrentDownloads, maxConcurrentDownloads) &&
+            const DeepCollectionEquality().equals(other.logFile, logFile));
   }
 
   @override
@@ -209,7 +226,8 @@ class _$_ExportDocumentsArgs extends _ExportDocumentsArgs {
       const DeepCollectionEquality().hash(destination),
       const DeepCollectionEquality().hash(allowNonEmptyDestination),
       const DeepCollectionEquality().hash(copyIfExists),
-      const DeepCollectionEquality().hash(maxConcurrentDownloads));
+      const DeepCollectionEquality().hash(maxConcurrentDownloads),
+      const DeepCollectionEquality().hash(logFile));
 
   @JsonKey(ignore: true)
   @override
@@ -225,7 +243,8 @@ abstract class _ExportDocumentsArgs extends ExportDocumentsArgs {
       required final String destination,
       required final bool allowNonEmptyDestination,
       required final bool copyIfExists,
-      required final String maxConcurrentDownloads}) = _$_ExportDocumentsArgs;
+      required final String maxConcurrentDownloads,
+      required final String? logFile}) = _$_ExportDocumentsArgs;
   const _ExportDocumentsArgs._() : super._();
 
   @override
@@ -241,6 +260,8 @@ abstract class _ExportDocumentsArgs extends ExportDocumentsArgs {
   @override
   String get maxConcurrentDownloads;
   @override
+  String? get logFile;
+  @override
   @JsonKey(ignore: true)
   _$$_ExportDocumentsArgsCopyWith<_$_ExportDocumentsArgs> get copyWith =>
       throw _privateConstructorUsedError;
@@ -254,6 +275,7 @@ mixin _$ValidatedExportDocumentsArgs {
   bool get allowNonEmptyDestination => throw _privateConstructorUsedError;
   bool get copyIfExists => throw _privateConstructorUsedError;
   int get maxConcurrentDownloads => throw _privateConstructorUsedError;
+  File? get logFile => throw _privateConstructorUsedError;
   ExportDocumentsArgs get originalArgs => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -274,6 +296,7 @@ abstract class $ValidatedExportDocumentsArgsCopyWith<$Res> {
       bool allowNonEmptyDestination,
       bool copyIfExists,
       int maxConcurrentDownloads,
+      File? logFile,
       ExportDocumentsArgs originalArgs});
 
   $ExportDocumentsArgsCopyWith<$Res> get originalArgs;
@@ -296,6 +319,7 @@ class _$ValidatedExportDocumentsArgsCopyWithImpl<$Res>
     Object? allowNonEmptyDestination = freezed,
     Object? copyIfExists = freezed,
     Object? maxConcurrentDownloads = freezed,
+    Object? logFile = freezed,
     Object? originalArgs = freezed,
   }) {
     return _then(_value.copyWith(
@@ -323,6 +347,10 @@ class _$ValidatedExportDocumentsArgsCopyWithImpl<$Res>
           ? _value.maxConcurrentDownloads
           : maxConcurrentDownloads // ignore: cast_nullable_to_non_nullable
               as int,
+      logFile: logFile == freezed
+          ? _value.logFile
+          : logFile // ignore: cast_nullable_to_non_nullable
+              as File?,
       originalArgs: originalArgs == freezed
           ? _value.originalArgs
           : originalArgs // ignore: cast_nullable_to_non_nullable
@@ -353,6 +381,7 @@ abstract class _$$_ValidatedExportDocumentsArgsCopyWith<$Res>
       bool allowNonEmptyDestination,
       bool copyIfExists,
       int maxConcurrentDownloads,
+      File? logFile,
       ExportDocumentsArgs originalArgs});
 
   @override
@@ -380,6 +409,7 @@ class __$$_ValidatedExportDocumentsArgsCopyWithImpl<$Res>
     Object? allowNonEmptyDestination = freezed,
     Object? copyIfExists = freezed,
     Object? maxConcurrentDownloads = freezed,
+    Object? logFile = freezed,
     Object? originalArgs = freezed,
   }) {
     return _then(_$_ValidatedExportDocumentsArgs(
@@ -407,6 +437,10 @@ class __$$_ValidatedExportDocumentsArgsCopyWithImpl<$Res>
           ? _value.maxConcurrentDownloads
           : maxConcurrentDownloads // ignore: cast_nullable_to_non_nullable
               as int,
+      logFile: logFile == freezed
+          ? _value.logFile
+          : logFile // ignore: cast_nullable_to_non_nullable
+              as File?,
       originalArgs: originalArgs == freezed
           ? _value.originalArgs
           : originalArgs // ignore: cast_nullable_to_non_nullable
@@ -425,6 +459,7 @@ class _$_ValidatedExportDocumentsArgs implements _ValidatedExportDocumentsArgs {
       required this.allowNonEmptyDestination,
       required this.copyIfExists,
       required this.maxConcurrentDownloads,
+      required this.logFile,
       required this.originalArgs});
 
   @override
@@ -440,11 +475,13 @@ class _$_ValidatedExportDocumentsArgs implements _ValidatedExportDocumentsArgs {
   @override
   final int maxConcurrentDownloads;
   @override
+  final File? logFile;
+  @override
   final ExportDocumentsArgs originalArgs;
 
   @override
   String toString() {
-    return 'ValidatedExportDocumentsArgs._internal(orgId: $orgId, projectId: $projectId, destination: $destination, allowNonEmptyDestination: $allowNonEmptyDestination, copyIfExists: $copyIfExists, maxConcurrentDownloads: $maxConcurrentDownloads, originalArgs: $originalArgs)';
+    return 'ValidatedExportDocumentsArgs._internal(orgId: $orgId, projectId: $projectId, destination: $destination, allowNonEmptyDestination: $allowNonEmptyDestination, copyIfExists: $copyIfExists, maxConcurrentDownloads: $maxConcurrentDownloads, logFile: $logFile, originalArgs: $originalArgs)';
   }
 
   @override
@@ -462,6 +499,7 @@ class _$_ValidatedExportDocumentsArgs implements _ValidatedExportDocumentsArgs {
                 .equals(other.copyIfExists, copyIfExists) &&
             const DeepCollectionEquality()
                 .equals(other.maxConcurrentDownloads, maxConcurrentDownloads) &&
+            const DeepCollectionEquality().equals(other.logFile, logFile) &&
             const DeepCollectionEquality()
                 .equals(other.originalArgs, originalArgs));
   }
@@ -475,6 +513,7 @@ class _$_ValidatedExportDocumentsArgs implements _ValidatedExportDocumentsArgs {
       const DeepCollectionEquality().hash(allowNonEmptyDestination),
       const DeepCollectionEquality().hash(copyIfExists),
       const DeepCollectionEquality().hash(maxConcurrentDownloads),
+      const DeepCollectionEquality().hash(logFile),
       const DeepCollectionEquality().hash(originalArgs));
 
   @JsonKey(ignore: true)
@@ -493,6 +532,7 @@ abstract class _ValidatedExportDocumentsArgs
           required final bool allowNonEmptyDestination,
           required final bool copyIfExists,
           required final int maxConcurrentDownloads,
+          required final File? logFile,
           required final ExportDocumentsArgs originalArgs}) =
       _$_ValidatedExportDocumentsArgs;
 
@@ -508,6 +548,8 @@ abstract class _ValidatedExportDocumentsArgs
   bool get copyIfExists;
   @override
   int get maxConcurrentDownloads;
+  @override
+  File? get logFile;
   @override
   ExportDocumentsArgs get originalArgs;
   @override

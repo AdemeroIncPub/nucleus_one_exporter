@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
+import 'package:path/path.dart' as path_;
 import 'package:url_launcher/link.dart';
 
 import '../application/constants.dart';
@@ -31,6 +32,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
 
   final _apiKeyTextFieldController = TextEditingController();
   final _destinationTextFieldController = TextEditingController();
+  final _logFileTextFieldController = TextEditingController();
   final _maxDownloadsTextFieldController = TextEditingController(text: '4');
 
   bool _allowNonEmptyDestination = false;
@@ -66,6 +68,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
   }
 
   Future<void> _exportDocuments() async {
+    final logFileText = _logFileTextFieldController.text;
     final validArgs = ExportDocumentsArgs(
       orgId: _selectedOrgId ?? '',
       projectId: _selectedProjectId ?? '',
@@ -73,6 +76,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
       allowNonEmptyDestination: _allowNonEmptyDestination,
       copyIfExists: _copyIfExists,
       maxConcurrentDownloads: _maxDownloadsTextFieldController.text,
+      logFile: (logFileText.isNotEmpty) ? logFileText : null,
     ).validate(PathValidator());
 
     await validArgs.bimap(
@@ -94,6 +98,8 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
             case ExportDocumentsArgsValidationFailure.maxDownloadsInvalid:
               return '"$_maxConcurrentDownloadsLabel" must be a '
                   'number greater than zero.';
+            case ExportDocumentsArgsValidationFailure.logFileInvalid:
+              return 'The log file path is not a valid path.';
             case ExportDocumentsArgsValidationFailure.unknownFailure:
               return 'An unknown failure has ocurred.';
           }
@@ -236,6 +242,8 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
         _optionsRow(),
         _spacerRow(height: Insets.compSmall),
         _maxConcurrentDownloadsRow(),
+        _spacerRow(height: Insets.compSmall),
+        _logFileRow()
       ],
     );
   }
@@ -437,6 +445,58 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  TableRow _logFileRow() {
+    return _buildTableRow(
+      item1: IconButton(
+        icon: const Icon(Icons.edit),
+        tooltip: 'Browse',
+        onPressed: () async {
+          String? foldername;
+          String? filename;
+          if (_logFileTextFieldController.text.isNotEmpty) {
+            final logFilePath = _logFileTextFieldController.text;
+            foldername = path_.dirname(logFilePath);
+            filename = path_.basename(logFilePath);
+          }
+          if (foldername == null &&
+              _destinationTextFieldController.text.isNotEmpty) {
+            foldername = _destinationTextFieldController.text;
+          }
+          if (filename == null) {
+            final now = DateTime.now();
+            final formattedNow = '${now.year.toString()}-'
+                '${now.month.toString().padLeft(2, '0')}-'
+                '${now.day.toString().padLeft(2, '0')}';
+            filename = 'Nucleus_One_Export_$formattedNow.log';
+          }
+
+          final logFilePath = await FilePicker.platform.saveFile(
+            allowedExtensions: ['log', 'txt'],
+            dialogTitle:
+                'Export log file (an existing file will be overwritten)',
+            initialDirectory: foldername,
+            fileName: filename,
+            lockParentWindow: true,
+          );
+          if (logFilePath != null) {
+            _logFileTextFieldController.text = logFilePath;
+          }
+        },
+      ),
+      item2: SelectionArea(
+        child: TextField(
+          controller: _logFileTextFieldController,
+          readOnly: true,
+          decoration: const InputDecoration(
+            labelText: 'Log file (optional)',
+            hintText:
+                'Use the edit button to set a log file (an existing file will be overwritten)',
+          ),
+        ),
       ),
     );
   }

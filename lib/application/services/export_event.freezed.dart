@@ -192,14 +192,15 @@ class __$$BeginExportCopyWithImpl<$Res> extends _$ExportEventCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$BeginExport implements BeginExport {
+class _$BeginExport extends BeginExport {
   const _$BeginExport(
       {required this.orgId,
       required this.orgName,
       required this.projectId,
       required this.projectName,
       required this.localPath,
-      required this.docCount});
+      required this.docCount})
+      : super._();
 
   @override
   final String orgId;
@@ -370,7 +371,7 @@ class _$BeginExport implements BeginExport {
   }
 }
 
-abstract class BeginExport implements ExportEvent {
+abstract class BeginExport extends ExportEvent {
   const factory BeginExport(
       {required final String orgId,
       required final String orgName,
@@ -378,6 +379,7 @@ abstract class BeginExport implements ExportEvent {
       required final String projectName,
       required final String localPath,
       required final int docCount}) = _$BeginExport;
+  const BeginExport._() : super._();
 
   String get orgId;
   String get orgName;
@@ -429,8 +431,9 @@ class __$$DocExportAttemptCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$DocExportAttempt implements DocExportAttempt {
-  const _$DocExportAttempt({required this.docId, required this.n1Path});
+class _$DocExportAttempt extends DocExportAttempt {
+  const _$DocExportAttempt({required this.docId, required this.n1Path})
+      : super._();
 
   @override
   final String docId;
@@ -581,10 +584,11 @@ class _$DocExportAttempt implements DocExportAttempt {
   }
 }
 
-abstract class DocExportAttempt implements ExportEvent {
+abstract class DocExportAttempt extends ExportEvent {
   const factory DocExportAttempt(
       {required final String docId,
       required final String n1Path}) = _$DocExportAttempt;
+  const DocExportAttempt._() : super._();
 
   String get docId;
   String get n1Path;
@@ -642,12 +646,13 @@ class __$$DocExportedCopyWithImpl<$Res> extends _$ExportEventCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$DocExported implements DocExported {
+class _$DocExported extends DocExported {
   const _$DocExported(
       {required this.docId,
       required this.n1Path,
       required this.localPath,
-      required this.exportedAsCopy});
+      required this.exportedAsCopy})
+      : super._();
 
   @override
   final String docId;
@@ -807,12 +812,13 @@ class _$DocExported implements DocExported {
   }
 }
 
-abstract class DocExported implements ExportEvent {
+abstract class DocExported extends ExportEvent {
   const factory DocExported(
       {required final String docId,
       required final String n1Path,
       required final String localPath,
       required final bool exportedAsCopy}) = _$DocExported;
+  const DocExported._() : super._();
 
   String get docId;
   String get n1Path;
@@ -868,9 +874,10 @@ class __$$DocSkippedAlreadyExistsCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$DocSkippedAlreadyExists implements DocSkippedAlreadyExists {
+class _$DocSkippedAlreadyExists extends DocSkippedAlreadyExists {
   const _$DocSkippedAlreadyExists(
-      {required this.docId, required this.n1Path, required this.localPath});
+      {required this.docId, required this.n1Path, required this.localPath})
+      : super._();
 
   @override
   final String docId;
@@ -1026,11 +1033,12 @@ class _$DocSkippedAlreadyExists implements DocSkippedAlreadyExists {
   }
 }
 
-abstract class DocSkippedAlreadyExists implements ExportEvent {
+abstract class DocSkippedAlreadyExists extends ExportEvent {
   const factory DocSkippedAlreadyExists(
       {required final String docId,
       required final String n1Path,
       required final String localPath}) = _$DocSkippedAlreadyExists;
+  const DocSkippedAlreadyExists._() : super._();
 
   String get docId;
   String get n1Path;
@@ -1080,8 +1088,9 @@ class __$$DocSkippedUnknownFailureCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$DocSkippedUnknownFailure implements DocSkippedUnknownFailure {
-  const _$DocSkippedUnknownFailure({required this.docId, required this.n1Path});
+class _$DocSkippedUnknownFailure extends DocSkippedUnknownFailure {
+  const _$DocSkippedUnknownFailure({required this.docId, required this.n1Path})
+      : super._();
 
   @override
   final String docId;
@@ -1234,10 +1243,11 @@ class _$DocSkippedUnknownFailure implements DocSkippedUnknownFailure {
   }
 }
 
-abstract class DocSkippedUnknownFailure implements ExportEvent {
+abstract class DocSkippedUnknownFailure extends ExportEvent {
   const factory DocSkippedUnknownFailure(
       {required final String docId,
       required final String n1Path}) = _$DocSkippedUnknownFailure;
+  const DocSkippedUnknownFailure._() : super._();
 
   String get docId;
   String get n1Path;
@@ -1267,8 +1277,8 @@ class __$$CancelExportRequestedCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$CancelExportRequested implements CancelExportRequested {
-  const _$CancelExportRequested();
+class _$CancelExportRequested extends CancelExportRequested {
+  const _$CancelExportRequested() : super._();
 
   @override
   String toString() {
@@ -1403,8 +1413,9 @@ class _$CancelExportRequested implements CancelExportRequested {
   }
 }
 
-abstract class CancelExportRequested implements ExportEvent {
+abstract class CancelExportRequested extends ExportEvent {
   const factory CancelExportRequested() = _$CancelExportRequested;
+  const CancelExportRequested._() : super._();
 }
 
 /// @nodoc
@@ -1448,9 +1459,10 @@ class __$$ExportFinishedCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$ExportFinished implements ExportFinished {
+class _$ExportFinished extends ExportFinished {
   const _$ExportFinished(
-      {required this.results, required this.canceledBeforeComplete});
+      {required this.results, required this.canceledBeforeComplete})
+      : super._();
 
   @override
   final Either<List<ExportFailure>, ExportResults> results;
@@ -1602,10 +1614,11 @@ class _$ExportFinished implements ExportFinished {
   }
 }
 
-abstract class ExportFinished implements ExportEvent {
+abstract class ExportFinished extends ExportEvent {
   const factory ExportFinished(
       {required final Either<List<ExportFailure>, ExportResults> results,
       required final bool canceledBeforeComplete}) = _$ExportFinished;
+  const ExportFinished._() : super._();
 
   Either<List<ExportFailure>, ExportResults> get results;
   bool get canceledBeforeComplete;

@@ -15,6 +15,7 @@ enum ExportDocumentsArgsValidationFailure {
   destinationInvalid,
   destinationNotEmpty,
   maxDownloadsInvalid,
+  logFileInvalid,
   unknownFailure,
 }
 
@@ -27,6 +28,7 @@ class ExportDocumentsArgs with _$ExportDocumentsArgs {
     required bool allowNonEmptyDestination,
     required bool copyIfExists,
     required String maxConcurrentDownloads,
+    required String? logFile,
   }) = _ExportDocumentsArgs;
 
   const ExportDocumentsArgs._();
@@ -68,6 +70,17 @@ class ExportDocumentsArgs with _$ExportDocumentsArgs {
         }
       }
 
+      File? logFileFile;
+      if (logFile != null) {
+        final logFileCanonical = path_.canonicalize(logFile!);
+        if (!pathValidator.isValid(
+            logFileCanonical, PathType.absoluteFilepath)) {
+          failures.add(ExportDocumentsArgsValidationFailure.logFileInvalid);
+        } else {
+          logFileFile = File(logFileCanonical);
+        }
+      }
+
       if (failures.isNotEmpty) {
         throw LeftException(failures);
       }
@@ -78,6 +91,7 @@ class ExportDocumentsArgs with _$ExportDocumentsArgs {
         allowNonEmptyDestination: allowNonEmptyDestination,
         copyIfExists: copyIfExists,
         maxConcurrentDownloads: maxDownloads,
+        logFile: logFileFile,
         originalArgs: this,
       );
     }, (error, stackTrace) {
@@ -98,6 +112,7 @@ class ValidatedExportDocumentsArgs with _$ValidatedExportDocumentsArgs {
     required bool allowNonEmptyDestination,
     required bool copyIfExists,
     required int maxConcurrentDownloads,
+    required File? logFile,
     required ExportDocumentsArgs originalArgs,
   }) = _ValidatedExportDocumentsArgs;
 }

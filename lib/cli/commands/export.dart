@@ -64,11 +64,19 @@ class ExportCommand extends Command<void> {
       valueHelp: 'max',
       defaultsTo: '4',
     );
+    argParser.addOption(
+      _option_logFile,
+      help: 'Relative or absolute path to log file. An existing file will be '
+          'overwritten.',
+      abbr: 'l',
+      valueHelp: 'log file path',
+    );
   }
 
   static const _option_orgId = 'organization-id';
   static const _option_projectId = 'project-id';
   static const _option_destination = 'destination';
+  static const _option_logFile = 'log';
   static const _flag_allowNonemptyDestination = 'allow-nonempty-destination';
   static const _flag_copyIfExists = 'copy-if-exists';
   static const _option_maxConcurrentDownloads = 'max-concurrent-downloads';
@@ -112,6 +120,7 @@ class ExportCommand extends Command<void> {
       copyIfExists: copyIfExists,
       maxConcurrentDownloads:
           tryCast(args[_option_maxConcurrentDownloads], '0'),
+      logFile: tryCast(args[_option_logFile], null),
     );
     final validArgs = exportArgs.validate(_pathValidator);
 
@@ -162,6 +171,8 @@ class ExportCommand extends Command<void> {
           return ExportFailure.destinationNotEmpty;
         case ExportDocumentsArgsValidationFailure.maxDownloadsInvalid:
           return ExportFailure.maxConcurrentDownloadsInvalid;
+        case ExportDocumentsArgsValidationFailure.logFileInvalid:
+          return ExportFailure.logFileInvalid;
         case ExportDocumentsArgsValidationFailure.unknownFailure:
           return ExportFailure.unknownFailure;
       }
@@ -182,6 +193,8 @@ class ExportCommand extends Command<void> {
               ' Use flag $_flag_allowNonemptyDestination to export anyway.';
         case ExportFailure.maxConcurrentDownloadsInvalid:
           return _maxConcurrentDownloadsInvalidMessage;
+        case ExportFailure.logFileInvalid:
+          return 'The $_option_logFile is invalid.';
         case ExportFailure.unknownFailure:
           return 'An unknown failure has ocurred.';
       }
@@ -219,11 +232,6 @@ class ExportCommand extends Command<void> {
   ) async {
     final Ansi ansi = logger.ansi;
 
-    const prefixExported = '[Exported] ';
-    const prefixAsCopy = '[Exported As Copy] ';
-    const prefixExists = '[Skipped (Already Exists)] ';
-    const prefixFailure = '[Skipped (Unknown Failure)] ';
-
     var totalDocs = 0;
     var docsProcessed = 0;
     final sw = Stopwatch()..start();
@@ -238,41 +246,33 @@ class ExportCommand extends Command<void> {
         }
       }
 
-      event.when(
-        beginExport:
-            ((orgId, orgName, projectId, projectName, localPath, docCount) {
-          totalDocs = docCount;
+      event.maybeMap(
+        orElse: () {},
+        beginExport: (e) {
+          totalDocs = e.docCount;
           logger.stdout('* Export 0% complete...');
-        }),
-        docExportAttempt: (docId, n1Path) {},
-        docExported: (docId, n1Path, localPath, exportedAsCopy) {
+        },
+        docExported: (e) {
           incrementDocsProcessed();
-          final msg = 'Document ID: "$docId", N1 Path: "$n1Path", '
-              'Local Path: "$localPath"';
-          if (exportedAsCopy) {
-            logger.stdout('${ansi.yellow}$prefixAsCopy$msg${ansi.none}');
+          if (e.exportedAsCopy) {
+            logger.stdout('${ansi.yellow}${e.getLogMessage()}${ansi.none}');
           } else {
-            logger.trace('$prefixExported$msg');
+            logger.trace(e.getLogMessage());
           }
         },
-        docSkippedAlreadyExists: (docId, n1Path, localPath) {
+        docSkippedAlreadyExists: (e) {
           incrementDocsProcessed();
-          final msg = 'Document ID: "$docId", N1 Path: "$n1Path", '
-              'Local Path: "$localPath"';
-          logger.stdout('${ansi.yellow}$prefixExists$msg${ansi.none}');
+          logger.stdout('${ansi.yellow}${e.getLogMessage()}${ansi.none}');
         },
-        docSkippedUnknownFailure: (docId, n1Path) {
+        docSkippedUnknownFailure: (e) {
           incrementDocsProcessed();
-          final msg = 'Document ID: "$docId", N1 Path: "$n1Path"';
-          logger.stderr('${ansi.red}$prefixFailure$msg${ansi.none}');
+          logger.stderr('${ansi.red}${e.getLogMessage()}${ansi.none}');
         },
-        cancelExportRequested: () {},
-        exportFinished: (Either<List<ExportFailure>, ExportResults> results,
-            canceledBeforeComplete) {
+        exportFinished: (e) {
           streamCompleter.complete(
             ExportFinished(
-                results: results,
-                canceledBeforeComplete: canceledBeforeComplete),
+                results: e.results,
+                canceledBeforeComplete: e.canceledBeforeComplete),
           );
         },
       );
