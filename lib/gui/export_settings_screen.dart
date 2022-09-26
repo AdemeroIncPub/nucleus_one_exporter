@@ -223,7 +223,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
       textBaseline: TextBaseline.alphabetic,
       defaultVerticalAlignment: TableCellVerticalAlignment.baseline,
       children: [
-        _apiKeyControlsRow(),
+        _apiKeyRow(),
         _spacerRow(height: Insets.compSmall),
         _refreshDataRow(),
         _spacerRow(height: Insets.compSmall),
@@ -231,16 +231,16 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
         _spacerRow(height: Insets.compSmall),
         _projectDropdownRow(),
         _spacerRow(height: Insets.compSmall),
-        _destinationControlsRow(),
+        _destinationRow(),
         _spacerRow(height: Insets.compSmall),
-        _optionControlsRow(),
+        _optionsRow(),
         _spacerRow(height: Insets.compSmall),
-        _maxConcurrentDownloadsControlsRow(),
+        _maxConcurrentDownloadsRow(),
       ],
     );
   }
 
-  TableRow _apiKeyControlsRow() {
+  TableRow _apiKeyRow() {
     return _buildTableRow(
       item1: IconButton(
         icon: const Icon(Icons.edit),
@@ -344,7 +344,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
     );
   }
 
-  TableRow _destinationControlsRow() {
+  TableRow _destinationRow() {
     return _buildTableRow(
       item1: IconButton(
         icon: const Icon(Icons.edit),
@@ -374,7 +374,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
     );
   }
 
-  TableRow _optionControlsRow() {
+  TableRow _optionsRow() {
     return _buildTableRow(
       item2: Column(
         children: [
@@ -408,7 +408,7 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
     );
   }
 
-  TableRow _maxConcurrentDownloadsControlsRow() {
+  TableRow _maxConcurrentDownloadsRow() {
     return _buildTableRow(
       item2: Row(
         textBaseline: TextBaseline.alphabetic,
@@ -441,6 +441,16 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
     );
   }
 
+  Widget _footerText() {
+    const text = 'During export, any characters that are not allowed in file '
+        'and folder names will be replaced with an underscore. Due to this '
+        "renaming, it's possible that the export will save a file with the "
+        'same name as another file not yet exported. With "Copy if exists" '
+        'unchecked, the second file will be skipped since the file already '
+        'exists. A warning will be logged. This mostly affects Windows.';
+    return const Text(text);
+  }
+
   Widget _exportButton() {
     final enabled = _selectedOrgId != null &&
         _selectedProjectId != null &&
@@ -455,16 +465,6 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
           : null,
       child: const Text('EXPORT'),
     );
-  }
-
-  Widget _footerText() {
-    const text = 'During export, any characters that are not allowed in file '
-        'and folder names will be replaced with an underscore. Due to this '
-        "renaming, it's possible that the export will save a file with the "
-        'same name as another file not yet exported. With "Copy if exists" '
-        'unchecked, the second file will be skipped since the file already '
-        'exists. A warning will be logged. This mostly affects Windows.';
-    return const Text(text);
   }
 
   TableRow _spacerRow({required double height}) {

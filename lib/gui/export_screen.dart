@@ -179,8 +179,7 @@ class _ExportScreenState extends ConsumerState<ExportScreen>
         if (exportedAsCopy) {
           return Text(
             '$prefixAsCopy$msg',
-            style: theme.textTheme.bodyMedium
-                ?.copyWith(color: Colors.amber.shade200),
+            style: TextStyle(color: Colors.amber.shade200),
           );
         } else {
           // todo(apn): selection in ui for all, warnings, errors (chips?)
@@ -192,16 +191,14 @@ class _ExportScreenState extends ConsumerState<ExportScreen>
             'Local Path: "$localPath"';
         return Text(
           '$prefixExists$msg',
-          style: theme.textTheme.bodyMedium
-              ?.copyWith(color: Colors.amber.shade200),
+          style: TextStyle(color: Colors.amber.shade200),
         );
       },
       docSkippedUnknownFailure: (docId, n1Path) {
         final msg = 'Document ID: "$docId", N1 Path: "$n1Path"';
         return Text(
           '$prefixFailure$msg',
-          style: theme.textTheme.bodyMedium
-              ?.copyWith(color: theme.colorScheme.error),
+          style: TextStyle(color: theme.colorScheme.error),
         );
       },
     );
