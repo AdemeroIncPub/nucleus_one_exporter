@@ -24,8 +24,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
+      title: 'Nucleus One Exporter',
+      darkTheme: ThemeData(
         useMaterial3: true,
         colorSchemeSeed: Colors.teal,
         brightness: Brightness.dark,

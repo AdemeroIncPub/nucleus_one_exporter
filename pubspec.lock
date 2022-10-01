@@ -155,13 +155,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.2"
-  cupertino_icons:
-    dependency: "direct main"
-    description:
-      name: cupertino_icons
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.5"
   dart_style:
     dependency: transitive
     description:
@@ -411,9 +404,11 @@ packages:
   nucleus_one_dart_sdk:
     dependency: "direct main"
     description:
-      path: "../nucleus_one_dart_sdk"
-      relative: true
-    source: path
+      path: "."
+      ref: my-ApiMappingRefresh
+      resolved-ref: d5b13d79418c37a346e4a26363286d60513a674a
+      url: "https://github.com/jibbers42/nucleus_one_dart_sdk"
+    source: git
     version: "0.0.0"
   package_config:
     dependency: transitive
