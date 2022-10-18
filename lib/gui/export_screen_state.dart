@@ -69,11 +69,11 @@ class ExportStateNotifier extends StateNotifier<AsyncValue<ExportState>> {
         _exportStreamSubscription = exportStream.listen(
           _addEvent,
           onError: (Object error, StackTrace stackTrace) =>
-              state = AsyncValue.error(error, stackTrace: stackTrace),
+              state = AsyncValue.error(error, stackTrace),
         );
       },
       error: (error, stackTrace) {
-        state = AsyncValue.error(error, stackTrace: stackTrace);
+        state = AsyncValue.error(error, stackTrace);
       },
       loading: () {
         state = const AsyncValue.loading();
