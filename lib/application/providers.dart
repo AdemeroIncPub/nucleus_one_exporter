@@ -27,8 +27,8 @@ final nucleusOneSdkServiceProvider =
       ref.watch(settingsProvider.select((settings) => settings.apiKey));
   final apiKeyCompleter = Completer<NucleusOneSdkService>();
   if (apiKey != '') {
-    // Calling NucleusOne.resetSdk() in case it has already been initialized (it's
-    // a no op if not initialized).
+    // Calling NucleusOne.resetSdk() in case it has already been initialized
+    // (it's a no op if not initialized).
     await n1.NucleusOne.resetSdk();
     await n1.NucleusOne.intializeSdk();
 

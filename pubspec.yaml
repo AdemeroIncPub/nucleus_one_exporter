@@ -2,6 +2,9 @@ name: nucleus_one_exporter
 description: A tool for exporting documents from Nucleus One.
 homepage: https://nucleus.one
 
+# Derry scripts: https://pub.dev/packages/derry
+# installation: pub global activate derry
+# usage: derry [script]
 scripts:
   gen: flutter pub run build_runner build --delete-conflicting-outputs
   outdated: flutter pub outdated --color
