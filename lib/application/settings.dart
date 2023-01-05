@@ -49,5 +49,5 @@ class StorageBoxWrapper {
   }
 
   static StorageBox _initStorageBox() =>
-      StorageBox('settings', configPathPrefix: productId);
+      StorageBox('settings', configPathPrefix: productName);
 }

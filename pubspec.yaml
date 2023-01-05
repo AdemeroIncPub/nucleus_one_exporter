@@ -54,10 +54,8 @@ dependencies:
   meta: any
   nucleus_one_dart_sdk:
     git:
-      url: https://github.com/jibbers42/nucleus_one_dart_sdk
-      ref: my-ApiMappingRefresh
-  # nucleus_one_dart_sdk:
-  #   path: ../nucleus_one_dart_sdk
+      url: https://github.com/AdemeroIncPub/nucleus_one_dart_sdk
+      ref: '8be0ec8' # main
   path: any
   quiver: any
   riverpod: any
@@ -80,6 +78,10 @@ dev_dependencies:
   freezed: any
   glados: any
   mocktail: any
+
+# dependency_overrides:
+  # nucleus_one_dart_sdk:
+  #   path: ../../nucleus_one_dart_sdk
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
