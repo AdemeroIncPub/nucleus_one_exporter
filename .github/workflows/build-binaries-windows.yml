@@ -27,5 +27,4 @@ jobs:
           flutter build windows
       
       - run: |
-          cd "C:\Program Files (x86)"
-          dir
+          SET
