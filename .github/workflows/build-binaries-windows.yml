@@ -27,4 +27,4 @@ jobs:
           flutter build windows
       
       - run: |
-          SET
+          Get-Variable
