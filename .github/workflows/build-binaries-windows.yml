@@ -26,5 +26,5 @@ jobs:
           flutter config --enable-windows-desktop
           flutter build windows
       
-      - run: |
-          Get-Variable
+      - name: powershell-version
+        run: Write-Output "::add-mask::$env:GITHUB_PATH"
