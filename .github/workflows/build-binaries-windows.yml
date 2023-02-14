@@ -27,11 +27,7 @@ jobs:
           flutter build windows
       
       # Set the WiX path.  See https://github.com/orgs/community/discussions/27149
-      - name: Set path for candle and light
-        run: $env:Path += ";C:\Program Files (x86)\WiX Toolset v3.11\bin"
+      # - name: Set path for candle and light
+      #   run: $env:Path += ";C:\Program Files (x86)\WiX Toolset v3.11\bin"
       
-      - name: Echo GITHUB_PATH
-        run: Write-Output "::add-mask::$env:GITHUB_PATH"
-      
-      - name: Echo $env:Path
-        run: Write-Output "::add-mask::$env:Path"
+      - run: echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
