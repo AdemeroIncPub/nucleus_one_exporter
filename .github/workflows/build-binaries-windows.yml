@@ -26,5 +26,10 @@ jobs:
           flutter config --enable-windows-desktop
           flutter build windows
       
+      # Set the WiX path.  See https://github.com/orgs/community/discussions/27149
+      - name: Set path for candle and light
+        run: echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" >> $GITHUB_PATH
+        shell: bash
+      
       - name: powershell-version
         run: Write-Output "::add-mask::$env:GITHUB_PATH"
