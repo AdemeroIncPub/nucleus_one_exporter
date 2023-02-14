@@ -28,8 +28,10 @@ jobs:
       
       # Set the WiX path.  See https://github.com/orgs/community/discussions/27149
       - name: Set path for candle and light
-        run: echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" >> $GITHUB_PATH
-        shell: bash
+        run: $env:Path += ";C:\Program Files (x86)\WiX Toolset v3.11\bin"
       
-      - name: powershell-version
+      - name: Echo GITHUB_PATH
         run: Write-Output "::add-mask::$env:GITHUB_PATH"
+      
+      - name: Echo $env:Path
+        run: Write-Output "::add-mask::$env:Path"
