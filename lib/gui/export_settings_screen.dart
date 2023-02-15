@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:collection/collection.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/gestures.dart';
@@ -7,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nucleus_one_dart_sdk/nucleus_one_dart_sdk.dart' as n1;
 import 'package:path/path.dart' as path_;
 import 'package:url_launcher/link.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../application/constants.dart';
 import '../application/path_validator.dart';
@@ -166,7 +169,13 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
             const SizedBox(height: Insets.compLarge),
             _footerText(),
             const SizedBox(height: Insets.compLarge),
-            _exportButton(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _exportButton(),
+                _aboutButton(),
+              ],
+            ),
           ],
         ),
       ),
@@ -524,6 +533,44 @@ class _ExportSettingsScreenState extends ConsumerState<ExportSettingsScreen> {
             )
           : null,
       child: const Text('EXPORT'),
+    );
+  }
+
+  Widget _aboutButton() {
+    const iconLicenseUrl = 'https://www.iconfinder.com/carbon-design';
+
+    return TextButton(
+      onPressed: () => showAboutDialog(
+        context: context,
+        children: [
+          SizedBox(
+            width: 400,
+            child: RichText(
+              text: TextSpan(
+                children: [
+                  const TextSpan(
+                    text: 'Icon courtesy of Carbon Design at ',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  TextSpan(
+                    text: iconLicenseUrl,
+                    style: const TextStyle(color: Colors.blue),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        unawaited(launchUrl(Uri.parse(iconLicenseUrl)));
+                      },
+                  ),
+                  const TextSpan(
+                    text: '.',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+      child: const Text('ABOUT'),
     );
   }
 
