@@ -48,10 +48,11 @@ jobs:
       - name: Determine tag
         run: |
           echo "RELEASE_TAG=${env:GITHUB_REF#refs/tags/}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          echo "Steve 1 $env:GITHUB_ENV"
-          echo "Steve 2 ${env:GITHUB_REF#refs/tags/}"
-          echo "Steve 3 $env:RELEASE_TAG"
-          echo "Steve 4 ${process.env.RELEASE_TAG}"
+          echo "Steve 1.0  $env:GITHUB_ENV"
+          echo "Steve 2.1  $env:GITHUB_REF"
+          echo "Steve 2.2  ${env:GITHUB_REF#refs/tags/}"
+          echo "Steve 3.0  $env:RELEASE_TAG"
+          echo "Steve 4.0  ${process.env.RELEASE_TAG}"
 
       - name: Create release
         uses: actions/github-script@v6
