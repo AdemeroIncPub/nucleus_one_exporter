@@ -35,7 +35,6 @@ jobs:
           cd \
           md dev
           cd dev
-          export PATH="$PATH:`pwd`/flutter/bin"
           git clone https://github.com/AdemeroIncPub/nucleus_one_exporter.git
           cd nucleus_one_exporter
           flutter build windows --release
