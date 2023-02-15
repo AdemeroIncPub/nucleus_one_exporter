@@ -26,15 +26,21 @@ jobs:
           flutter config --enable-windows-desktop
           flutter build windows
       
-      # Set the WiX path.  See https://github.com/orgs/community/discussions/27149
-      # - name: Set path for candle and light
-      #   run: $env:Path += ";C:\Program Files (x86)\WiX Toolset v3.11\bin"
+      # Set the WiX path.  See https://www.scivision.dev/github-actions-path-append/
+      - name: Add WiX path to GITHUB_PATH
+        run: echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
       
-      - name: Find light 1
-        run: (get-command light.exe).Path
-        continue-on-error: true
+      - id: buildExporter
+        run: |
+          cd \
+          md dev
+          cd dev
+          export PATH="$PATH:`pwd`/flutter/bin"
+          git clone https://github.com/AdemeroIncPub/nucleus_one_exporter.git
+          cd nucleus_one_exporter
+          flutter build windows --release
       
-      - run: echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-      
-      - name: Find light 2
-        run: (get-command light.exe).Path
+      - name: Build MSI
+        run: |
+          candle.exe -nologo "install\windows\Setup.wxs" -out "install\windows\Setup.wixobj" -ext WixUIExtension
+          light.exe -nologo "install\windows\Setup.wixobj" -out "install\windows\Setup.msi"  -ext WixUIExtension

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Product Id="E094DA7D-EC68-453E-B7E2-4847760EAA14" Name="Nucleus One Exporter" Language="1033" Version="1.0.0.0" Manufacturer="WixEdit" UpgradeCode="3BABA1B2-3334-4D6A-9807-9F26B3F8ABE8">
+        <Package Description="Nucleus One Exporter" Comments="Nucleus One Exporter" InstallerVersion="200" Compressed="yes" />
+        <Media Id="1" Cabinet="simple.cab" EmbedCab="yes" />
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="ProgramFilesFolder" Name="PFiles">
+                <Directory Id="ProgramFilesAdemero" Name="Ademero">
+					<Directory Id="ProgramFilesAdemeroNucleusOneExporter" Name="Nucleus One Exporter">
+						<Component Id="FLUTTER_WINDOWS.DLL" DiskId="1" Guid="63FF4E97-BC00-47E8-BB44-54FCB07D1E2B">
+							<File Id="FLUTTER_WINDOWS.DLL" Name="flutter_windows.dll" Source="..\..\build\windows\runner\Release\flutter_windows.dll" />
+						</Component>
+						<Component Id="NUCLEUS_ONE_EXPORTER.EXE" DiskId="1" Guid="2C10B70B-4B0E-459B-B95A-726292DA9AB8">
+							<File Id="NUCLEUS_ONE_EXPORTER.EXE" Name="nucleus_one_exporter.exe" Source="..\..\build\windows\runner\Release\nucleus_one_exporter.exe" KeyPath="yes">
+								<Shortcut Id="desktopShortcut" Directory="DesktopFolder" Name="Nucleus One Exporter" WorkingDirectory="INSTALLDIR" Advertise="yes" Icon="DesktopIcon.exe" IconIndex="0" />
+								<Shortcut Id="ExeShortcut" Directory="ProgramMenuDir" Name="Nucleus One Exporter" Advertise="yes" Icon="StartMenuIcon.exe" IconIndex="0" />
+							</File>
+						</Component>
+						<Component Id="SCREEN_RETRIEVER_PLUGIN.DLL" DiskId="1" Guid="4900A1AE-516D-4BDF-9A2B-BAFCEA7C2699">
+							<File Id="SCREEN_RETRIEVER_PLUGIN.DLL" Name="screen_retriever_plugin.dll" Source="..\..\build\windows\runner\Release\screen_retriever_plugin.dll" />
+						</Component>
+						<Component Id="URL_LAUNCHER_WINDOWS_PLUGIN.DLL" DiskId="1" Guid="FAECE521-A55D-4677-9A94-7652BC1952FE">
+							<File Id="URL_LAUNCHER_WINDOWS_PLUGIN.DLL" Name="url_launcher_windows_plugin.dll" Source="..\..\build\windows\runner\Release\url_launcher_windows_plugin.dll" />
+						</Component>
+						<Component Id="WINDOW_MANAGER_PLUGIN.DLL" DiskId="1" Guid="8DDFD678-3237-4B79-A4E5-AD38D31C01B4">
+							<File Id="WINDOW_MANAGER_PLUGIN.DLL" Name="window_manager_plugin.dll" Source="..\..\build\windows\runner\Release\window_manager_plugin.dll" />
+						</Component>
+						<Directory Id="DATA" Name="data">
+							<Component Id="APP.SO" DiskId="1" Guid="FB4A8F6B-3423-474C-9881-84B6A3105CCD">
+								<File Id="APP.SO" Name="app.so" Source="..\..\build\windows\runner\Release\data\app.so" />
+							</Component>
+							<Component Id="ICUDTL.DAT" DiskId="1" Guid="1FA291FF-26D7-4E5F-8988-625E3CBB13E0">
+								<File Id="ICUDTL.DAT" Name="icudtl.dat" Source="..\..\build\windows\runner\Release\data\icudtl.dat" />
+							</Component>
+							<Directory Id="FLUTTER_ASSETS" Name="flutter_assets">
+								<Component Id="ASSETMANIFEST.JSON" DiskId="1" Guid="BFCFADA8-4EB8-439D-B623-CCB62BFB8894">
+									<File Id="ASSETMANIFEST.JSON" Name="AssetManifest.json" Source="..\..\build\windows\runner\Release\data\flutter_assets\AssetManifest.json" />
+								</Component>
+								<Component Id="FONTMANIFEST.JSON" DiskId="1" Guid="747A2AF7-86CB-4445-9E9E-794E25AD4BB3">
+									<File Id="FONTMANIFEST.JSON" Name="FontManifest.json" Source="..\..\build\windows\runner\Release\data\flutter_assets\FontManifest.json" />
+								</Component>
+								<Component Id="NOTICES.Z" DiskId="1" Guid="5647B66A-48AE-44F4-A79D-537BACE85E5F">
+									<File Id="NOTICES.Z" Name="NOTICES.Z" Source="..\..\build\windows\runner\Release\data\flutter_assets\NOTICES.Z" />
+								</Component>
+								<Directory Id="FONTS" Name="fonts">
+									<Component Id="MATERIALICONS_REGULAR.OTF" DiskId="1" Guid="ACAD2CA6-3442-489A-9CF3-01957D65C0AB">
+										<File Id="MATERIALICONS_REGULAR.OTF" Name="MaterialIcons-Regular.otf" Source="..\..\build\windows\runner\Release\data\flutter_assets\fonts\MaterialIcons-Regular.otf" />
+									</Component>
+								</Directory>
+								<Directory Id="PACKAGES" Name="packages">
+									<Directory Id="WINDOW_MANAGER" Name="window_manager">
+										<Directory Id="IMAGES" Name="images">
+											<Component Id="IC_CHROME_CLOSE.PNG" DiskId="1" Guid="FD7A7443-FB9E-4403-9C97-3B85DE152FF1">
+												<File Id="IC_CHROME_CLOSE.PNG" Name="ic_chrome_close.png" Source="..\..\build\windows\runner\Release\data\flutter_assets\packages\window_manager\images\ic_chrome_close.png" />
+											</Component>
+											<Component Id="IC_CHROME_MAXIMIZE.PNG" DiskId="1" Guid="1687B5BC-33A0-4E3F-8D78-29FD7ACEED0E">
+												<File Id="IC_CHROME_MAXIMIZE.PNG" Name="ic_chrome_maximize.png" Source="..\..\build\windows\runner\Release\data\flutter_assets\packages\window_manager\images\ic_chrome_maximize.png" />
+											</Component>
+											<Component Id="IC_CHROME_MINIMIZE.PNG" DiskId="1" Guid="8B7D776E-3C7A-4406-BE7A-7E305AB14154">
+												<File Id="IC_CHROME_MINIMIZE.PNG" Name="ic_chrome_minimize.png" Source="..\..\build\windows\runner\Release\data\flutter_assets\packages\window_manager\images\ic_chrome_minimize.png" />
+											</Component>
+											<Component Id="IC_CHROME_UNMAXIMIZE.PNG" DiskId="1" Guid="2DB1B380-500F-468D-95F6-C0E8B8F73A40">
+												<File Id="IC_CHROME_UNMAXIMIZE.PNG" Name="ic_chrome_unmaximize.png" Source="..\..\build\windows\runner\Release\data\flutter_assets\packages\window_manager\images\ic_chrome_unmaximize.png" />
+											</Component>
+										</Directory>
+									</Directory>
+								</Directory>
+								<Directory Id="SHADERS" Name="shaders">
+									<Component Id="INK_SPARKLE.FRAG" DiskId="1" Guid="BCB35B51-ED87-4F42-A831-006B3C3ED9B3">
+										<File Id="INK_SPARKLE.FRAG" Name="ink_sparkle.frag" Source="..\..\build\windows\runner\Release\data\flutter_assets\shaders\ink_sparkle.frag" />
+									</Component>
+								</Directory>
+							</Directory>
+						</Directory>
+					</Directory>
+                </Directory>
+            </Directory>
+            <Directory Id="DesktopFolder" />
+            <Directory Id="ProgramMenuFolder">
+                <Directory Id="ProgramMenuDir" Name="Ademero">
+                    <Component Id="StartMenuShortcuts" Guid="9B237E66-47EA-4A61-90AC-35837AE6469B">
+                        <RemoveFolder Id="ProgramMenuDir" On="uninstall" />
+                        <RegistryValue Root="HKCU" Key="Software\[Manufacturer]\[ProductName]" Type="string" Value="" />
+                    </Component>
+                </Directory>
+            </Directory>
+        </Directory>
+        <Feature Id="DefaultFeature" Title="Complete" Level="1">
+            <ComponentRef Id="FLUTTER_WINDOWS.DLL" />
+            <ComponentRef Id="NUCLEUS_ONE_EXPORTER.EXE" />
+            <ComponentRef Id="SCREEN_RETRIEVER_PLUGIN.DLL" />
+            <ComponentRef Id="URL_LAUNCHER_WINDOWS_PLUGIN.DLL" />
+            <ComponentRef Id="WINDOW_MANAGER_PLUGIN.DLL" />
+            <ComponentRef Id="APP.SO" />
+            <ComponentRef Id="ICUDTL.DAT" />
+            <ComponentRef Id="ASSETMANIFEST.JSON" />
+            <ComponentRef Id="FONTMANIFEST.JSON" />
+            <ComponentRef Id="NOTICES.Z" />
+            <ComponentRef Id="MATERIALICONS_REGULAR.OTF" />
+            <ComponentRef Id="IC_CHROME_CLOSE.PNG" />
+            <ComponentRef Id="IC_CHROME_MAXIMIZE.PNG" />
+            <ComponentRef Id="IC_CHROME_MINIMIZE.PNG" />
+            <ComponentRef Id="IC_CHROME_UNMAXIMIZE.PNG" />
+            <ComponentRef Id="INK_SPARKLE.FRAG" />
+            <ComponentRef Id="StartMenuShortcuts" />
+        </Feature>
+		<UI>
+		  <UIRef Id="WixUI_InstallDir" />
+		  <Publish Dialog="WelcomeDlg"
+				Control="Next"
+				Event="NewDialog"
+				Value="VerifyReadyDlg"
+				Order="2">1</Publish>
+		  <Publish Dialog="VerifyReadyDlg"
+				Control="Back"
+				Event="NewDialog"
+				Value="WelcomeDlg"
+				Order="2">1</Publish>
+		</UI>
+        <Icon Id="DesktopIcon.exe" SourceFile="..\..\build\windows\runner\Release\nucleus_one_exporter.exe" />
+        <Icon Id="StartMenuIcon.exe" SourceFile="..\..\build\windows\runner\Release\nucleus_one_exporter.exe" />
+    </Product>
+</Wix>
