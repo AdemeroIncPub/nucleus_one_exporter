@@ -77,7 +77,7 @@ jobs:
           generate_release_notes: true
           body_path: ${{ github.workspace }}-CHANGELOG.txt
           files: |
-            ${{ github.workspace }}\install\windows\Setup.msi
+            .\install\windows\Setup.msi
           fail_on_unmatched_files: true
           # note you'll typically need to create a personal access token
           # with permissions to create releases in the other repo
