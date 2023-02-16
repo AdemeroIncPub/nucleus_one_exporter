@@ -75,7 +75,7 @@ jobs:
           draft: true
           tag_name: process.env.MOST_RECENT_TAG
           generate_release_notes: true
-          body_path: ${{ github.workspace }}-CHANGELOG.txt
+          #body_path: ${{ github.workspace }}-CHANGELOG.txt
           files: |
             ./install/windows/Setup.msi
           fail_on_unmatched_files: true
