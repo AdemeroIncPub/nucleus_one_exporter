@@ -52,6 +52,8 @@ jobs:
       
       - name: Determine tag
         run: |
+          cd \dev\nucleus_one_exporter
+          git describe --tags --abbrev=0
           echo "git describe --tags --abbrev=0" >> $MOST_RECENT_TAG
           echo "MOST_RECENT_TAG2=$(echo git describe --tags --abbrev=0)" >> $env:GITHUB_ENV
           $SOURCE_NAME = $env:GITHUB_REF -replace 'refs/\w+/', ''
