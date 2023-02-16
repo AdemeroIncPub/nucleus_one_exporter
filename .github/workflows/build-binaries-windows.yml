@@ -46,26 +46,12 @@ jobs:
       - name: Determine most recent tag
         run: |
           cd $env:GITHUB_WORKSPACE
-          git describe --tags --abbrev=0
-          echo "git describe --tags --abbrev=0" >> $MOST_RECENT_TAG
-          echo "MOST_RECENT_TAG2=$(echo git describe --tags --abbrev=0)" >> $env:GITHUB_ENV
-          $MOST_RECENT_TAG3 = git describe --tags --abbrev=0
-          echo "MOST_RECENT_TAG4=$MOST_RECENT_TAG3" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
-          echo "Steve 1.0  $env:GITHUB_ENV"
-          echo "Steve 2.0  $env:MOST_RECENT_TAG"
-          echo "Steve 2.1  $env:MOST_RECENT_TAG2"
-          echo "Steve 2.2  $MOST_RECENT_TAG3"
-          echo "Steve 2.3  $env:MOST_RECENT_TAG4"
-          echo "Steve 4.0  ${process.env.MOST_RECENT_TAG2}"
-          echo "Steve 5.0  $MOST_RECENT_TAG"
-          echo "Steve 5.1  $MOST_RECENT_TAG2"
+          $MOST_RECENT_TAG_LOCAL = git describe --tags --abbrev=0
+          echo "MOST_RECENT_TAG=$MOST_RECENT_TAG_LOCAL" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
       
       - name: Determine tag2
         run: |
-          echo "Steve 6.0  $env:MOST_RECENT_TAG"
-          echo "Steve 6.1  $env:MOST_RECENT_TAG2"
-          echo "Steve 6.2  $MOST_RECENT_TAG3"
-          echo "Steve 6.3  $env:MOST_RECENT_TAG4"
+          echo "Steve 6.3  $env:MOST_RECENT_TAG"
 
       - name: Create release
         uses: actions/github-script@v6
