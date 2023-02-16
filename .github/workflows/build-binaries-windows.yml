@@ -44,8 +44,7 @@ jobs:
       - name: Build MSI
         run: |
           candle.exe -nologo "install\windows\Setup.wxs" -out "install\windows\Setup.wixobj" -ext WixUIExtension
-          light.exe -nologo "install\windows\Setup.wixobj" -out "install\windows\Setup.msi"  -ext WixUIExtension
-          Get-ChildItem -Filter Setup.msi -Recurse -ErrorAction SilentlyContinue -Force
+          light.exe -nologo "install\windows\Setup.wixobj" -out "install\windows\NucleusOneExporter_Installer_${{ env.MOST_RECENT_TAG }}.msi" -ext WixUIExtension
 
       # - name: Create release
       #   uses: actions/github-script@v6
