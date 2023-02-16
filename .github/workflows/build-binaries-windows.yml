@@ -47,6 +47,7 @@ jobs:
       
       - name: Determine tag
         run: |
+          $MOST_RECENT_TAG = echo "git describe --tags --abbrev=0"
           $SOURCE_NAME = $env:GITHUB_REF -replace 'refs/\w+/', ''
           $SOURCE_BRANCH = $env:GITHUB_REF -replace 'refs/heads/', ''
           $SOURCE_TAG = $env:GITHUB_REF -replace 'refs/tags/', ''
@@ -56,6 +57,7 @@ jobs:
           echo "Steve 2.2  $SOURCE_TAG"
           echo "Steve 3.0  $env:RELEASE_TAG"
           echo "Steve 4.0  ${process.env.RELEASE_TAG}"
+          echo "Steve 4.0  $MOST_RECENT_TAG"
 
       - name: Create release
         uses: actions/github-script@v6
