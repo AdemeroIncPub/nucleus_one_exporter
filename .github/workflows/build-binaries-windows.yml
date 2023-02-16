@@ -30,19 +30,10 @@ jobs:
       # - name: Add WiX path to GITHUB_PATH
       #   run: echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
       
-      - id: cloneN1ExporterRepo
-        name: Clone N1 Exporter Repository
-        run: |
-          cd \
-          md dev
-          cd dev
-          git clone https://github.com/AdemeroIncPub/nucleus_one_exporter.git
-          cd \dev\nucleus_one_exporter
-      
       # - id: buildExporter
       #   name: Build EXE
       #   run: |
-      #     cd \dev\nucleus_one_exporter
+      #     cd $env:GITHUB_WORKSPACE
       #     flutter build windows --release
       
       # - name: Build MSI
@@ -52,7 +43,8 @@ jobs:
       
       - name: Determine tag
         run: |
-          cd \dev\nucleus_one_exporter
+          echo $env:GITHUB_WORKSPACE
+          cd $env:GITHUB_WORKSPACE
           git describe --tags --abbrev=0
           echo "git describe --tags --abbrev=0" >> $MOST_RECENT_TAG
           echo "MOST_RECENT_TAG2=$(echo git describe --tags --abbrev=0)" >> $env:GITHUB_ENV
