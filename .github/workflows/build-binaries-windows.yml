@@ -25,6 +25,7 @@ jobs:
           cd $env:GITHUB_WORKSPACE
           $MOST_RECENT_TAG_LOCAL = git describe --tags --abbrev=0
           echo "MOST_RECENT_TAG=$MOST_RECENT_TAG_LOCAL" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
+          echo "OUTPUT_INSTALLER_NAME=NucleusOneExporter-${{ env.MOST_RECENT_TAG }}-Installer.msi" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
       
       - name: Install Flutter SDK
         uses: subosito/flutter-action@v2
@@ -44,7 +45,7 @@ jobs:
       - name: Build MSI
         run: |
           candle.exe -nologo "install\windows\Setup.wxs" -out "install\windows\Setup.wixobj" -ext WixUIExtension
-          light.exe -nologo "install\windows\Setup.wixobj" -out "install\windows\NucleusOneExporter_Installer_${{ env.MOST_RECENT_TAG }}.msi" -ext WixUIExtension
+          light.exe -nologo "install\windows\Setup.wixobj" -out "install\windows\${{ env.OUTPUT_INSTALLER_NAME }}" -ext WixUIExtension
 
       # - name: Create release
       #   uses: actions/github-script@v6
@@ -76,7 +77,7 @@ jobs:
           generate_release_notes: true
           #body_path: ${{ github.workspace }}-CHANGELOG.txt
           files: |
-            ./install/windows/Setup.msi
+            ./install/windows/${{ env.OUTPUT_INSTALLER_NAME }}
           fail_on_unmatched_files: true
           # note you'll typically need to create a personal access token
           # with permissions to create releases in the other repo
