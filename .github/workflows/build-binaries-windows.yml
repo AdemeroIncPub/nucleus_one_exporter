@@ -17,7 +17,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-        fetch-depth: 0
+        with:
+          fetch-depth: 0  # Fetch all history for all tags and branches
       
       # - uses: subosito/flutter-action@v2
       #   with:
