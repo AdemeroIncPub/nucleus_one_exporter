@@ -47,7 +47,7 @@ jobs:
       
       - name: Determine tag
         run: |
-          $MOST_RECENT_TAG = echo "git describe --tags --abbrev=0"
+          echo "git describe --tags --abbrev=0" >> $MOST_RECENT_TAG
           $SOURCE_NAME = $env:GITHUB_REF -replace 'refs/\w+/', ''
           $SOURCE_BRANCH = $env:GITHUB_REF -replace 'refs/heads/', ''
           $SOURCE_TAG = $env:GITHUB_REF -replace 'refs/tags/', ''
