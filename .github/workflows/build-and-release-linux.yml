@@ -1,8 +1,8 @@
-name: Build and Release - Linux
+name: "Build and Release - Linux"
 
 on:
   workflow_run:
-    workflows: [Build and Release - Windows]
+    workflows: ["Build and Release - Windows"]
     types: 
       - completed
 
