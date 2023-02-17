@@ -1,8 +1,8 @@
-name: BuildAndRelease_Linux
+name: Build and release - Linux
 
 on:
   workflow_run:
-    workflows: BuildAndRelease_Windows
+    workflows: "BuildAndRelease_Windows"
     types: completed
 
 jobs:
@@ -32,3 +32,17 @@ jobs:
           export PATH="$PATH:~/dev/flutter/bin"
           cd ${GITHUB_WORKSPACE}
           flutter build linux --release
+      
+      - name: Compress output to ZIP file
+        run: |
+          ls -R build/linux
+          zip -r -DestinationPath build/linux/runner/Release/$env:OUTPUT_BINARIES_NAME build/linux/runner/Release
+      
+      - name: Create GitHub release draft
+        uses: softprops/action-gh-release@v1
+        with:
+          # draft: true
+          tag_name: ${{ env.MOST_RECENT_TAG }}
+          files: |
+            ./build/windows/runner/Release/${{ env.OUTPUT_BINARIES_NAME }}
+          fail_on_unmatched_files: true
