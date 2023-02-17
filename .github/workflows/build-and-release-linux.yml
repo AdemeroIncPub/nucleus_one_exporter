@@ -3,7 +3,6 @@ name: Build and Release - Linux
 on:
   workflow_run:
     workflows: ["Build and Release - Windows"]
-    branches: [main]
     types: 
       - completed
 
