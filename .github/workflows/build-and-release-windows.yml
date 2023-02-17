@@ -1,18 +1,11 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
-name: Build Binaries - Windows
+name: Build and Release - Windows
 
 on:
   push:
     branches: [ "wip/create-install" ]
-  pull_request:
-    branches: [ "wip/create-install" ]
 
 jobs:
-  build:
+  build-and-release:
     runs-on: windows-latest
 
     steps:
