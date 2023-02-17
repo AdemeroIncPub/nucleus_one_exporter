@@ -7,7 +7,10 @@ on:
   workflow_run:
     workflows: BuildAndRelease_Windows
     #types: [completed]
-    branches: "wip/create-install" # TODO: Remove this when merging back to main
+    #branches: "wip/create-install" # TODO: Remove this when merging back to main
+    branches:
+      - '*'
+      - '!master'
 
 jobs:
   build-and-release:
