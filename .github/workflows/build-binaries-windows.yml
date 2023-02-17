@@ -31,7 +31,7 @@ jobs:
           cd $env:GITHUB_WORKSPACE
           $MOST_RECENT_TAG_LOCAL = git describe --tags --abbrev=0
           Add-Content -Path $env:GITHUB_ENV -Value "MOST_RECENT_TAG=$MOST_RECENT_TAG_LOCAL"
-          Add-Content -Path $env:GITHUB_ENV -Value "OUTPUT_INSTALLER_NAME=NucleusOneExporter-$(MOST_RECENT_TAG_LOCAL)-Installer.msi"
+          Add-Content -Path $env:GITHUB_ENV -Value "OUTPUT_INSTALLER_NAME=NucleusOneExporter-${{ MOST_RECENT_TAG_LOCAL }}-Installer.msi"
       
       - name: Install Flutter SDK
         uses: subosito/flutter-action@v2
