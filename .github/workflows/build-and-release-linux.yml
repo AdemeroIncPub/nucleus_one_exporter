@@ -3,8 +3,8 @@ name: BuildAndRelease_Linux
 on:
   workflow_dispatch:
   workflow_run:
-    workflows: [BuildAndRelease_Windows]
-    types: [requested]
+    # workflows: [BuildAndRelease_Windows]
+    # types: [requested]
     branches: [wip/create-install] # TODO: Remove this when merging back to main
 
 jobs:
