@@ -1,16 +1,9 @@
 name: BuildAndRelease_Linux
 
 on:
-  workflow_dispatch:
-  push:
-    branches: "wip/create-install"
   workflow_run:
     workflows: BuildAndRelease_Windows
-    #types: [completed]
-    #branches: "wip/create-install" # TODO: Remove this when merging back to main
-    branches:
-      - '*'
-      - '!master'
+    types: completed
 
 jobs:
   build-and-release:
