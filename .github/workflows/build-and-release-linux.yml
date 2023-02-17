@@ -1,10 +1,13 @@
 name: Build and Release - Linux
 
 on:
-  workflow_run:
-    workflows: ["Build and Release - Windows"]
-    types: 
-      - completed
+  push:
+    branches: [ "wip/create-install" ]
+  
+  # workflow_run:
+  #   workflows: ["Build and Release - Windows"]
+  #   types: 
+  #     - completed
 
 jobs:
   build-and-release:
