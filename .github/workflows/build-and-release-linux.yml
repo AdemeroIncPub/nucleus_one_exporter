@@ -1,8 +1,10 @@
 name: "Build and Release - Linux"
 
 on:
+  workflow_dispatch:
   workflow_run:
-    workflows: ["Build and Release - Windows"]
+    workflows:
+      - "Build and Release - Windows"
     types: 
       - completed
 
