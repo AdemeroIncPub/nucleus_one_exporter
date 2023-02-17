@@ -26,12 +26,13 @@ jobs:
       #     $MOST_RECENT_TAG_LOCAL = git describe --tags --abbrev=0
       #     echo "MOST_RECENT_TAG=$MOST_RECENT_TAG_LOCAL" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
       
-      - name: Determine most recent tag in branch
+      - name: Determine most recent tag in branch and set misc variables, based on that
         run: |
           cd $env:GITHUB_WORKSPACE
           $MOST_RECENT_TAG_LOCAL = git describe --tags --abbrev=0
           Add-Content -Path $env:GITHUB_ENV -Value "MOST_RECENT_TAG=$MOST_RECENT_TAG_LOCAL"
           Add-Content -Path $env:GITHUB_ENV -Value "OUTPUT_INSTALLER_NAME=NucleusOneExporter-${MOST_RECENT_TAG_LOCAL}-Installer.msi"
+          Add-Content -Path $env:GITHUB_ENV -Value "OUTPUT_BINARIES_NAME=NucleusOneExporter-${MOST_RECENT_TAG_LOCAL}-Binaries.zip"
       
       - name: Install Flutter SDK
         uses: subosito/flutter-action@v2
@@ -44,6 +45,10 @@ jobs:
           cd $env:GITHUB_WORKSPACE
           flutter build windows --release
       
+      - name: Compress output to ZIP file
+        run: |
+          Compress-Archive -Path build\windows\runner\Release -DestinationPath build\windows\runner\Release\$env:OUTPUT_BINARIES_NAME
+      
       # Set the WiX path.  See https://www.scivision.dev/github-actions-path-append/
       - name: Add WiX path to GITHUB_PATH
         run: echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
@@ -52,28 +57,6 @@ jobs:
         run: |
           candle.exe -nologo "install\windows\Setup.wxs" -out "install\windows\Setup.wixobj" -ext WixUIExtension
           light.exe -nologo "install\windows\Setup.wixobj" -out "install\windows\${{ env.OUTPUT_INSTALLER_NAME }}" -ext WixUIExtension
-
-      # - name: Create release
-      #   uses: actions/github-script@v6
-      #   with:
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
-      #     script: |
-      #       try {
-      #         const response = await github.rest.repos.createRelease({
-      #           draft: true,
-      #           generate_release_notes: true,
-      #           name: process.env.MOST_RECENT_TAG,
-      #           owner: context.repo.owner,
-      #           prerelease: false,
-      #           repo: context.repo.repo,
-      #           tag_name: process.env.MOST_RECENT_TAG,
-      #         });
-
-      #         core.exportVariable('RELEASE_ID', response.data.id);
-      #         core.exportVariable('RELEASE_UPLOAD_URL', response.data.upload_url);
-      #       } catch (error) {
-      #         core.setFailed(error.message);
-      #       }
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
@@ -84,6 +67,7 @@ jobs:
           #body_path: ${{ github.workspace }}-CHANGELOG.txt
           files: |
             ./install/windows/${{ env.OUTPUT_INSTALLER_NAME }}
+            ./build/windows/runner/Release/${{ env.OUTPUT_BINARIES_NAME }}
           fail_on_unmatched_files: true
           # note you'll typically need to create a personal access token
           # with permissions to create releases in the other repo
