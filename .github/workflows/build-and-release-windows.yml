@@ -14,12 +14,6 @@ jobs:
         with:
           fetch-depth: 0  # Fetch all history for all tags and branches
       
-      # - name: Determine most recent tag in branch
-      #   run: |
-      #     cd $env:GITHUB_WORKSPACE
-      #     $MOST_RECENT_TAG_LOCAL = git describe --tags --abbrev=0
-      #     echo "MOST_RECENT_TAG=$MOST_RECENT_TAG_LOCAL" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
-      
       - name: Determine most recent tag in branch and set misc variables, based on that
         run: |
           cd $env:GITHUB_WORKSPACE
