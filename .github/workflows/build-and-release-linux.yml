@@ -11,7 +11,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - run: JSON.stringify(${{ github.event }})
+      - run: echo ${{ github.event }}
+      
+      - run: echo ${{ github.event.workflow_run }}
 
       - uses: actions/checkout@v3
 
