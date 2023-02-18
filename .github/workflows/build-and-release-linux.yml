@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - run: JSON.stringify(${{ github.event }})
+
       - uses: actions/checkout@v3
 
       - name: Install dependencies needed for builiding
