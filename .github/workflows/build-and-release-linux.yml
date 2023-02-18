@@ -2,7 +2,7 @@ name: Build and release - Linux
 
 on:
   workflow_run:
-    workflows: "BuildAndRelease_Windows"
+    workflows: "Build and release - Windows"
     types: completed
 
 jobs:
