@@ -32,7 +32,7 @@ jobs:
         name: Build Linux executable
         run: |
           export PATH="$PATH:~/dev/flutter/bin"
-          cd {{ env.GITHUB_WORKSPACE }}
+          cd ${{ env.GITHUB_WORKSPACE }}
           flutter build linux --release
       
       - name: Compress output to ZIP file
