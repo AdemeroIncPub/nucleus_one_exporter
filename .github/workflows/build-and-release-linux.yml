@@ -17,7 +17,7 @@ jobs:
       
       - name: Determine most recent tag in branch and set misc variables, based on that
         run: |
-          cd $env:GITHUB_WORKSPACE
+          cd $GITHUB_WORKSPACE
           $MOST_RECENT_TAG_LOCAL = git describe --tags --abbrev=0
           echo "MOST_RECENT_TAG=$(echo git describe --tags --abbrev=0)" >> $GITHUB_ENV
           echo ABC
