@@ -11,15 +11,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - run: echo ${{ github.event }}
-      
-      - run: echo ${{ github.event.workflow_run }}
-
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Fetch all history for all tags and branches
+      
+      - name: Determine most recent tag in branch and set misc variables, based on that
+        run: |
+          cd $env:GITHUB_WORKSPACE
+          $MOST_RECENT_TAG_LOCAL = git describe --tags --abbrev=0
+          echo "MOST_RECENT_TAG=$(echo git describe --tags --abbrev=0)" >> $GITHUB_ENV
+          echo ABC
+          echo $MOST_RECENT_TAG
+          echo DEF
+          echo ${{ env.MOST_RECENT_TAG }}
+          echo "OUTPUT_BINARIES_NAME_LINUX=NucleusOneExporter-$MOST_RECENT_TAG-Linux-Binaries.zip" >> $GITHUB_ENV
 
       - name: Install dependencies needed for builiding
         run: |
           echo ${{ env.MOST_RECENT_TAG }}
+          echo ${{ env.OUTPUT_BINARIES_NAME_LINUX }}
           sudo apt-get update
           sudo apt-get install clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
 
