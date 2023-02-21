@@ -52,6 +52,7 @@ jobs:
       
       - name: Compress output to ZIP file
         run: |
+          zip --help
           zip -r -DestinationPath build/linux/x64/release/bundle/${{ env.OUTPUT_BINARIES_NAME }} build/linux/x64/release/bundle
       
       - name: Create GitHub release draft
