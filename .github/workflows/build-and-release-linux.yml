@@ -1,9 +1,13 @@
 name: Build and release - Linux
 
+# on:
+#   workflow_run:
+#     workflows: "Build and release - Windows"
+#     types: completed
 on:
-  workflow_run:
-    workflows: "Build and release - Windows"
-    types: completed
+  workflow_dispatch:
+  push:
+    branches: [ "wip/create-install" ]
 
 jobs:
   build-and-release:
@@ -17,7 +21,9 @@ jobs:
       
       - name: Determine most recent tag in branch and set misc variables, based on that
         run: |
+          echo $GITHUB_WORKSPACE
           cd $GITHUB_WORKSPACE
+          ls
           echo "MOST_RECENT_TAG=$(echo git describe --tags --abbrev=0)" >> $GITHUB_ENV
           echo ABC
           echo $MOST_RECENT_TAG

@@ -1,9 +1,9 @@
 name: Build and release - Windows
 
-on:
-  workflow_dispatch:
-  push:
-    branches: [ "wip/create-install" ]
+# on:
+#   workflow_dispatch:
+#   push:
+#     branches: [ "wip/create-install" ]
 
 jobs:
   build-and-release:
