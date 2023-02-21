@@ -52,13 +52,12 @@ jobs:
       
       - name: Compress output to ZIP file
         run: |
-          zip --help
-          zip -r -DestinationPath build/linux/x64/release/bundle/${{ env.OUTPUT_BINARIES_NAME }} build/linux/x64/release/bundle
+          zip -r build/linux/x64/release/bundle/${{ env.OUTPUT_BINARIES_NAME }} build/linux/x64/release/bundle
       
       - name: Create GitHub release draft
         uses: softprops/action-gh-release@v1
         with:
-          # draft: true
+          draft: true
           tag_name: ${{ env.MOST_RECENT_TAG }}
           files: |
             ./build/linux/x64/release/bundle/${{ env.OUTPUT_BINARIES_NAME }}
