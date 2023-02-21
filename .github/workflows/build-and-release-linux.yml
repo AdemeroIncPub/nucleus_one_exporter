@@ -23,7 +23,7 @@ jobs:
         run: |
           echo $GITHUB_WORKSPACE
           cd $GITHUB_WORKSPACE
-          MOST_RECENT_TAG_LOCAL = git describe --tags --abbrev=0
+          MOST_RECENT_TAG_LOCAL=git describe --tags --abbrev=0
           echo $MOST_RECENT_TAG_LOCAL
           echo "MOST_RECENT_TAG=$MOST_RECENT_TAG_LOCAL" >> $GITHUB_ENV
           echo ABC
