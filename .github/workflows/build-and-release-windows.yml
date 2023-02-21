@@ -1,9 +1,9 @@
 name: Build and release - Windows
 
-# on:
-#   workflow_dispatch:
-#   push:
-#     branches: [ "wip/create-install" ]
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "wip/create-install" ]
 
 jobs:
   build-and-release:
@@ -35,7 +35,7 @@ jobs:
       
       - name: Compress output to ZIP file
         run: |
-          Compress-Archive -Path build\windows\runner\Release -DestinationPath build\windows\runner\Release\$env:OUTPUT_BINARIES_NAME
+          Compress-Archive -Path build\windows\runner\Release\* -DestinationPath build\windows\runner\Release\$env:OUTPUT_BINARIES_NAME
       
       # Set the WiX path.  See https://www.scivision.dev/github-actions-path-append/
       - name: Add WiX path to GITHUB_PATH

@@ -1,13 +1,9 @@
 name: Build and release - Linux
 
-# on:
-#   workflow_run:
-#     workflows: "Build and release - Windows"
-#     types: completed
 on:
-  workflow_dispatch:
-  push:
-    branches: [ "wip/create-install" ]
+  workflow_run:
+    workflows: "Build and release - Windows"
+    types: completed
 
 jobs:
   build-and-release:
@@ -53,7 +49,7 @@ jobs:
       - name: Compress output to ZIP file
         run: |
           cd build/linux/x64/release/bundle
-          zip -r ../${{ env.OUTPUT_BINARIES_NAME }} .
+          zip -r ${{ env.OUTPUT_BINARIES_NAME }} .
       
       - name: Create GitHub release draft
         uses: softprops/action-gh-release@v1
