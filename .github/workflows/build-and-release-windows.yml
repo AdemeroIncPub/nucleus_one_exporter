@@ -1,3 +1,11 @@
+# Releases are built in multiple stages.
+# 1) This workflow executes and creates Windows portions of the Release.
+# 2) A draft Release is created.
+# 3) The Windows assets are uploaded to said draft Release.
+# 4) This workflow completes.
+# 5) The Linux workflow subsequently executes.
+# 6) The Windows assets are uploaded to the Release, at which point it becomes published.
+
 name: Build and release - Windows
 
 on:
@@ -19,7 +27,7 @@ jobs:
           cd $env:GITHUB_WORKSPACE
           $MOST_RECENT_TAG_LOCAL = git describe --tags --abbrev=0
           Add-Content -Path $env:GITHUB_ENV -Value "MOST_RECENT_TAG=$MOST_RECENT_TAG_LOCAL"
-          Add-Content -Path $env:GITHUB_ENV -Value "OUTPUT_INSTALLER_NAME=NucleusOneExporter-${MOST_RECENT_TAG_LOCAL}-Installer.msi"
+          Add-Content -Path $env:GITHUB_ENV -Value "OUTPUT_INSTALLER_NAME=NucleusOneExporter-${MOST_RECENT_TAG_LOCAL}-Windows-Installer.msi"
           Add-Content -Path $env:GITHUB_ENV -Value "OUTPUT_BINARIES_NAME=NucleusOneExporter-${MOST_RECENT_TAG_LOCAL}-Windows-Binaries.zip"
       
       - name: Install Flutter SDK

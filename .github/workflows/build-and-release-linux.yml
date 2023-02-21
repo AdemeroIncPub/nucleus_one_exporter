@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-release:
-    # if: ${{ github.event.workflow_run.conclusion == 'success' }}  # Only run if the previous workflow succeeded
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}  # Only run if the previous workflow succeeded
     runs-on: ubuntu-latest
 
     steps:
@@ -51,10 +51,9 @@ jobs:
           cd build/linux/x64/release/bundle
           zip -r ${{ env.OUTPUT_BINARIES_NAME }} .
       
-      - name: Create GitHub release draft
+      - name: Upload assets to GitHub release then publish
         uses: softprops/action-gh-release@v1
         with:
-          draft: true
           tag_name: ${{ env.MOST_RECENT_TAG }}
           files: |
             ./build/linux/x64/release/bundle/${{ env.OUTPUT_BINARIES_NAME }}
