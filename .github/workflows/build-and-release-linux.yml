@@ -1,8 +1,8 @@
-name: Build and release - Linux
+name: Build and release - 2 of 2 - Linux
 
 on:
   workflow_run:
-    workflows: "Build and release - Windows"
+    workflows: "Build and release - 1 of 2 - Windows"
     types: completed
 
 jobs:
@@ -15,10 +15,11 @@ jobs:
         with:
           fetch-depth: 0  # Fetch all history for all tags and branches
       
+      # The tag-matching command came from https://stackoverflow.com/a/52439270
       - name: Determine most recent tag in branch and set misc variables, based on that
         run: |
           cd $GITHUB_WORKSPACE
-          MOST_RECENT_TAG_LOCAL=$(git describe --tags --abbrev=0)
+          MOST_RECENT_TAG_LOCAL=$(git describe --match "v*" --abbrev=0 --tags $(git rev-list --tags --max-count=1))
           echo $MOST_RECENT_TAG_LOCAL
           echo "MOST_RECENT_TAG=$MOST_RECENT_TAG_LOCAL" >> $GITHUB_ENV
           echo "OUTPUT_BINARIES_NAME=NucleusOneExporter-$MOST_RECENT_TAG_LOCAL-Linux-Binaries.zip" >> $GITHUB_ENV

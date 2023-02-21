@@ -6,12 +6,10 @@
 # 5) The Linux workflow subsequently executes.
 # 6) The Windows assets are uploaded to the Release, at which point it becomes published.
 
-name: Build and release - Windows
+name: Build and release - 1 of 2 - Windows
 
 on:
-  workflow_dispatch:
-  push:
-    branches: [ "wip/create-install" ]
+  workflow_dispatch: # Only run manually
 
 jobs:
   build-and-release:
@@ -22,10 +20,11 @@ jobs:
         with:
           fetch-depth: 0  # Fetch all history for all tags and branches
       
+      # The tag-matching command came from https://stackoverflow.com/a/52439270
       - name: Determine most recent tag in branch and set misc variables, based on that
         run: |
           cd $env:GITHUB_WORKSPACE
-          $MOST_RECENT_TAG_LOCAL = git describe --tags --abbrev=0
+          $MOST_RECENT_TAG_LOCAL = git describe --match "v*" --abbrev=0 --tags $(git rev-list --tags --max-count=1)
           Add-Content -Path $env:GITHUB_ENV -Value "MOST_RECENT_TAG=$MOST_RECENT_TAG_LOCAL"
           Add-Content -Path $env:GITHUB_ENV -Value "OUTPUT_INSTALLER_NAME=NucleusOneExporter-${MOST_RECENT_TAG_LOCAL}-Windows-Installer.msi"
           Add-Content -Path $env:GITHUB_ENV -Value "OUTPUT_BINARIES_NAME=NucleusOneExporter-${MOST_RECENT_TAG_LOCAL}-Windows-Binaries.zip"
