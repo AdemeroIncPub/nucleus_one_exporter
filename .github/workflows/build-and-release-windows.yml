@@ -20,8 +20,7 @@ jobs:
           $MOST_RECENT_TAG_LOCAL = git describe --tags --abbrev=0
           Add-Content -Path $env:GITHUB_ENV -Value "MOST_RECENT_TAG=$MOST_RECENT_TAG_LOCAL"
           Add-Content -Path $env:GITHUB_ENV -Value "OUTPUT_INSTALLER_NAME=NucleusOneExporter-${MOST_RECENT_TAG_LOCAL}-Installer.msi"
-          Add-Content -Path $env:GITHUB_ENV -Value "OUTPUT_BINARIES_NAME_WIN=NucleusOneExporter-${MOST_RECENT_TAG_LOCAL}-Windows-Binaries.zip"
-          Add-Content -Path $env:GITHUB_ENV -Value "OUTPUT_BINARIES_NAME_LINUX=NucleusOneExporter-${MOST_RECENT_TAG_LOCAL}-Linux-Binaries.zip"
+          Add-Content -Path $env:GITHUB_ENV -Value "OUTPUT_BINARIES_NAME=NucleusOneExporter-${MOST_RECENT_TAG_LOCAL}-Windows-Binaries.zip"
       
       - name: Install Flutter SDK
         uses: subosito/flutter-action@v2
@@ -36,7 +35,7 @@ jobs:
       
       - name: Compress output to ZIP file
         run: |
-          Compress-Archive -Path build\windows\runner\Release -DestinationPath build\windows\runner\Release\$env:OUTPUT_BINARIES_NAME_WIN
+          Compress-Archive -Path build\windows\runner\Release -DestinationPath build\windows\runner\Release\$env:OUTPUT_BINARIES_NAME
       
       # Set the WiX path.  See https://www.scivision.dev/github-actions-path-append/
       - name: Add WiX path to GITHUB_PATH
@@ -55,5 +54,5 @@ jobs:
           generate_release_notes: true
           files: |
             ./install/windows/${{ env.OUTPUT_INSTALLER_NAME }}
-            ./build/windows/runner/Release/${{ env.OUTPUT_BINARIES_NAME_WIN }}
+            ./build/windows/runner/Release/${{ env.OUTPUT_BINARIES_NAME }}
           fail_on_unmatched_files: true

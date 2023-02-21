@@ -22,13 +22,12 @@ jobs:
           echo ABC
           echo $MOST_RECENT_TAG
           echo DEF
-          echo ${{ env.MOST_RECENT_TAG }}
-          echo "OUTPUT_BINARIES_NAME_LINUX=NucleusOneExporter-$MOST_RECENT_TAG-Linux-Binaries.zip" >> $GITHUB_ENV
+          echo "OUTPUT_BINARIES_NAME=NucleusOneExporter-$MOST_RECENT_TAG-Linux-Binaries.zip" >> $GITHUB_ENV
 
       - name: Install dependencies needed for builiding
         run: |
           echo ${{ env.MOST_RECENT_TAG }}
-          echo ${{ env.OUTPUT_BINARIES_NAME_LINUX }}
+          echo ${{ env.OUTPUT_BINARIES_NAME }}
           sudo apt-get update
           sudo apt-get install clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
 
