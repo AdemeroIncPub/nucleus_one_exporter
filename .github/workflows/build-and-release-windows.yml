@@ -54,7 +54,7 @@ jobs:
           candle.exe -nologo "install\windows\Setup.wxs" -out "install\windows\Setup.wixobj" -ext WixUIExtension
           light.exe -nologo "install\windows\Setup.wixobj" -out "install\windows\${{ env.OUTPUT_INSTALLER_NAME }}" -ext WixUIExtension
 
-      - name: Create GitHub release draft
+      - name: Create GitHub Release draft
         uses: softprops/action-gh-release@v1
         with:
           draft: true

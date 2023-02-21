@@ -51,10 +51,19 @@ jobs:
           cd build/linux/x64/release/bundle
           zip -r ${{ env.OUTPUT_BINARIES_NAME }} .
       
-      - name: Upload assets to GitHub release then publish
+      - id: updateReleaseDraft
+        name: Upload assets to exist GitHub Release draft
         uses: softprops/action-gh-release@v1
         with:
+          draft: true
           tag_name: ${{ env.MOST_RECENT_TAG }}
           files: |
             ./build/linux/x64/release/bundle/${{ env.OUTPUT_BINARIES_NAME }}
           fail_on_unmatched_files: true
+      
+      - name: Publish the Release draft
+        uses: eregon/publish-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_id: ${{ steps.updateReleaseDraft.outputs.id }}
