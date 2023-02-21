@@ -1,0 +1,65 @@
+# Releases are built in multiple stages.
+# 1) This workflow executes and creates Windows portions of the Release.
+# 2) A draft Release is created.
+# 3) The Windows assets are uploaded to said draft Release.
+# 4) This workflow completes.
+# 5) The Linux workflow subsequently executes.
+# 6) The Windows assets are uploaded to the Release, at which point it becomes published.
+
+name: Build and release - 1 of 2 - Windows
+
+on:
+  workflow_dispatch: # Only run manually
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Fetch all history for all tags and branches
+      
+      # The tag-matching command came from https://stackoverflow.com/a/52439270
+      - name: Determine most recent tag in branch and set misc variables, based on that
+        run: |
+          cd $env:GITHUB_WORKSPACE
+          $MOST_RECENT_TAG_LOCAL = git describe --match "v*" --abbrev=0 --tags $(git rev-list --tags --max-count=1)
+          Add-Content -Path $env:GITHUB_ENV -Value "MOST_RECENT_TAG=$MOST_RECENT_TAG_LOCAL"
+          Add-Content -Path $env:GITHUB_ENV -Value "OUTPUT_INSTALLER_NAME=NucleusOneExporter-${MOST_RECENT_TAG_LOCAL}-Windows-Installer.msi"
+          Add-Content -Path $env:GITHUB_ENV -Value "OUTPUT_BINARIES_NAME=NucleusOneExporter-${MOST_RECENT_TAG_LOCAL}-Windows-Binaries.zip"
+      
+      - name: Install Flutter SDK
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable' # or: 'beta', 'dev' or 'master'
+      
+      - id: buildExporter
+        name: Build Windows EXE
+        run: |
+          cd $env:GITHUB_WORKSPACE
+          flutter build windows --release
+      
+      - name: Compress output to ZIP file
+        run: |
+          Compress-Archive -Path build\windows\runner\Release\* -DestinationPath build\windows\runner\Release\$env:OUTPUT_BINARIES_NAME
+      
+      # Set the WiX path.  See https://www.scivision.dev/github-actions-path-append/
+      - name: Add WiX path to GITHUB_PATH
+        run: echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      
+      - name: Build MSI
+        run: |
+          candle.exe -nologo "install\windows\Setup.wxs" -out "install\windows\Setup.wixobj" -ext WixUIExtension
+          light.exe -nologo "install\windows\Setup.wixobj" -out "install\windows\${{ env.OUTPUT_INSTALLER_NAME }}" -ext WixUIExtension
+
+      - name: Create GitHub Release draft
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          tag_name: ${{ env.MOST_RECENT_TAG }}
+          generate_release_notes: true
+          files: |
+            ./install/windows/${{ env.OUTPUT_INSTALLER_NAME }}
+            ./build/windows/runner/Release/${{ env.OUTPUT_BINARIES_NAME }}
+          fail_on_unmatched_files: true
