@@ -11,7 +11,7 @@ on:
 
 jobs:
   build-and-release:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}  # Only run if the previous workflow succeeded
+    # if: ${{ github.event.workflow_run.conclusion == 'success' }}  # Only run if the previous workflow succeeded
     runs-on: ubuntu-latest
 
     steps:
