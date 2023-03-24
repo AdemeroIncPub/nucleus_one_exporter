@@ -1,4 +1,14 @@
 {
+  // Use FVM for Flutter SDK
+  "dart.flutterSdkPath": ".fvm/flutter_sdk",
+  "search.exclude": {
+    // Remove .fvm files from search
+    "**/.fvm": true
+  },
+  "files.watcherExclude": {
+    // Remove .fvm files from file watching
+    "**/.fvm": true
+  },
   "files.exclude": {
     "**/*.freezed.dart": true
   },

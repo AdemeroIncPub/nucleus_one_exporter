@@ -43,7 +43,11 @@ dependencies:
   cli_util: any
   collection: any
   dartx: any
-  file_picker: any
+  # For some reason `fvm flutter pub upgrade` used a very old version that was
+  # breaking the build, so specifying the version for now. Pubspec package docs
+  # guidance says to use 'any' for app dependencies (vs specifying for
+  # packages), not sure if that's the best guidance.
+  file_picker: ^5.2.6
   flutter:
     sdk: flutter
   flutter_riverpod: any

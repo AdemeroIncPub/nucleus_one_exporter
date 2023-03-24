@@ -6,11 +6,30 @@ machine. A GUI tool is expected to follow in the future.
 For more information about Nucleus One, visit https://nucleus.one/.
 
 ## GUI Usage
-- Ensure the Flutter SDK is installed on your machine.
-- TODO(apn)
+- Generate an api key in your user profile in the Nucleus One web app.
+- Ensure Flutter Version Manager ([FVM](https://fvm.app/)) is installed on your machine.
+- Clone this repository to your machine.
+- Open a terminal window to your cloned repository (to the same folder as this
+  README.md).
+- Install the Flutter SDK version found in project config:
+  ```
+  fvm install
+  ```
+- Get required dependencies:
+  ```
+  fvm flutter pub get
+  ```
+- Run the app:
+  ```
+  fvm flutter run -d windows
+  ```
 
 ## CLI Usage
+- FVM currently will not work with this CLI (https://github.com/fluttertools/fvm/issues/512).
+
+  These directions will be updated to use FVM when the issue is resolved.
 - Ensure the Dart or Flutter SDK is installed on your machine.
+- Generate an api key in your user profile in the Nucleus One web app.
 - Clone this repository to your machine.
 - Open a terminal window to your cloned repository (to the same folder as this
   README.md).
@@ -18,7 +37,6 @@ For more information about Nucleus One, visit https://nucleus.one/.
   ```
   dart pub get
   ```
-- Generate an api key in your user profile in the Nucleus One web app.
 - Set your api key:
   ```
   dart run .\bin\nucleus_one_exporter.dart api-key set <your api key>
@@ -40,7 +58,9 @@ For more information about Nucleus One, visit https://nucleus.one/.
   ```
 
 ## Development
-Ensure the Flutter SDK is installed on your machine.
+Follow the [GUI Usage](#gui-usage) directions to get setup.
+
+Open this folder in VS Code or your favorite IDE.
 
 ### Pull Requests and Commits
 
@@ -61,5 +81,5 @@ to be written direclty in your editor.
 ### Testing
 
 ```
-flutter test
+fvm flutter test
 ```
